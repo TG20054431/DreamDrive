@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="it">
+<head>
+    <title>DreamDrive | Profilo Utente</title>
+    <%- include('../partials/head') %>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .content-wrapper {
+            flex: 1 0 auto;
+        }
+        footer {
+            flex-shrink: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/nav') %>
+
+    <div class="content-wrapper">
+        <div class="container mt-5" style="font-family: 'Tektur', sans-serif;">
+            <%- include('../partials/alerts') %>
+            
+            <!-- User profile content -->
+            <div class="row">
+                <!-- Profilo utente -->
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-person-circle mb-3" viewBox="0 0 16 16">
+                                <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                                <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                            </svg>
+                            <h4 id="userName">
+                                <% if (typeof user !== 'undefined' && user) { %>
+                                    <%= user.nome %> <%= user.cognome %>
+                                <% } else { %>
+                                    Nome Utente
+                                <% } %>
+                            </h4>
+                            <p id="userEmail">
+                                <% if (typeof user !== 'undefined' && user) { %>
+                                    <%= user.email %>
+                                <% } else { %>
+                                    demo@example.com
+                                <% } %>
+                            </p>
+                            <button class="btn btn-outline-danger w-100" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Prenotazioni -->
+                <div class="col-md-8">
+                    <h3 class="mb-4">Le tue prenotazioni</h3>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">Prenotazioni Attive</h5>
+                            <div id="activeBookings">
+                                <% if (typeof bookings !== 'undefined' && bookings && bookings.length > 0) { %>
+                                    <% bookings.forEach(function(booking) { %>
+                                        <div class="booking-item mb-3 p-3 border rounded">
+                                            <h6>Servizio: <%= booking.service || booking.servizio || booking.tipologia || 'N/D' %></h6>
+                                            <p>Data: <%= new Date(booking.date || booking.data_prenotazione).toLocaleDateString('it-IT') %></p>
+                                            <!-- Uniformato il campo auto tra le due sezioni -->
+                                            <p>Auto: <%= booking.auto || (booking.marca ? booking.marca + ' ' + booking.modello : 'N/D') %></p>
+                                            <% if (booking.circuito) { %>
+                                                <p>Circuito: <%= booking.circuito %></p>
+                                            <% } %>
+                                            <% if (booking.durata) { %>
+                                                <p>Durata: <%= booking.durata %> giorni</p>
+                                            <% } %>
+                                            <p class="text-success fw-bold">Status: Confermata</p>
+                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminaPrenotazioneModal-<%= booking.ID_prenotazione %>">Elimina</button>
+                                        </div>
+                                        <!-- Modal elimina prenotazione -->
+                                        <div class="modal fade" id="eliminaPrenotazioneModal-<%= booking.ID_prenotazione %>" tabindex="-1" aria-labelledby="eliminaPrenotazioneModalLabel-<%= booking.ID_prenotazione %>" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="eliminaPrenotazioneModalLabel-<%= booking.ID_prenotazione %>">Elimina Prenotazione</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Sei sicuro di voler eliminare questa prenotazione?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                                                        <form action="/utente/prenotazioni/<%= booking.ID_prenotazione %>/elimina" method="POST">
+                                                            <button type="submit" class="btn btn-danger">Elimina</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <p class="text-muted">Nessuna prenotazione attiva</p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Storico Prenotazioni</h5>
+                            <div id="bookingHistory">
+                                <% if (typeof bookings !== 'undefined' && bookings && bookings.length > 0) { %>
+                                    <% bookings.forEach(function(booking) { %>
+                                        <div class="booking-item mb-3 p-3 border rounded">
+                                            <h6>Servizio: <%= booking.servizio || booking.service || booking.tipologia || 'N/D' %></h6>
+                                            <p>Data: <%= new Date(booking.date || booking.data_prenotazione).toLocaleDateString('it-IT') %></p>
+                                            <!-- Uniformato il campo auto tra le due sezioni -->
+                                            <p>Auto: <%= booking.auto || (booking.marca ? booking.marca + ' ' + booking.modello : 'N/D') %></p>
+                                            <% if (booking.circuito) { %>
+                                                <p>Circuito: <%= booking.circuito %></p>
+                                            <% } %>
+                                            <% if (booking.durata) { %>
+                                                <p>Durata: <%= booking.durata %> giorni</p>
+                                            <% } %>
+                                            <p>Importo: € <%= booking.amount || booking.importo || '0.00' %></p>
+                                            <p>Pagamento: <%= booking.paymentMethod === 'card' ? 'Carta di Credito' : 
+                                                            booking.paymentMethod === 'paypal' ? 'PayPal' : 'Bonifico Bancario' %></p>
+                                            <p class="text-success fw-bold">Status: <%= booking.status || 'Completata' %></p>
+                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminaPrenotazioneModal-<%= booking.ID_prenotazione %>">Elimina</button>
+                                        </div>
+                                        <!-- Modal elimina prenotazione -->
+                                        <div class="modal fade" id="eliminaPrenotazioneModal-<%= booking.ID_prenotazione %>" tabindex="-1" aria-labelledby="eliminaPrenotazioneModalLabel-<%= booking.ID_prenotazione %>" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="eliminaPrenotazioneModalLabel-<%= booking.ID_prenotazione %>">Elimina Prenotazione</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Sei sicuro di voler eliminare questa prenotazione?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                                                        <form action="/utente/prenotazioni/<%= booking.ID_prenotazione %>/elimina" method="POST">
+                                                            <button type="submit" class="btn btn-danger">Elimina</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <p class="text-muted">Nessuna prenotazione precedente</p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+    <%- include('../partials/modals/logout-modal') %>
+    <% if (typeof user !== 'undefined' && user && user.ruolo !== 'admin') { %>
+        <%- include('../partials/modals/elimina-account-modal') %>
+    <% } %>
+    <%- include('../partials/scripts') %>
+</body>
+</html>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="it">
+<head>
+    <title>DreamDrive | Auto</title>
+    <%- include('../partials/head') %>
+</head>
+<body>
+    <%- include('../partials/nav') %>
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Le Nostre Auto</h1>
+        <%- include('../partials/alerts') %>
+        <%- include('../partials/toast') %>
+        <% if (typeof autoList !== 'undefined' && autoList.length > 0) { %>
+          <div class="row">
+            <% autoList.forEach(function(auto) { %>
+              <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                  <img src="/public/images/auto1.jpg" class="card-img-top" alt="<%= auto.marca %> <%= auto.modello %>">
+                  <div class="card-body">
+                    <h5 class="card-title"><%= auto.marca %> <%= auto.modello %></h5>
+                    <p class="card-text">Motore: <%= auto.motore %></p>
+                    <p class="card-text">Nazione: <%= auto.nazione %></p>
+                    <a href="/auto/<%= auto.ID_auto %>" class="btn btn-primary">Dettagli</a>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <p class="text-muted">Nessuna auto disponibile.</p>
+        <% } %>
+    </div>
+
+    <%- include('../partials/footer') %>
+    <%- include('../partials/scripts') %>
+</body>
+</html>
