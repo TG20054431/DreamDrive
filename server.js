@@ -59,7 +59,7 @@ app.use((req, res, next) => {
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/utente', utenteRouter);
-app.use('/admin', adminRouter);
+app.use('/adminl', adminRouter);
 
 // Avvio del server
 app.listen(PORT, () => {
