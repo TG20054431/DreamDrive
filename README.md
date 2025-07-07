@@ -59,8 +59,6 @@ _______________________________________________________
 oppure visitare il sito come un utente non navigato e non registrato.
 _______________________________________________________
 
-# 📁 Struttura cartelle
-
 # 🙋🏻‍♂️ Autore
 
 Timothy Giolito, studente di Informatica presso l'Università del Piemonte Orientale, sede di Vercelli.
