@@ -6,117 +6,174 @@
 </head>
 <body>
     <%- include('../partials/nav') %>
+    <%- include('../partials/alerts') %>
 
-    <div class="intro-section text-center py-4">
-        <h1 class="display-5">Benvenuto su DreamDrive</h1>
-        <p class="lead">Scopri il nostro mondo di auto da sogno e prestazioni straordinarie.</p>
-    </div>
-
-    <div class="banner-wallpaper">
-        <div class="overlay">
-            <div class="button-container">
-                <a href="/servizi" class="hover-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-check-fill me-2 d-none d-md-inline" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5m8.854-9.646a.5.5 0 0 0-.708-.708L7.5 7.793 6.354 6.646a.5.5 0 1 0-.708.708l1.5 1.5a.5.5 0 0 0 .708 0z"/>
-                    </svg>
-                    Prenota ora
-                </a>
-                <a href="#contatti" class="hover-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-telephone-outbound-fill me-2 d-none d-md-inline" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M1.885.511a1.745 1.745 0 0 1 2.61.163L6.29 2.98c.329.423.445.974.315 1.494l-.547 2.19a.68.68 0 0 0 .178.643l2.457 2.457a.68.68 0 0 0 .644.178l2.189-.547a1.75 1.75 0 0 1 1.494.315l2.306 1.794c.829.645.905 1.87.163 2.611l-1.034 1.034c-.74.74-1.846 1.065-2.877.702a18.6 18.6 0 0 1-7.01-4.42 18.6 18.6 0 0 1-4.42-7.009c-.362-1.03-.037-2.137.703-2.877zm10.761.135a.5.5 0 0 1 .708 0l2.5 2.5a.5.5 0 0 1 0 .708l-2.5 2.5a.5.5 0 0 1-.708-.708L14.293 4H9.5a.5.5 0 0 1 0-1h4.793l-1.647-1.646a.5.5 0 0 1 0-.708"/>
-                    </svg>
-                    Contattaci
-                </a>
-                <a href="#recensioni" class="hover-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill me-2 d-none d-md-inline" viewBox="0 0 16 16">
-                        <path d="M3.612 15.443c-.386.197-.812-.149-.754-.575l.588-3.429-2.637-2.536c-.329-.318-.158-.888.283-.951l3.535-.514 1.578-3.194c.197-.386.735-.386.932 0l1.578 3.194 3.535.514c.441.063.612.633.283.951l-2.637 2.536.588 3.429c.058.426-.368.772-.754.575L8 13.187l-3.388 1.256z"/>
-                    </svg>
-                    Vedi Recensioni
-                </a>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <div class="hero-content">
+                <h1 class="hero-title">DreamDrive</h1>
+                <p class="hero-subtitle">Vivi l'emozione di guidare auto sportive di lusso attraverso i nostri servizi di noleggio e track day</p>
+                <div class="mt-5">
+                    <a href="/auto" class="btn btn-teal hero-btn">Scopri le nostre auto</a>
+                    <a href="#servizi" class="btn btn-outline-light hero-btn">I nostri servizi</a>
+                </div>
             </div>
         </div>
-        <img src="/images/wallpaper.jpg" alt="Banner" class="img-fluid">
-    </div>
+    </section>
 
-    <!-- Recensioni section -->
-    <div class="recensioni" id="recensioni">
-        <% if (locals.recensioni && recensioni.length > 0) { %>
-            <% recensioni.slice(0, 3).forEach(recensione => { %>
-                <div class="card">
-                    <img src="<%= recensione.utente.avatar || '/images/default-user.jpg' %>" class="card-img-top" alt="Utente">
-                    <div class="card-body">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-square-quote-fill mb-2" viewBox="0 0 16 16">
-                            <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.5a1 1 0 0 0-.8.4l-1.9 2.533a1 1 0 0 1-1.6 0L5.3 12.4a1 1 0 0 0-.8-.4H2a2 2 0 0 1-2-2zm7.194 2.766a1.7 1.7 0 0 0-.227-.272 1.5 1.5 0 0 0-.469-.324l-.008-.004A1.8 1.8 0 0 0 5.734 4C4.776 4 4 4.746 4 5.667c0 .92.776 1.666 1.734 1.666.343 0 .662-.095.931-.26-.137.389-.39.804-.81 1.22a.405.405 0 0 0 .011.59c.173.16.447.155.614-.01 1.334-1.329 1.37-2.758.941-3.706a2.5 2.5 0 0 0-.227-.4zM11 7.073c-.136.389-.39.804-.81 1.22a.405.405 0 0 0 .012.59c.172.16.446.155.613-.01 1.334-1.329 1.37-2.758.942-3.706a2.5 2.5 0 0 0-.228-.4 1.7 1.7 0 0 0-.227-.273 1.5 1.5 0 0 0-.469-.324l-.008-.004A1.8 1.8 0 0 0 10.07 4c-.957 0-1.734.746-1.734 1.667 0 .92.777 1.666 1.734 1.666.343 0 .662-.095.931-.26z"/>
-                        </svg>
-                        <p class="card-text">"<%= recensione.testo %>"</p>
+    <!-- Servizi Section -->
+    <section id="servizi" class="py-5">
+        <div class="container py-5">
+            <h2 class="text-center section-title">I nostri servizi</h2>
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 service-card">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-car service-icon"></i>
+                            <h3>Noleggio</h3>
+                            <p class="card-text">Noleggia una delle nostre auto sportive per un'esperienza di guida indimenticabile. Disponibili per eventi speciali, weekend o vacanze.</p>
+                            <a href="/servizi/prenota?tipo=noleggio" class="btn btn-teal mt-3">Prenota ora</a>
+                        </div>
                     </div>
                 </div>
-            <% }); %>
-        <% } else { %>
-            <div class="card">
-                <img src="/images/user1.jpg" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-square-quote-fill mb-2" viewBox="0 0 16 16">
-                        <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.5a1 1 0 0 0-.8.4l-1.9 2.533a1 1 0 0 1-1.6 0L5.3 12.4a1 1 0 0 0-.8-.4H2a2 2 0 0 1-2-2zm7.194 2.766a1.7 1.7 0 0 0-.227-.272 1.5 1.5 0 0 0-.469-.324l-.008-.004A1.8 1.8 0 0 0 5.734 4C4.776 4 4 4.746 4 5.667c0 .92.776 1.666 1.734 1.666.343 0 .662-.095.931-.26-.137.389-.39.804-.81 1.22a.405.405 0 0 0 .011.59c.173.16.447.155.614-.01 1.334-1.329 1.37-2.758.941-3.706a2.5 2.5 0 0 0-.227-.4zM11 7.073c-.136.389-.39.804-.81 1.22a.405.405 0 0 0 .012.59c.172.16.446.155.613-.01 1.334-1.329 1.37-2.758.942-3.706a2.5 2.5 0 0 0-.228-.4 1.7 1.7 0 0 0-.227-.273 1.5 1.5 0 0 0-.469-.324l-.008-.004A1.8 1.8 0 0 0 10.07 4c-.957 0-1.734.746-1.734 1.667 0 .92.777 1.666 1.734 1.666.343 0 .662-.095.931-.26z"/>
-                    </svg>
-                    <p class="card-text">"Un'emozione unica! Ho potuto passare un'intera settimana al volante dell'auto dei miei sogni!"</p>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 service-card">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-flag-checkered service-icon"></i>
+                            <h3>Track Day</h3>
+                            <p class="card-text">Sperimenta l'adrenalina di guidare in pista con una delle nostre supercar. Istruttori professionisti ti guideranno per un'esperienza sicura e divertente.</p>
+                            <a href="/servizi/prenota?tipo=trackday" class="btn btn-teal mt-3">Prenota ora</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card">
-                <img src="/images/user2.jpg" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-square-quote-fill mb-2" viewBox="0 0 16 16">
-                        <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.5a1 1 0 0 0-.8.4l-1.9 2.533a1 1 0 0 1-1.6 0L5.3 12.4a1 1 0 0 0-.8-.4H2a2 2 0 0 1-2-2zm7.194 2.766a1.7 1.7 0 0 0-.227-.272 1.5 1.5 0 0 0-.469-.324l-.008-.004A1.8 1.8 0 0 0 5.734 4C4.776 4 4 4.746 4 5.667c0 .92.776 1.666 1.734 1.666.343 0 .662-.095.931-.26-.137.389-.39.804-.81 1.22a.405.405 0 0 0 .011.59c.173.16.447.155.614-.01 1.334-1.329 1.37-2.758.941-3.706a2.5 2.5 0 0 0-.227-.4zM11 7.073c-.136.389-.39.804-.81 1.22a.405.405 0 0 0 .012.59c.172.16.446.155.613-.01 1.334-1.329 1.37-2.758.942-3.706a2.5 2.5 0 0 0-.228-.4 1.7 1.7 0 0 0-.227-.273 1.5 1.5 0 0 0-.469-.324l-.008-.004A1.8 1.8 0 0 0 10.07 4c-.957 0-1.734.746-1.734 1.667 0 .92.777 1.666 1.734 1.666.343 0 .662-.095.931-.26z"/>
-                    </svg>
-                    <p class="card-text">"Poter vivere una giornata in pista, a bordo di un'auto così performante, è qualcosa di inspiegabile!"</p>
-                </div>
-            </div>
-            <div class="card">
-                <img src="/images/user3.jpg" class="card-img-top" alt="...">
-                <div class="card-body">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-square-quote-fill mb-2" viewBox="0 0 16 16">
-                        <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.5a1 1 0 0 0-.8.4l-1.9 2.533a1 1 0 0 1-1.6 0L5.3 12.4a1 1 0 0 0-.8-.4H2a2 2 0 0 1-2-2zm7.194 2.766a1.7 1.7 0 0 0-.227-.272 1.5 1.5 0 0 0-.469-.324l-.008-.004A1.8 1.8 0 0 0 5.734 4C4.776 4 4 4.746 4 5.667c0 .92.776 1.666 1.734 1.666.343 0 .662-.095.931-.26-.137.389-.39.804-.81 1.22a.405.405 0 0 0 .011.59c.173.16.447.155.614-.01 1.334-1.329 1.37-2.758.941-3.706a2.5 2.5 0 0 0-.227-.4zM11 7.073c-.136.389-.39.804-.81 1.22a.405.405 0 0 0 .012.59c.172.16.446.155.613-.01 1.334-1.329 1.37-2.758.942-3.706a2.5 2.5 0 0 0-.228-.4 1.7 1.7 0 0 0-.227-.273 1.5 1.5 0 0 0-.469-.324l-.008-.004A1.8 1.8 0 0 0 10.07 4c-.957 0-1.734.746-1.734 1.667 0 .92.777 1.666 1.734 1.666.343 0 .662-.095.931-.26z"/>
-                    </svg>
-                    <p class="card-text">"Sono veramente soddisfatto di essermi affidato a DreamDrive per questa esperienza!"</p>
-                </div>
-            </div>
-        <% } %>
-    </div>
+        </div>
+    </section>
 
-    <!-- Contact form section -->
-    <div class="container my-5" id="contatti">
-        <div class="row">
-            <div class="col-md-8 mx-auto">
-                <div class="card shadow">
-                    <div class="card-body">
-                        <h3 class="card-title text-center mb-4">Contattaci</h3>
-                        
-                        <%- include('../partials/alerts') %>
-                        
-                        <form method="POST" action="/contatti/invia">
+    <!-- Recensioni Section - Card semplificate -->
+    <section id="recensioni" class="py-5 bg-light">
+        <div class="container py-5">
+            <h2 class="text-center section-title">Cosa dicono i nostri clienti</h2>
+            <div class="row">
+                <% try { %>
+                    <% if (typeof recensioni !== 'undefined' && recensioni.length > 0) { %>
+                        <% recensioni.slice(0, 3).forEach(function(recensione) { %>
+                            <div class="col-md-4 mb-4">
+                                <div class="card h-100 testimonial-card">
+                                    <div class="card-body p-4">
+                                        <div class="mb-3">
+                                            <% for(let i=1; i<=5; i++) { %>
+                                                <i class="fas fa-star <%= i <= recensione.valutazione ? 'text-warning' : 'text-secondary' %>"></i>
+                                            <% } %>
+                                        </div>
+                                        <p class="card-text">"<%= recensione.contenuto %>"</p>
+                                        <p class="text-end mb-0 text-muted"><small><%= recensione.nome || 'Cliente DreamDrive' %></small></p>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } else { %>
+                        <div class="col-12">
+                            <div class="no-reviews">
+                                <div class="no-reviews-icon">
+                                    <i class="fas fa-comment-slash"></i>
+                                </div>
+                                <h4 class="mb-3">Nessuna recensione disponibile</h4>
+                                <p class="no-reviews-text">Sii il primo a condividere la tua esperienza con DreamDrive!</p>
+                                <a href="/#contatti" class="btn btn-teal mt-3">Contattaci per maggiori informazioni</a>
+                            </div>
+                        </div>
+                    <% } %>
+                <% } catch(error) { %>
+                    <div class="col-12 text-center">
+                        <div class="no-reviews">
+                            <div class="no-reviews-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h4 class="mb-3">Oops! Qualcosa è andato storto</h4>
+                            <p class="no-reviews-text">Si è verificato un errore nel caricamento delle recensioni. Riprova più tardi.</p>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+            <% if (typeof recensioni !== 'undefined' && recensioni.length > 0) { %>
+                <div class="text-center mt-4">
+                    <a href="/recensioni" class="btn btn-teal btn-lg">Vedi tutte le recensioni</a>
+                </div>
+            <% } %>
+        </div>
+    </section>
+
+    <!-- Contatti Section - Form migliorato -->
+    <section id="contatti" class="contact-section">
+        <div class="container py-4">
+            <h2 class="text-center section-title">Contattaci</h2>
+            <p class="text-center lead mb-5">Hai domande o vuoi prenotare? Non esitare a contattarci!</p>
+            
+            <!-- Riga superiore: Informazioni di contatto -->
+            <div class="row mb-5 justify-content-center">
+                <div class="col-md-10">
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-4 contact-col">
+                            <i class="fas fa-phone-alt contact-icon"></i>
+                            <h5 class="fw-bold mb-3">Telefono</h5>
+                            <p class="mb-0">+39 02 1234567</p>
+                        </div>
+                        <div class="col-md-4 mb-4 contact-col">
+                            <i class="fas fa-envelope contact-icon"></i>
+                            <h5 class="fw-bold mb-3">Email</h5>
+                            <p class="mb-0">info@dreamdrive.com</p>
+                        </div>
+                        <div class="col-md-4 mb-4 contact-col">
+                            <i class="fas fa-map-marker-alt contact-icon"></i>
+                            <h5 class="fw-bold mb-3">Indirizzo</h5>
+                            <p class="mb-0">Via Roma 123, 20100 Milano (MI)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Riga inferiore: Mappa e Form di contatto -->
+            <div class="row">
+                <!-- Mappa -->
+                <div class="col-lg-6 mb-4">
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2798.854087832347!2d9.189723!3d45.464226!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zM40yNzAnMTUuMiJOIDnCsDExJzIzLjAiRQ!5e0!3m2!1sen!2sit!4v1620120000000!5m2!1sen!2sit"
+                            allowfullscreen="" 
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
+                
+                <!-- Form di contatto -->
+                <div class="col-lg-6 mb-4">
+                    <div class="contact-form">
+                        <h3 class="contact-form-title">Inviaci un messaggio</h3>
+                        <form action="/contatti/invia" method="POST">
                             <div class="mb-3">
-                                <label for="nome" class="form-label">Nome e Cognome</label>
-                                <input type="text" class="form-control" id="nome" name="nome" required>
+                                <label for="contactEmail" class="form-label fw-bold">Email</label>
+                                <input type="email" class="form-control" id="contactEmail" name="email" required placeholder="La tua email">
                             </div>
                             <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
+                                <label for="contactMessage" class="form-label fw-bold">Messaggio</label>
+                                <textarea class="form-control" id="contactMessage" name="messaggio" rows="4" required placeholder="Scrivi il tuo messaggio qui..."></textarea>
                             </div>
-                            <div class="mb-3">
-                                <label for="messaggio" class="form-label">Messaggio</label>
-                                <textarea class="form-control" id="messaggio" name="messaggio" rows="4" required></textarea>
-                            </div>
-                            <div class="text-center">
-                                <button type="submit" class="btn btn-teal px-5">Invia</button>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-teal">
+                                    Invia messaggio
+                                </button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <%- include('../partials/footer') %>
+    <%- include('../partials/scripts') %>
+    <%- include('../partials/toast') %>
 </body>
 </html>
-                          

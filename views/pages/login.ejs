@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
     <title>DreamDrive | Login</title>
@@ -7,32 +7,36 @@
 <body>
     <%- include('../partials/nav') %>
 
-    <main>
+    <main class="content-wrapper">
         <section class="login-section">
-            <div class="container mt-5">
+            <div class="container">
                 <div class="row justify-content-center">
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card shadow">
-                            <div class="card-header bg-teal text-white text-center">
-                                <h4 class="mb-0">Accedi</h4>
+                    <div class="col-md-5">
+                        <div class="card login-card">
+                            <div class="login-header">
+                                <img src="/images/logo_bianco.jpg" alt="DreamDrive" height="60" class="mb-3">
+                                <h2>Accedi a DreamDrive</h2>
                             </div>
-                            <div class="card-body p-4">
+                            <div class="login-body">
                                 <%- include('../partials/alerts') %>
 
-                                <form id="loginForm" method="POST" action="/auth/login">
+                                <form id="loginForm" action="/auth/login" method="POST">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label fw-bold">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" required autocomplete="email" placeholder="Inserisci la tua email">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label fw-bold">Password</label>
+                                        <input type="password" class="form-control" id="password" name="password" required autocomplete="current-password" placeholder="Inserisci la tua password">
+                                    </div>
                                     <input type="hidden" name="serviceRedirect" value="<%= typeof serviceRedirect !== 'undefined' ? serviceRedirect : '' %>">
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    <div class="d-grid mt-4">
+                                        <button type="submit" class="btn btn-teal login-btn">
+                                            Accedi
+                                        </button>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="password" class="form-label">Password</label>
-                                        <input type="password" class="form-control" id="password" name="password" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-teal w-100 mb-3">Accedi</button>
-                                    <div class="text-center">
-                                        <p class="mb-0">Non hai un account?</p>
-                                        <a href="/auth/register" class="text-teal">Registrati qui</a>
+                                    <div class="login-footer">
+                                        <p>Non hai ancora un account? <a href="/auth/register">Registrati</a></p>
                                     </div>
                                 </form>
                             </div>
@@ -45,5 +49,7 @@
 
     <%- include('../partials/footer') %>
     <%- include('../partials/scripts') %>
+    <%- include('../partials/toast') %>
 </body>
+</html>
 </html>

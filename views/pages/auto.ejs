@@ -7,32 +7,66 @@
 <body>
     <%- include('../partials/nav') %>
 
-    <div class="container mt-5">
-        <h1 class="text-center mb-4">Le Nostre Auto</h1>
-        <%- include('../partials/alerts') %>
-        <%- include('../partials/toast') %>
-        <% if (typeof autoList !== 'undefined' && autoList.length > 0) { %>
-          <div class="row">
-            <% autoList.forEach(function(auto) { %>
-              <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                  <img src="/public/images/auto1.jpg" class="card-img-top" alt="<%= auto.marca %> <%= auto.modello %>">
-                  <div class="card-body">
-                    <h5 class="card-title"><%= auto.marca %> <%= auto.modello %></h5>
-                    <p class="card-text">Motore: <%= auto.motore %></p>
-                    <p class="card-text">Nazione: <%= auto.nazione %></p>
-                    <a href="/auto/<%= auto.ID_auto %>" class="btn btn-primary">Dettagli</a>
-                  </div>
+    <div class="content-wrapper">
+        <section class="auto-section">
+            <div class="container">
+                <div class="section-header">
+                    <h1 class="section-title">Le Nostre Auto</h1>
+                    <p class="lead">Scopri la nostra collezione di auto sportive e di lusso</p>
                 </div>
-              </div>
-            <% }) %>
-          </div>
-        <% } else { %>
-          <p class="text-muted">Nessuna auto disponibile.</p>
-        <% } %>
+                
+                <%- include('../partials/alerts') %>
+                
+                <% if (typeof autoList !== 'undefined' && autoList.length > 0) { %>
+                  <div class="row">
+                    <% autoList.forEach(function(auto) { %>
+                      <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="car-card">
+                          <img src="/images/auto1.jpg" class="car-img w-100" alt="<%= auto.marca %> <%= auto.modello %>">
+                          <div class="car-details">
+                            <h5 class="car-title"><%= auto.marca %> <%= auto.modello %></h5>
+                            <div class="car-info">
+                              <p class="mb-2">
+                                <span class="car-info-label">Origine:</span>
+                                <span class="car-info-value"><%= auto.nazione %></span>
+                              </p>
+                              <p class="mb-2">
+                                <span class="car-info-label">Motore:</span>
+                                <span class="car-info-value"><%= auto.motore %></span>
+                              </p>
+                            </div>
+                            <div class="car-actions">
+                              <a href="/auto/<%= auto.ID_auto %>" class="btn btn-teal car-btn">
+                                <i class="fas fa-info-circle me-2"></i> Dettagli
+                              </a>
+                            </div>
+                            <div class="car-actions mt-2">
+                              <a href="/noleggio?auto=<%= auto.ID_auto %>" class="btn btn-outline-primary car-btn">
+                                <i class="fas fa-car me-2"></i> Noleggia
+                              </a>
+                              <a href="/track-day?auto=<%= auto.ID_auto %>" class="btn btn-outline-success car-btn">
+                                <i class="fas fa-flag-checkered me-2"></i> Track Day
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    <% }) %>
+                  </div>
+                <% } else { %>
+                  <div class="no-cars">
+                    <div class="no-cars-icon">
+                      <i class="fas fa-car-slash"></i>
+                    </div>
+                    <p class="no-cars-text">Nessuna auto disponibile al momento.</p>
+                  </div>
+                <% } %>
+            </div>
+        </section>
     </div>
 
     <%- include('../partials/footer') %>
     <%- include('../partials/scripts') %>
+    <%- include('../partials/toast') %>
 </body>
 </html>
