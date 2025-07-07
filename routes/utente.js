@@ -50,7 +50,7 @@ router.get('/dashboard/:section', async (req, res) => {
       recensioni = await recensioniDAO.getRecensioniByUserId(req.user.ID_utente);
     }
 
-    res.render('pages/utente', {
+    res.render('pages/dashboard_utente', {
       title: 'DreamDrive - Dashboard Utente',
       user: req.user,
       isAuth: req.isAuthenticated(),

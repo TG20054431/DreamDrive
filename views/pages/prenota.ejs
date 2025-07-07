@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="it">
+<head>
+    <title>DreamDrive | Prenota un Servizio</title>
+    <%- include('../partials/head') %>
+</head>
+<body>
+    <%- include('../partials/nav') %>
+    
+    <div class="content-wrapper">
+        <section class="py-5">
+            <div class="container">
+                <h1 class="section-title">Prenota un Servizio</h1>
+                
+                <%- include('../partials/alerts') %>
+                
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-body p-4">
+                                <form action="/servizi/prenota" method="POST" id="booking-form">
+                                    <div class="mb-3">
+                                        <label for="servizio" class="form-label">Tipo di servizio</label>
+                                        <select class="form-select" id="servizio" name="servizio" required>
+                                            <option value="" disabled <%= !tipoServizio ? 'selected' : '' %>>Seleziona un servizio</option>
+                                            <option value="noleggio" <%= tipoServizio === 'noleggio' ? 'selected' : '' %>>Noleggio</option>
+                                            <option value="trackday" <%= tipoServizio === 'trackday' ? 'selected' : '' %>>Track Day</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="auto" class="form-label">Auto</label>
+                                        <select class="form-select" id="auto" name="auto" required>
+                                            <option value="" selected disabled>Seleziona un'auto</option>
+                                            <!-- Qui verranno caricate le auto in base al servizio selezionato -->
+                                            <option value="ferrari_458">Ferrari 458</option>
+                                            <option value="lamborghini_huracan">Lamborghini Huracán</option>
+                                            <option value="porsche_911">Porsche 911</option>
+                                            <option value="audi_r8">Audi R8</option>
+                                            <!-- Altre auto... -->
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="data" class="form-label">Data</label>
+                                            <input type="date" class="form-control" id="data" name="data" required min="<%= new Date().toISOString().split('T')[0] %>">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="ora" class="form-label">Ora</label>
+                                            <select class="form-select" id="ora" name="ora" required>
+                                                <option value="" selected disabled>Seleziona un orario</option>
+                                                <option value="08:30">08:30</option>
+                                                <option value="09:00">09:00</option>
+                                                <option value="09:30">09:30</option>
+                                                <option value="10:00">10:00</option>
+                                                <option value="10:30">10:30</option>
+                                                <option value="11:00">11:00</option>
+                                                <option value="11:30">11:30</option>
+                                                <option value="12:00">12:00</option>
+                                                <option value="12:30">12:30</option>
+                                                <option value="13:00">13:00</option>
+                                                <option value="13:30">13:30</option>
+                                                <option value="14:00">14:00</option>
+                                                <option value="14:30">14:30</option>
+                                                <option value="15:00">15:00</option>
+                                                <option value="15:30">15:30</option>
+                                                <option value="16:00">16:00</option>
+                                                <option value="16:30">16:30</option>
+                                                <option value="17:00">17:00</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Campi specifici per il noleggio -->
+                                    <div class="mb-3" id="durata-container" style="display: none;">
+                                        <label for="durata" class="form-label">Durata (giorni)</label>
+                                        <select class="form-select" id="durata" name="durata">
+                                            <option value="1">1 giorno</option>
+                                            <option value="2">2 giorni</option>
+                                            <option value="3">3 giorni</option>
+                                            <option value="7">1 settimana</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <!-- Campi specifici per il track day -->
+                                    <div class="mb-3" id="circuito-container" style="display: none;">
+                                        <label for="circuito" class="form-label">Circuito</label>
+                                        <select class="form-select" id="circuito" name="circuito">
+                                            <option value="" selected disabled>Seleziona un circuito</option>
+                                            <option value="monza">Autodromo di Monza</option>
+                                            <option value="imola">Autodromo di Imola</option>
+                                            <option value="mugello">Mugello Circuit</option>
+                                            <option value="vallelunga">Autodromo di Vallelunga</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">Prezzo stimato</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">€</span>
+                                            <input type="text" class="form-control" id="prezzo-stimato" readonly value="0.00">
+                                        </div>
+                                        <small class="text-muted">Il prezzo finale potrebbe variare in base a orari e disponibilità</small>
+                                    </div>
+                                    
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-teal">Prenota ora</button>
+                                        <a href="/" class="btn btn-outline-secondary">Annulla</a>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <%- include('../partials/footer') %>
+    <%- include('../partials/scripts') %>
+    
+    <script>
+        // Handle showing/hiding fields based on service type
+        document.getElementById('servizio').addEventListener('change', function() {
+            const durataContainer = document.getElementById('durata-container');
+            const circuitoContainer = document.getElementById('circuito-container');
+            const durataSelect = document.getElementById('durata');
+            const circuitoSelect = document.getElementById('circuito');
+            
+            if (this.value === 'noleggio') {
+                durataContainer.style.display = 'block';
+                durataSelect.required = true;
+                circuitoContainer.style.display = 'none';
+                circuitoSelect.required = false;
+                updatePrice('noleggio');
+            } else if (this.value === 'trackday') {
+                durataContainer.style.display = 'none';
+                durataSelect.required = false;
+                circuitoContainer.style.display = 'block';
+                circuitoSelect.required = true;
+                updatePrice('trackday');
+            }
+        });
+        
+        // Trigger the change event if service is preselected
+        window.addEventListener('DOMContentLoaded', () => {
+            const servizioSelect = document.getElementById('servizio');
+            if (servizioSelect.value) {
+                servizioSelect.dispatchEvent(new Event('change'));
+            }
+        });
+        
+        // Simple price estimator
+        function updatePrice(serviceType) {
+            let basePrice = 0;
+            if (serviceType === 'noleggio') {
+                basePrice = 500; // Base price per day
+                const durata = parseInt(document.getElementById('durata').value) || 1;
+                document.getElementById('prezzo-stimato').value = (basePrice * durata).toFixed(2);
+            } else if (serviceType === 'trackday') {
+                basePrice = 1200; // Base price for track day
+                document.getElementById('prezzo-stimato').value = basePrice.toFixed(2);
+            }
+        }
+        
+        // Update price when duration changes
+        document.getElementById('durata').addEventListener('change', function() {
+            if (document.getElementById('servizio').value === 'noleggio') {
+                updatePrice('noleggio');
+            }
+        });
+        
+        // Update price when circuit changes
+        document.getElementById('circuito').addEventListener('change', function() {
+            if (document.getElementById('servizio').value === 'trackday') {
+                updatePrice('trackday');
+            }
+        });
+    </script>
+</body>
+</html>

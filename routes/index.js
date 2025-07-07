@@ -10,9 +10,8 @@ const contattiDAO = require('../models/dao/contatti-dao');
 // Visualizza la pagina home del sito
 router.get('/', async (req, res) => {
   try {
-    // Ottiene le recensioni più recenti per la homepage
     const recensioni = await recensioniDAO.getAllRecensioni();
-    
+
     res.render('pages/index', {
       title: 'DreamDrive - Home',
       user: req.user || null,
@@ -35,7 +34,7 @@ router.get('/auto', async (req, res) => {
   try {
     const autoList = await autoDAO.getAllAuto();
     res.render('pages/auto', {
-      title: 'DreamDrive - Le Nostre Auto',
+      title: 'DreamDrive - Le nostre auto',
       user: req.user || null,
       isAuth: req.isAuthenticated(),
       autoList: autoList
@@ -47,59 +46,10 @@ router.get('/auto', async (req, res) => {
   }
 });
 
-// Visualizza la pagina dettaglio auto
-router.get('/auto/:id', async (req, res) => {
-  const autoId = req.params.id;
-  try {
-    const auto = await autoDAO.getAutoById(autoId);
-    if (!auto) {
-      req.flash('error', 'Auto non trovata');
-      return res.redirect('/auto');
-    }
-    res.render('pages/dettaglio-auto', {
-      title: `DreamDrive - ${auto.marca} ${auto.modello}`,
-      user: req.user || null,
-      isAuth: req.isAuthenticated(),
-      auto: auto
-    });
-  } catch (err) {
-    console.error('Errore nel caricamento del dettaglio auto:', err);
-    req.flash('error', 'Errore durante il caricamento del dettaglio auto');
-    res.redirect('/auto');
-  }
-});
-
-// Visualizza la pagina noleggio
-router.get('/noleggio', (req, res) => {
-  res.render('pages/noleggio', {
-    title: 'DreamDrive - Noleggio',
-    user: req.user || null,
-    isAuth: req.isAuthenticated(),
-  });
-});
-
-// Visualizza la pagina track-day
-router.get('/track-day', (req, res) => {
-  res.render('pages/track-day', {
-    title: 'DreamDrive - Track Day',
-    user: req.user || null,
-    isAuth: req.isAuthenticated(),
-  });
-});
-
 // Visualizza la pagina servizi
 router.get('/servizi', (req, res) => {
   res.render('pages/servizi', {
     title: 'DreamDrive - Servizi',
-    user: req.user || null,
-    isAuth: req.isAuthenticated(),
-  });
-});
-
-// Visualizza la pagina contatti
-router.get('/contatti', (req, res) => {
-  res.render('pages/contatti', {
-    title: 'DreamDrive - Contatti',
     user: req.user || null,
     isAuth: req.isAuthenticated(),
   });
@@ -126,14 +76,7 @@ router.get('/recensioni', async (req, res) => {
 router.post(
   '/contatti/invia',
   [
-    check('nome')
-      .notEmpty()
-      .withMessage('Il nome è obbligatorio')
-      .isLength({ min: 3 })
-      .withMessage('Il nome deve contenere almeno 3 caratteri')
-      .matches(/^[A-Za-zÀ-ÖØ-öø-ÿ]+(['\s-][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/)
-      .withMessage('Il nome deve contenere solo lettere, spazi e apostrofi'),
-
+    // Rimozione della validazione per il campo "nome"
     check('email')
       .notEmpty()
       .withMessage("L'email è obbligatoria")
@@ -157,21 +100,18 @@ router.post(
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         req.flash('error', errors.array());
-        return res.redirect('/contatti');
+        return res.redirect('/#contatti');
       }
 
-      // Salva il messaggio nel database
-      await contattiDAO.insertContatto({
-        nome: req.body.nome,
-        email: req.body.email,
-        messaggio: req.body.messaggio
-      });
+      const { email, messaggio } = req.body; // Rimosso "nome" dall'estrazione
+      await contattiDAO.insertContatto({ email, messaggio }); // Rimosso "nome" dal passaggio al DAO
+
       req.flash('success', 'Messaggio inviato con successo! Ti contatteremo presto.');
-      res.redirect('/contatti');
+      res.redirect('/#contatti');
     } catch (error) {
       console.error('Errore durante l\'invio del messaggio:', error);
       req.flash('error', 'Si è verificato un errore durante l\'invio del messaggio.');
-      res.redirect('/contatti');
+      res.redirect('/#contatti');
     }
   }
 );
@@ -182,7 +122,58 @@ router.get('/error', (req, res) => {
     title: 'DreamDrive - Errore',
     user: req.user || null,
     isAuth: req.isAuthenticated(),
+    errorMessage: res.locals.error || 'Si è verificato un errore imprevisto.',
   });
+});
+
+// Visualizza la pagina prenota servizio
+router.get('/servizi/prenota', (req, res) => {
+  const tipo = req.query.tipo || '';
+  
+  // Check if user is authenticated
+  if (!req.isAuthenticated()) {
+    // Redirect to login with return URL
+    req.flash('info', 'Accedi per prenotare un servizio');
+    return res.redirect(`/auth/login?serviceRedirect=${encodeURIComponent(`/servizi/prenota?tipo=${tipo}`)}`);
+  }
+  
+  // If authenticated, render the booking page
+  res.render('pages/prenota', {
+    title: 'DreamDrive - Prenota un servizio',
+    user: req.user,
+    isAuth: req.isAuthenticated(),
+    tipoServizio: tipo
+  });
+});
+
+// Process booking form submission
+router.post('/servizi/prenota', [
+  check('servizio').notEmpty().withMessage('Il tipo di servizio è obbligatorio'),
+  check('auto').notEmpty().withMessage('Seleziona un\'auto'),
+  check('data').notEmpty().withMessage('La data è obbligatoria')
+], async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.redirect('/auth/login');
+  }
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('error', errors.array().map(e => e.msg));
+    return res.redirect('/servizi/prenota');
+  }
+
+  try {
+    const { servizio, auto, data, ora, durata, circuito } = req.body;
+    
+    // TODO: Insert into database using DAO
+    // For now just redirect with success message
+    req.flash('success', 'Prenotazione effettuata con successo! Ti contatteremo per confermare.');
+    res.redirect('/utente/dashboard');
+  } catch (error) {
+    console.error('Errore nella prenotazione:', error);
+    req.flash('error', 'Si è verificato un errore durante la prenotazione.');
+    res.redirect('/servizi/prenota');
+  }
 });
 
 module.exports = router;
