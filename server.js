@@ -13,7 +13,7 @@ const authRouter = require('./routes/auth');
 const utenteRouter = require('./routes/utente');
 const adminRouter = require('./routes/admin');
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 3000;
 const app = express();
 
 // Configurazione middleware di base
