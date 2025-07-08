@@ -26,14 +26,9 @@
             background-color: #1ba085;
             border-color: #1ba085;
         }
-        .debug-info {
-            background-color: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 20px;
-            font-family: monospace;
-            font-size: 12px;
+        .auto-info {
+            font-size: 0.9em;
+            color: #6c757d;
         }
     </style>
 </head>
@@ -46,32 +41,6 @@
                 <div class="prenotazione-container">
                     <h1 class="text-center mb-4">Prenota un Servizio</h1>
                     
-                    <!-- Debug info -->
-                    <div class="debug-info">
-                        <strong>🔍 DEBUG DETTAGLIATO:</strong><br>
-                        <strong>Variabile auto:</strong> <%= typeof auto %><br>
-                        <% if (typeof auto !== 'undefined') { %>
-                            <strong>Auto è array:</strong> <%= Array.isArray(auto) %><br>
-                            <strong>Lunghezza array:</strong> <%= auto.length %><br>
-                            <% if (auto.length > 0) { %>
-                                <strong>📋 Auto trovate:</strong><br>
-                                <% auto.forEach(function(car, index) { %>
-                                    &nbsp;&nbsp;<%= index + 1 %>. ID:<%= car.ID_auto %> - <%= car.marca %> <%= car.modello %> 
-                                    <% if (car.nazione) { %>(<%= car.nazione %>)<% } %><br>
-                                <% }) %>
-                            <% } else { %>
-                                <strong style="color: red;">❌ Array auto vuoto</strong><br>
-                            <% } %>
-                        <% } else { %>
-                            <strong style="color: red;">❌ Variabile auto NON DEFINITA</strong><br>
-                        <% } %>
-                        <hr>
-                        <strong>Altri parametri:</strong><br>
-                        Service: '<%= service %>'<br>
-                        AutoId: '<%= autoId %>'<br>
-                        User: <%= user ? user.email : 'Non loggato' %>
-                    </div>
-                    
                     <!-- Alert messages -->
                     <% if (locals.success_msg && success_msg.length > 0) { %>
                         <div class="alert alert-success alert-dismissible fade show">
@@ -83,13 +52,6 @@
                     <% if (locals.error_msg && error_msg.length > 0) { %>
                         <div class="alert alert-danger alert-dismissible fade show">
                             <%= error_msg %>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    <% } %>
-                    
-                    <% if (locals.error) { %>
-                        <div class="alert alert-warning alert-dismissible fade show">
-                            <%= error %>
                             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
                     <% } %>
@@ -124,11 +86,9 @@
                                             <option value="" disabled style="color: red;">❌ Nessuna auto disponibile</option>
                                         <% } %>
                                     </select>
-                                    <div class="form-text">
+                                    <div class="form-text auto-info">
                                         <% if (typeof auto !== 'undefined') { %>
-                                            <%= auto.length %> auto disponibili nel sistema
-                                        <% } else { %>
-                                            Errore nel caricamento delle auto
+                                            <i class="bi bi-info-circle"></i> <%= auto.length %> auto disponibili
                                         <% } %>
                                     </div>
                                 </div>
@@ -138,6 +98,7 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="data" class="form-label">Data *</label>
                                         <input type="date" class="form-control" id="data" name="data" required>
+                                        <div class="form-text">Minimo 24h di anticipo</div>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="ora" class="form-label">Ora *</label>
@@ -167,7 +128,7 @@
                                 
                                 <!-- Campi specifici per il track day -->
                                 <div class="mb-3" id="circuito-container" style="display: none;">
-                                    <label for="circuito" class="form-label">Circuito</label>
+                                    <label for="circuito" class="form-label">Circuito *</label>
                                     <select class="form-select" id="circuito" name="circuito">
                                         <option value="">Seleziona un circuito</option>
                                         <option value="monza">Autodromo di Monza</option>
@@ -180,9 +141,8 @@
                                 <!-- Pulsanti -->
                                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                                     <a href="/" class="btn btn-outline-secondary me-md-2">Annulla</a>
-                                    <button type="submit" class="btn btn-teal">
-                                        <i class="bi bi-calendar-check"></i> Prenota ora
-                                    </button>
+                                    <a href="/prenotazioni?service=noleggio" class="btn btn-teal mt-3">Prenota ora</a>
+                                    <a href="/prenotazioni?service=track-day" class="btn btn-teal mt-3">Prenota ora</a>
                                 </div>
                             </form>
                         </div>

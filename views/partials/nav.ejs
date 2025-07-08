@@ -37,7 +37,9 @@
           <% if (typeof isAuth !== 'undefined' && isAuth) { %>
             <% const dashboardUrl = (typeof user !== 'undefined' && user && user.ruolo === 'admin') ? 
               '/admin/dashboard' : '/utente/dashboard'; %>
-            <a href="<%= dashboardUrl %>" class="btn btn-primary">
+            <% const buttonClass = (typeof user !== 'undefined' && user && user.ruolo === 'admin') ? 
+              'btn btn-teal' : 'btn btn-primary'; %>
+            <a href="<%= dashboardUrl %>" class="<%= buttonClass %>">
               <i class="fas fa-user me-1"></i> Area Personale
             </a>
             <a href="/auth/logout" class="btn btn-outline-light ms-2">

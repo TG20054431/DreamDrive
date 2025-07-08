@@ -86,19 +86,32 @@ app.use((req, res, next) => {
   next();
 });
 
+// AGGIUNGI QUESTO PRIMA DELLE ROUTE (per debug)
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
+
+
+
 // Import routes
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const utenteRouter = require('./routes/utente');
 const adminRouter = require('./routes/admin');
-const prenotazioniRouter = require('./routes/prenotazioni');
 
-// Route setup
+// AGGIUNGI QUESTO PER VERIFICARE CHE IL FILE ESISTA
+console.log('📂 Caricamento route prenotazioni...');
+const prenotazioniRouter = require('./routes/prenotazioni');
+console.log('✅ Route prenotazioni caricate con successo');
+
+// Route setup - ORDINE IMPORTANTE!
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
-app.use('/utente', utenteRouter);
+app.use('/auto', require('./routes/auto'));
 app.use('/admin', adminRouter);
-app.use('/prenotazioni', prenotazioniRouter);
+app.use('/utente', utenteRouter);
+app.use('/prenotazioni', prenotazioniRouter); // DEVE ESSERE DOPO LE ALTRE
 
 // 404 error handler
 app.use((req, res, next) => {

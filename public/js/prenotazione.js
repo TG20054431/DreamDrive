@@ -26,6 +26,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Funzione per gestire il cambio di servizio
     function handleServiceChange(serviceType) {
+        console.log('Cambio servizio:', serviceType);
+        
         if (serviceType === 'noleggio') {
             if (durataContainer) {
                 durataContainer.style.display = 'block';
@@ -71,11 +73,39 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Gestione date picker
+    // Gestione date picker - impedisce selezione date passate
     const dataInput = document.getElementById('data');
     if (dataInput) {
-        const today = new Date().toISOString().split('T')[0];
-        dataInput.setAttribute('min', today);
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const minDate = tomorrow.toISOString().split('T')[0];
+        dataInput.setAttribute('min', minDate);
+    }
+
+    // Validazione form prima dell'invio
+    const form = document.getElementById('prenotazione-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const servizio = servizioSelect ? servizioSelect.value : '';
+            const auto = autoSelect ? autoSelect.value : '';
+            const data = dataInput ? dataInput.value : '';
+            const ora = document.getElementById('ora') ? document.getElementById('ora').value : '';
+            
+            if (!servizio || !auto || !data || !ora) {
+                e.preventDefault();
+                alert('Per favore, compila tutti i campi obbligatori');
+                return false;
+            }
+            
+            if (servizio === 'track-day' && circuitoSelect && !circuitoSelect.value) {
+                e.preventDefault();
+                alert('Per il Track Day è obbligatorio selezionare un circuito');
+                return false;
+            }
+            
+            return true;
+        });
     }
 
     console.log('Script prenotazione inizializzato');
