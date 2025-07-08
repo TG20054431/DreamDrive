@@ -102,6 +102,80 @@
     background-color: var(--teal-dark); /* Changed from white to teal-dark */
 }
 
+/* Link della sidebar - override completo */
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    color: #ecf0f1 !important; /* Colore chiaro per tutti i link */
+    text-decoration: none !important;
+    font-family: var(--main-font);
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.sidebar-link:hover {
+    color: #ffffff !important; /* Bianco al hover */
+    text-decoration: none !important;
+}
+
+.sidebar-link:focus {
+    color: #ecf0f1 !important;
+    text-decoration: none !important;
+    outline: none;
+    box-shadow: none;
+}
+
+.sidebar-link:visited {
+    color: #ecf0f1 !important;
+    text-decoration: none !important;
+}
+
+/* Override per link attivi */
+.sidebar-item.active .sidebar-link {
+    color: var(--teal-color) !important; /* Teal per il link attivo */
+}
+
+.sidebar-item.active .sidebar-link:hover {
+    color: var(--teal-dark) !important; /* Teal scuro al hover del link attivo */
+}
+
+/* Rimuovi la classe text-black dal template e aggiungi stili uniformi */
+.sidebar-link.text-black {
+    color: #ecf0f1 !important; /* Override della classe text-black */
+}
+
+/* Assicurati che le icone abbiano lo stesso colore del testo */
+.sidebar-link i {
+    color: inherit;
+    margin-right: 10px;
+    font-size: 1.2rem;
+}
+
+.sidebar-link span {
+    color: inherit;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+/* Stati specifici per migliore visibilità */
+.sidebar-item:not(.active) .sidebar-link {
+    color: #ecf0f1 !important;
+}
+
+.sidebar-item:not(.active) .sidebar-link:hover {
+    color: #ffffff !important;
+}
+
+.sidebar-item.active .sidebar-link {
+    color: var(--teal-color) !important;
+    font-weight: 600;
+}
+
+.sidebar-item.active .sidebar-link i {
+    font-weight: 700;
+}
+
 /* Content Area Styles */
 .admin-content {
     flex: 1;

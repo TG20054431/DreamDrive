@@ -19,191 +19,420 @@
                             <span class="admin-name"><%= user.nome %> <%= user.cognome %></span>
                         </div>
                         <ul class="sidebar-menu">
-                            <li class="sidebar-item active" data-section="prenotazioni">
-                                <i class="bi bi-calendar-check"></i>
-                                <span>Prenotazioni</span>
+                            <li class="sidebar-item <%= currentSection === 'prenotazioni' ? 'active' : '' %>">
+                                <a href="/admin/dashboard/prenotazioni" class="sidebar-link" >
+                                    <i class="bi bi-calendar-check"></i>
+                                    <span>Prenotazioni</span>
+                                </a>
                             </li>
-                            <li class="sidebar-item" data-section="recensioni">
-                                <i class="bi bi-star"></i>
-                                <span>Recensioni</span>
+                            <li class="sidebar-item <%= currentSection === 'auto' ? 'active' : '' %>">
+                                <a href="/admin/dashboard/auto" class="sidebar-link">
+                                    <i class="bi bi-car-front"></i>
+                                    <span>Auto</span>
+                                </a>
                             </li>
-                            <li class="sidebar-item" data-section="impostazioni">
-                                <i class="bi bi-gear"></i>
-                                <span>Impostazioni</span>
+                            <li class="sidebar-item <%= currentSection === 'recensioni' ? 'active' : '' %>">
+                                <a href="/admin/dashboard/recensioni" class="sidebar-link">
+                                    <i class="bi bi-star"></i>
+                                    <span>Recensioni</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item <%= currentSection === 'impostazioni' ? 'active' : '' %>">
+                                <a href="/admin/dashboard/impostazioni" class="sidebar-link">
+                                    <i class="bi bi-gear"></i>
+                                    <span>Impostazioni</span>
+                                </a>
                             </li>
                         </ul>
                     </div>
                     
                     <div class="admin-content">
-                        <!-- Prenotazioni Section -->
-                        <div class="content-section active" id="prenotazioni-section">
-                            <h2 class="section-title">Gestione Prenotazioni</h2>
-                            
-                            <!-- Statistics Cards -->
-                            <div class="stats-container">
-                                <div class="stat-card">
-                                    <div class="stat-value" id="total-bookings">
-                                        <%= typeof bookings !== 'undefined' ? bookings.length : 0 %>
+                        <!-- Mostra sezione prenotazioni solo se currentSection === 'prenotazioni' -->
+                        <% if (currentSection === 'prenotazioni') { %>
+                            <!-- Sezione Prenotazioni -->
+                            <div class="content-section active" id="prenotazioni-section">
+                                <h2 class="section-title">Gestione Prenotazioni</h2>
+                                
+                                <!-- Statistics Cards -->
+                                <div class="stats-container">
+                                    <div class="stat-card">
+                                        <div class="stat-value" id="total-bookings">
+                                            <%= typeof prenotazioni !== 'undefined' ? prenotazioni.length : 0 %>
+                                        </div>
+                                        <div class="stat-label">Prenotazioni Totali</div>
                                     </div>
-                                    <div class="stat-label">Prenotazioni Totali</div>
+                                    <div class="stat-card">
+                                        <div class="stat-value" id="confirmed-bookings">
+                                            <%= typeof prenotazioni !== 'undefined' ? prenotazioni.filter(p => p.stato === 'confermata').length : 0 %>
+                                        </div>
+                                        <div class="stat-label">Confermate</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-value" id="pending-bookings">
+                                            <%= typeof prenotazioni !== 'undefined' ? prenotazioni.filter(p => p.stato === 'in_attesa').length : 0 %>
+                                        </div>
+                                        <div class="stat-label">In Attesa</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-value" id="cancelled-bookings">
+                                            <%= typeof prenotazioni !== 'undefined' ? prenotazioni.filter(p => p.stato === 'cancellata').length : 0 %>
+                                        </div>
+                                        <div class="stat-label">Cancellate</div>
+                                    </div>
                                 </div>
-                                <div class="stat-card">
-                                    <div class="stat-value" id="confirmed-bookings">
-                                        <%= typeof bookings !== 'undefined' ? bookings.filter(b => b.status === 'Confermata').length : 0 %>
+                                
+                                <div class="booking-controls">
+                                    <div class="filter-container">
+                                        <select class="form-select" id="status-filter">
+                                            <option value="all">Tutti gli stati</option>
+                                            <option value="confermata">Confermata</option>
+                                            <option value="in_attesa">In attesa</option>
+                                            <option value="cancellata">Cancellata</option>
+                                        </select>
+                                        <select class="form-select" id="service-filter">
+                                            <option value="all">Tutti i servizi</option>
+                                            <option value="Noleggio">Noleggio</option>
+                                            <option value="Track Day">Track Day</option>
+                                        </select>
                                     </div>
-                                    <div class="stat-label">Confermate</div>
+                                    <div class="search-container">
+                                        <input type="text" class="form-control" id="booking-search" placeholder="Cerca cliente, auto...">
+                                    </div>
                                 </div>
-                                <div class="stat-card">
-                                    <div class="stat-value" id="pending-bookings">
-                                        <%= typeof bookings !== 'undefined' ? bookings.filter(b => b.status === 'In attesa').length : 0 %>
-                                    </div>
-                                    <div class="stat-label">In Attesa</div>
-                                </div>
-                                <div class="stat-card">
-                                    <div class="stat-value" id="cancelled-bookings">
-                                        <%= typeof bookings !== 'undefined' ? bookings.filter(b => b.status === 'Cancellata').length : 0 %>
-                                    </div>
-                                    <div class="stat-label">Cancellate</div>
+                                
+                                <div class="table-responsive booking-table">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Cliente</th>
+                                                <th>Email</th>
+                                                <th>Servizio</th>
+                                                <th>Auto</th>
+                                                <th>Data</th>
+                                                <th>Stato</th>
+                                                <th>Azioni</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (typeof prenotazioni !== 'undefined' && prenotazioni.length > 0) { %>
+                                                <% prenotazioni.forEach(function(prenotazione) { %>
+                                                    <tr data-status="<%= prenotazione.stato %>" data-service="<%= prenotazione.tipo_servizio %>">
+                                                        <td><%= prenotazione.ID_prenotazione %></td>
+                                                        <td><%= prenotazione.nome_cliente || 'N/A' %> <%= prenotazione.cognome_cliente || '' %></td>
+                                                        <td><%= prenotazione.email_cliente || 'N/A' %></td>
+                                                        <td><%= prenotazione.tipo_servizio %></td>
+                                                        <td><%= prenotazione.marca_auto %> <%= prenotazione.modello_auto %></td>
+                                                        <td><%= new Date(prenotazione.data_prenotazione).toLocaleDateString('it-IT') %></td>
+                                                        <td>
+                                                            <span class="status-badge <%= prenotazione.stato === 'confermata' ? 'status-confirmed' : 
+                                                                prenotazione.stato === 'in_attesa' ? 'status-pending' : 'status-cancelled' %>">
+                                                                <%= prenotazione.stato === 'in_attesa' ? 'In Attesa' : 
+                                                                    prenotazione.stato === 'confermata' ? 'Confermata' : 'Cancellata' %>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <div class="action-buttons">
+                                                                <% if (prenotazione.stato !== 'confermata') { %>
+                                                                    <button class="btn btn-sm btn-outline-success approve-booking" data-id="<%= prenotazione.ID_prenotazione %>">
+                                                                        <i class="bi bi-check-lg"></i>
+                                                                    </button>
+                                                                <% } %>
+                                                                <% if (prenotazione.stato !== 'cancellata') { %>
+                                                                    <form action="/admin/prenotazioni/<%= prenotazione.ID_prenotazione %>/elimina" method="POST" style="display: inline;">
+                                                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                                                onclick="return confirm('Sei sicuro di voler eliminare questa prenotazione?')">
+                                                                            <i class="bi bi-trash"></i>
+                                                                        </button>
+                                                                    </form>
+                                                                <% } %>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <% }); %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="8" class="text-center">Nessuna prenotazione trovata</td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                            
-                            <div class="booking-controls">
-                                <div class="filter-container">
-                                    <select class="form-select" id="status-filter">
-                                        <option value="all">Tutti gli stati</option>
-                                        <option value="Confermata">Confermata</option>
-                                        <option value="In attesa">In attesa</option>
-                                        <option value="Cancellata">Cancellata</option>
-                                    </select>
-                                    <select class="form-select" id="service-filter">
-                                        <option value="all">Tutti i servizi</option>
-                                        <option value="Noleggio">Noleggio</option>
-                                        <option value="Track Day">Track Day</option>
-                                    </select>
+                        <% } %>
+
+                        <!-- Mostra sezione auto solo se currentSection === 'auto' -->
+                        <% if (currentSection === 'auto') { %>
+                            <!-- Sezione Auto -->
+                            <div class="content-section active" id="auto-section">
+                                <h2 class="section-title">Gestione Auto</h2>
+                                
+                                <!-- Add New Car Button -->
+                                <div class="d-flex justify-content-end mb-3">
+                                    <button class="btn btn-teal" data-bs-toggle="modal" data-bs-target="#addAutoModal">
+                                        <i class="bi bi-plus-lg"></i> Aggiungi Auto
+                                    </button>
                                 </div>
-                                <div class="search-container">
-                                    <input type="text" class="form-control" id="booking-search" placeholder="Cerca cliente, auto...">
+                                
+                                <!-- Cars Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Immagine</th>
+                                                <th>Marca</th>
+                                                <th>Modello</th>
+                                                <th>Nazione</th>
+                                                <th>Motore</th>
+                                                <th>Azioni</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (typeof autos !== 'undefined' && autos.length > 0) { %>
+                                                <% autos.forEach(function(auto) { %>
+                                                    <tr>
+                                                        <td><%= auto.ID_auto %></td>
+                                                        <td>
+                                                            <img src="/uploads/auto/<%= auto.immagine %>" alt="<%= auto.marca %> <%= auto.modello %>" 
+                                                                 width="80" height="60" class="img-thumbnail">
+                                                        </td>
+                                                        <td><%= auto.marca %></td>
+                                                        <td><%= auto.modello %></td>
+                                                        <td><%= auto.nazione %></td>
+                                                        <td><%= auto.motore %></td>
+                                                        <td>
+                                                            <div class="action-buttons">
+                                                                <!-- Pulsante Modifica -->
+                                                                <button type="button" 
+                                                                        class="btn btn-sm btn-outline-info edit-auto" 
+                                                                        data-auto='<%- JSON.stringify(auto) %>'
+                                                                        title="Modifica auto">
+                                                                    <i class="bi bi-pencil"></i>
+                                                                </button>
+                                                                
+                                                                <!-- Pulsante Elimina -->
+                                                                <button type="button" 
+                                                                        class="btn btn-sm btn-outline-danger delete-auto" 
+                                                                        data-auto-id="<%= auto.ID_auto %>"
+                                                                        data-auto-nome="<%= auto.marca %> <%= auto.modello %>"
+                                                                        title="Elimina auto">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <% }); %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="7" class="text-center">Nessuna auto trovata</td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div>
-                            
-                            <div class="table-responsive booking-table">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Cliente</th>
-                                            <th>Email</th>
-                                            <th>Servizio</th>
-                                            <th>Auto</th>
-                                            <th>Data</th>
-                                            <th>Importo</th>
-                                            <th>Stato</th>
-                                            <th>Azioni</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <% if (typeof bookings !== 'undefined' && bookings.length > 0) { %>
-                                            <% bookings.forEach(function(booking) { %>
-                                                <tr data-status="<%= booking.status %>" data-service="<%= booking.servizio %>">
-                                                    <td><%= booking.id %></td>
-                                                    <td><%= booking.nome %> <%= booking.cognome %></td>
-                                                    <td><%= booking.email %></td>
-                                                    <td><%= booking.servizio %></td>
-                                                    <td><%= booking.auto %></td>
-                                                    <td><%= new Date(booking.date).toLocaleDateString('it-IT') %></td>
-                                                    <td>€ <%= booking.amount %></td>
-                                                    <td>
-                                                        <span class="status-badge <%= booking.status === 'Confermata' ? 'status-confirmed' : 
-                                                            booking.status === 'In attesa' ? 'status-pending' : 'status-cancelled' %>">
-                                                            <%= booking.status %>
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <div class="action-buttons">
-                                                            <button class="btn btn-sm btn-outline-info view-booking" data-id="<%= booking.id %>">
-                                                                <i class="bi bi-eye"></i>
-                                                            </button>
-                                                            <% if (booking.status !== 'Confermata') { %>
-                                                                <button class="btn btn-sm btn-outline-success approve-booking" data-id="<%= booking.id %>">
-                                                                    <i class="bi bi-check-lg"></i>
-                                                                </button>
-                                                            <% } %>
-                                                            <% if (booking.status !== 'Cancellata') { %>
-                                                                <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#eliminaPrenotazioneModal-<%= booking.id %>">
-                                                                    <i class="bi bi-x-lg"></i>
-                                                                </button>
-                                                            <% } %>
+                                
+                                <!-- Add Auto Modal -->
+                                <div class="modal fade" id="addAutoModal" tabindex="-1" aria-labelledby="addAutoModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="addAutoModalLabel">Aggiungi Nuova Auto</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form action="/admin/auto/add" method="POST" enctype="multipart/form-data" id="addAutoForm">
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <label for="marca" class="form-label">Marca</label>
+                                                            <input type="text" class="form-control" id="marca" name="marca" required>
                                                         </div>
-                                                        <!-- Modal elimina prenotazione -->
-                                                        <div class="modal fade" id="eliminaPrenotazioneModal-<%= booking.id %>" tabindex="-1" aria-labelledby="eliminaPrenotazioneModalLabel-<%= booking.id %>" aria-hidden="true">
-                                                            <div class="modal-dialog modal-dialog-centered">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title" id="eliminaPrenotazioneModalLabel-<%= booking.id %>">Elimina Prenotazione</h5>
-                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                    </div>
-                                                                    <div class="modal-body">
-                                                                        Sei sicuro di voler eliminare questa prenotazione?
-                                                                    </div>
-                                                                    <div class="modal-footer">
-                                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                                                                        <form action="/admin/prenotazioni/<%= booking.id %>/elimina" method="POST">
-                                                                            <button type="submit" class="btn btn-danger">Elimina</button>
-                                                                        </form>
-                                                                    </div>
-                                                                </div>
+                                                        <div class="col-md-6">
+                                                            <label for="modello" class="form-label">Modello</label>
+                                                            <input type="text" class="form-control" id="modello" name="modello" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <label for="nazione" class="form-label">Nazione</label>
+                                                            <input type="text" class="form-control" id="nazione" name="nazione" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label for="motore" class="form-label">Motore</label>
+                                                            <input type="text" class="form-control" id="motore" name="motore" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="immagine" class="form-label">Immagine</label>
+                                                        <input type="file" class="form-control" id="immagine" name="immagine" accept="image/*" required>
+                                                    </div>
+                                                    <div class="mb-3 text-center" id="imagePreviewContainer" style="display: none;">
+                                                        <img id="imagePreview" src="#" alt="Anteprima immagine" class="img-fluid" style="max-height: 200px;">
+                                                    </div>
+                                                    <div class="text-end">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                                                        <button type="submit" class="btn btn-teal">Salva</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Modal Modifica Auto -->
+                                <div class="modal fade" id="editAutoModal" tabindex="-1" aria-labelledby="editAutoModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="editAutoModalLabel">Modifica Auto</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <form action="/admin/auto/edit" method="POST" enctype="multipart/form-data">
+                                                <div class="modal-body">
+                                                    <input type="hidden" id="edit_id_auto" name="id_auto">
+                                                    
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="edit_marca" class="form-label">Marca</label>
+                                                                <input type="text" class="form-control" id="edit_marca" name="marca" required>
                                                             </div>
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                            <% }); %>
-                                        <% } else { %>
-                                            <tr>
-                                                <td colspan="9" class="text-center">Nessuna prenotazione trovata</td>
-                                            </tr>
-                                        <% } %>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <!-- Recensioni Section -->
-                        <div class="content-section" id="recensioni-section">
-                            <h2 class="section-title">Gestione Recensioni</h2>
-                            <div class="card">
-                                <div class="card-body">
-                                    <p>Questa sezione ti permetterà di gestire le recensioni degli utenti.</p>
-                                    <div class="alert alert-info">
-                                        <i class="bi bi-info-circle"></i> Funzionalità in sviluppo
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="edit_modello" class="form-label">Modello</label>
+                                                                <input type="text" class="form-control" id="edit_modello" name="modello" required>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="edit_nazione" class="form-label">Nazione</label>
+                                                                <input type="text" class="form-control" id="edit_nazione" name="nazione" required>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <div class="mb-3">
+                                                                <label for="edit_motore" class="form-label">Motore</label>
+                                                                <input type="text" class="form-control" id="edit_motore" name="motore" required>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="mb-3">
+                                                        <label for="edit_immagine" class="form-label">Nuova Immagine (opzionale)</label>
+                                                        <input type="file" class="form-control" id="edit_immagine" name="immagine" accept="image/*">
+                                                        <div class="form-text">Lascia vuoto per mantenere l'immagine attuale</div>
+                                                    </div>
+                                                    
+                                                    <!-- Immagine attuale -->
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Immagine Attuale</label>
+                                                        <div>
+                                                            <img id="current_image" src="" alt="Immagine attuale" class="img-thumbnail" style="max-height: 200px; display: none;">
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <!-- Anteprima nuova immagine -->
+                                                    <div id="editImagePreviewContainer" style="display: none;" class="mb-3">
+                                                        <label class="form-label">Anteprima Nuova Immagine</label>
+                                                        <div>
+                                                            <img id="editImagePreview" src="" alt="Anteprima" class="img-thumbnail" style="max-height: 200px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                                                    <button type="submit" class="btn btn-teal">Salva Modifiche</button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        <% } %>
 
-                        <!-- Impostazioni Section -->
-                        <div class="content-section" id="impostazioni-section">
-                            <h2 class="section-title">Impostazioni</h2>
-                            <div class="card">
-                                <div class="card-body">
-                                    <h4>Profilo Amministratore</h4>
-                                    <form>
-                                        <div class="mb-3">
-                                            <label for="admin-name" class="form-label">Nome</label>
-                                            <input type="text" class="form-control" id="admin-name" value="<%= user.nome %>">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="admin-email" class="form-label">Email</label>
-                                            <input type="email" class="form-control" id="admin-email" value="<%= user.email %>">
-                                        </div>
-                                        <div class="mb-3">
-                                            <label for="admin-password" class="form-label">Nuova Password</label>
-                                            <input type="password" class="form-control" id="admin-password">
-                                        </div>
-                                        <button type="button" class="btn btn-teal">Salva Modifiche</button>
-                                    </form>
+                        <!-- Mostra sezione recensioni solo se currentSection === 'recensioni' -->
+                        <% if (currentSection === 'recensioni') { %>
+                            <!-- Sezione Recensioni -->
+                            <div class="content-section active" id="recensioni-section">
+                                <h2 class="section-title">Gestione Recensioni</h2>
+                                <!-- Tabella recensioni -->
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Utente</th>
+                                                <th>Valutazione</th>
+                                                <th>Contenuto</th>
+                                                <th>Data</th>
+                                                <th>Azioni</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (typeof recensioni !== 'undefined' && recensioni.length > 0) { %>
+                                                <% recensioni.forEach(function(recensione) { %>
+                                                    <tr>
+                                                        <td><%= recensione.ID_recensione %></td>
+                                                        <td><%= recensione.nome_utente || 'Anonimo' %></td>
+                                                        <td><%= recensione.valutazione %>/5</td>
+                                                        <td><%= recensione.contenuto %></td>
+                                                        <td><%= new Date(recensione.data_creazione).toLocaleDateString('it-IT') %></td>
+                                                        <td>
+                                                            <div class="action-buttons">
+                                                                <form action="/admin/recensioni/elimina" method="POST" style="display: inline;">
+                                                                    <input type="hidden" name="recensioneId" value="<%= recensione.ID_recensione %>">
+                                                                    <button type="submit" 
+                                                                            class="btn btn-sm btn-outline-danger" 
+                                                                            onclick="return confirm('Sei sicuro di voler eliminare questa recensione di <%= recensione.nome_utente %>?')">
+                                                                        <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <% }); %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="6" class="text-center">Nessuna recensione trovata</td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                        </div>
+                        <% } %>
+
+                        <!-- Mostra sezione impostazioni solo se currentSection === 'impostazioni' -->
+                        <% if (currentSection === 'impostazioni') { %>
+                            <!-- Sezione Impostazioni esistente -->
+                            <div class="content-section active" id="impostazioni-section">
+                                <h2 class="section-title">Impostazioni</h2>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h4>Profilo Amministratore</h4>
+                                        <form>
+                                            <div class="mb-3">
+                                                <label for="admin-name" class="form-label">Nome</label>
+                                                <input type="text" class="form-control" id="admin-name" value="<%= user.nome %>">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="admin-email" class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="admin-email" value="<%= user.email %>">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="admin-password" class="form-label">Nuova Password</label>
+                                                <input type="password" class="form-control" id="admin-password">
+                                            </div>
+                                            <button type="button" class="btn btn-teal">Salva Modifiche</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        <% } %>
                     </div>
                 </div>
                 

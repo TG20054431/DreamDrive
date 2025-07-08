@@ -17,50 +17,111 @@
                 
                 <%- include('../partials/alerts') %>
                 
-                <% if (typeof autoList !== 'undefined' && autoList.length > 0) { %>
-                  <div class="row">
-                    <% autoList.forEach(function(auto) { %>
-                      <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="car-card">
-                          <img src="/images/auto1.jpg" class="car-img w-100" alt="<%= auto.marca %> <%= auto.modello %>">
-                          <div class="car-details">
-                            <h5 class="car-title"><%= auto.marca %> <%= auto.modello %></h5>
-                            <div class="car-info">
-                              <p class="mb-2">
-                                <span class="car-info-label">Origine:</span>
-                                <span class="car-info-value"><%= auto.nazione %></span>
-                              </p>
-                              <p class="mb-2">
-                                <span class="car-info-label">Motore:</span>
-                                <span class="car-info-value"><%= auto.motore %></span>
-                              </p>
+                <!-- Filtri di ricerca -->
+                <div class="filters-section mb-4">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">
+                                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#filterCollapse" aria-expanded="true">
+                                            <i class="fas fa-filter"></i> Filtri di Ricerca
+                                        </button>
+                                    </h5>
+                                </div>
+                                <div class="collapse show" id="filterCollapse">
+                                    <div class="card-body">
+                                        <form id="filterForm">
+                                            <div class="row">
+                                                <div class="col-md-3 mb-3">
+                                                    <label for="searchText" class="form-label">Cerca per nome</label>
+                                                    <input type="text" class="form-control" id="searchText" placeholder="Marca o modello...">
+                                                </div>
+                                                <div class="col-md-3 mb-3">
+                                                    <label for="filterMarca" class="form-label">Marca</label>
+                                                    <select class="form-control" id="filterMarca">
+                                                        <option value="">Tutte le marche</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3 mb-3">
+                                                    <label for="filterNazione" class="form-label">Origine</label>
+                                                    <select class="form-control" id="filterNazione">
+                                                        <option value="">Tutte le nazioni</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3 mb-3">
+                                                    <label for="filterMotore" class="form-label">Motore</label>
+                                                    <select class="form-control" id="filterMotore">
+                                                        <option value="">Tutti i motori</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-12">
+                                                    <button type="button" class="btn btn-teal" id="applyFilters">
+                                                        <i class="fas fa-search"></i> Applica Filtri
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-teal ml-2" id="clearFilters">
+                                                        <i class="fas fa-times"></i> Pulisci
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="car-actions">
-                              <a href="/auto/<%= auto.ID_auto %>" class="btn btn-teal car-btn">
-                                <i class="fas fa-info-circle me-2"></i> Dettagli
-                              </a>
-                            </div>
-                            <div class="car-actions mt-2">
-                              <a href="/noleggio?auto=<%= auto.ID_auto %>" class="btn btn-outline-primary car-btn">
-                                <i class="fas fa-car me-2"></i> Noleggia
-                              </a>
-                              <a href="/track-day?auto=<%= auto.ID_auto %>" class="btn btn-outline-success car-btn">
-                                <i class="fas fa-flag-checkered me-2"></i> Track Day
-                              </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Risultati -->
+                <div id="resultsSection">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 id="resultsCount">
+                            <% if (typeof autoList !== 'undefined' && autoList.length > 0) { %>
+                                Trovate <%= autoList.length %> auto
+                            <% } else { %>
+                                Nessuna auto trovata
+                            <% } %>
+                        </h4>
+                    </div>
+
+                    <% if (typeof autoList !== 'undefined' && autoList.length > 0) { %>
+                      <div class="row" id="carsContainer">
+                        <% autoList.forEach(function(auto) { %>
+                          <div class="col-lg-4 col-md-6 mb-4 car-item" 
+                               data-marca="<%= auto.marca.toLowerCase() %>" 
+                               data-modello="<%= auto.modello.toLowerCase() %>"
+                               data-nazione="<%= auto.nazione.toLowerCase() %>"
+                               data-motore="<%= auto.motore.toLowerCase() %>">
+                            <div class="car-card">
+                              <img src="/uploads/auto/<%= auto.immagine %>" class="car-img w-100" alt="<%= auto.marca %> <%= auto.modello %>">
+                              <div class="car-details">
+                                <h5 class="car-title"><%= auto.marca %> <%= auto.modello %></h5>
+                                <div class="car-info">
+                                  <p class="mb-2">
+                                    <span class="car-info-label">Origine:</span>
+                                    <span class="car-info-value"><%= auto.nazione %></span>
+                                  </p>
+                                  <p class="mb-2">
+                                    <span class="car-info-label">Motore:</span>
+                                    <span class="car-info-value"><%= auto.motore %></span>
+                                  </p>
+                                </div>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        <% }) %>
                       </div>
-                    <% }) %>
-                  </div>
-                <% } else { %>
-                  <div class="no-cars">
-                    <div class="no-cars-icon">
-                      <i class="fas fa-car-slash"></i>
-                    </div>
-                    <p class="no-cars-text">Nessuna auto disponibile al momento.</p>
-                  </div>
-                <% } %>
+                    <% } else { %>
+                      <div class="no-cars" id="noCarsMessage">
+                        <div class="no-cars-icon">
+                          <i class="fas fa-car-slash"></i>
+                        </div>
+                        <p class="no-cars-text">Nessuna auto disponibile al momento.</p>
+                      </div>
+                    <% } %>
+                </div>
             </div>
         </section>
     </div>
@@ -68,5 +129,181 @@
     <%- include('../partials/footer') %>
     <%- include('../partials/scripts') %>
     <%- include('../partials/toast') %>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const carItems = document.querySelectorAll('.car-item');
+        const searchText = document.getElementById('searchText');
+        const filterMarca = document.getElementById('filterMarca');
+        const filterNazione = document.getElementById('filterNazione');
+        const filterMotore = document.getElementById('filterMotore');
+        const applyFiltersBtn = document.getElementById('applyFilters');
+        const clearFiltersBtn = document.getElementById('clearFilters');
+        const resultsCount = document.getElementById('resultsCount');
+        const noCarsMessage = document.getElementById('noCarsMessage');
+
+        // Popola i filtri con i valori unici dalle auto
+        populateFilters();
+
+        function populateFilters() {
+            const marche = new Set();
+            const nazioni = new Set();
+            const motori = new Set();
+
+            carItems.forEach(item => {
+                marche.add(item.dataset.marca);
+                nazioni.add(item.dataset.nazione);
+                motori.add(item.dataset.motore);
+            });
+
+            // Popola select delle marche
+            Array.from(marche).sort().forEach(marca => {
+                const option = document.createElement('option');
+                option.value = marca;
+                option.textContent = marca.charAt(0).toUpperCase() + marca.slice(1);
+                filterMarca.appendChild(option);
+            });
+
+            // Popola select delle nazioni
+            Array.from(nazioni).sort().forEach(nazione => {
+                const option = document.createElement('option');
+                option.value = nazione;
+                option.textContent = nazione.charAt(0).toUpperCase() + nazione.slice(1);
+                filterNazione.appendChild(option);
+            });
+
+            // Popola select dei motori
+            Array.from(motori).sort().forEach(motore => {
+                const option = document.createElement('option');
+                option.value = motore;
+                option.textContent = motore.charAt(0).toUpperCase() + motore.slice(1);
+                filterMotore.appendChild(option);
+            });
+        }
+
+        function applyFilters() {
+            const searchValue = searchText.value.toLowerCase().trim();
+            const marcaValue = filterMarca.value.toLowerCase();
+            const nazioneValue = filterNazione.value.toLowerCase();
+            const motoreValue = filterMotore.value.toLowerCase();
+
+            let visibleCount = 0;
+
+            carItems.forEach(item => {
+                const marca = item.dataset.marca;
+                const modello = item.dataset.modello;
+                const nazione = item.dataset.nazione;
+                const motore = item.dataset.motore;
+
+                const matchesSearch = !searchValue || 
+                    marca.includes(searchValue) || 
+                    modello.includes(searchValue);
+                
+                const matchesMarca = !marcaValue || marca === marcaValue;
+                const matchesNazione = !nazioneValue || nazione === nazioneValue;
+                const matchesMotore = !motoreValue || motore === motoreValue;
+
+                if (matchesSearch && matchesMarca && matchesNazione && matchesMotore) {
+                    item.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            updateResultsCount(visibleCount);
+        }
+
+        function updateResultsCount(count) {
+            if (count === 0) {
+                resultsCount.textContent = 'Nessuna auto trovata';
+                if (noCarsMessage) {
+                    noCarsMessage.style.display = 'block';
+                }
+            } else {
+                resultsCount.textContent = `Trovate ${count} auto`;
+                if (noCarsMessage) {
+                    noCarsMessage.style.display = 'none';
+                }
+            }
+        }
+
+        function clearFilters() {
+            searchText.value = '';
+            filterMarca.value = '';
+            filterNazione.value = '';
+            filterMotore.value = '';
+            
+            carItems.forEach(item => {
+                item.style.display = 'block';
+            });
+            
+            updateResultsCount(carItems.length);
+        }
+
+        // Event listeners
+        applyFiltersBtn.addEventListener('click', applyFilters);
+        clearFiltersBtn.addEventListener('click', clearFilters);
+        
+        // Applica filtri in tempo reale durante la digitazione
+        searchText.addEventListener('input', applyFilters);
+        filterMarca.addEventListener('change', applyFilters);
+        filterNazione.addEventListener('change', applyFilters);
+        filterMotore.addEventListener('change', applyFilters);
+    });
+    </script>
+
+    <style>
+        .btn-teal {
+            background-color: #008080;
+            border-color: #008080;
+            color: white;
+        }
+        
+        .btn-teal:hover {
+            background-color: #006666;
+            border-color: #006666;
+            color: white;
+        }
+        
+        .btn-teal:focus,
+        .btn-teal.focus {
+            box-shadow: 0 0 0 0.2rem rgba(0, 128, 128, 0.25);
+        }
+        
+        .btn-outline-teal {
+            color: #008080;
+            border-color: #008080;
+            background-color: transparent;
+        }
+        
+        .btn-outline-teal:hover {
+            color: white;
+            background-color: #008080;
+            border-color: #008080;
+        }
+        
+        .btn-outline-teal:focus,
+        .btn-outline-teal.focus {
+            box-shadow: 0 0 0 0.2rem rgba(0, 128, 128, 0.25);
+        }
+
+        /* Stile per il titolo "Filtri di Ricerca" */
+        .card-header .btn-link {
+            color: #008080 !important;
+            text-decoration: none;
+        }
+
+        .card-header .btn-link:hover {
+            color: #006666 !important;
+            text-decoration: none;
+        }
+
+        .card-header .btn-link:focus {
+            color: #008080 !important;
+            text-decoration: none;
+            box-shadow: none;
+        }
+    </style>
 </body>
 </html>

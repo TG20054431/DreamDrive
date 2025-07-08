@@ -28,8 +28,16 @@ class RecensioniDAO {
   }
 
   async insertRecensione(recensione) {
-    const sql = `INSERT INTO RECENSIONI (ID_utente, tipologia, valutazione, contenuto) VALUES (?, ?, ?, ?)`;
-    const params = [recensione.ID_utente, recensione.tipologia, recensione.valutazione, recensione.contenuto];
+    // Modificato per usare solo le colonne esistenti nella tabella RECENSIONI
+    const sql = `INSERT INTO RECENSIONI (ID_utente, tipologia, valutazione, contenuto) 
+                VALUES (?, ?, ?, ?)`;
+    const params = [
+      recensione.ID_utente || null,  // Può essere null per recensioni anonime
+      recensione.tipologia, 
+      recensione.valutazione, 
+      recensione.contenuto
+    ];
+    
     return new Promise((resolve, reject) => {
       this.db.run(sql, params, function(err) {
         if (err) reject(err);
@@ -49,7 +57,10 @@ class RecensioniDAO {
   }
 
   async getAllRecensioni() {
-    const sql = `SELECT * FROM RECENSIONI ORDER BY data_creazione DESC`;
+    const sql = `SELECT R.*, U.nome AS nome_utente 
+                 FROM RECENSIONI R 
+                 LEFT JOIN UTENTE U ON R.ID_utente = U.ID_utente 
+                 ORDER BY R.data_creazione DESC`;
     return new Promise((resolve, reject) => {
       this.db.all(sql, [], (err, rows) => {
         if (err) reject(err);
@@ -59,4 +70,4 @@ class RecensioniDAO {
   }
 }
 
-module.exports = new RecensioniDAO(db); 
+module.exports = new RecensioniDAO(db);

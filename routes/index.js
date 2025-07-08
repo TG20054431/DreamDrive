@@ -116,6 +116,50 @@ router.post(
   }
 );
 
+// Gestione invio nuove recensioni
+router.post('/recensioni/invia', [
+  check('valutazione').notEmpty().withMessage('La valutazione è obbligatoria')
+    .isInt({ min: 1, max: 5 }).withMessage('La valutazione deve essere un numero da 1 a 5'),
+  check('contenuto').notEmpty().withMessage('Il contenuto della recensione è obbligatorio')
+    .isLength({ min: 10, max: 500 }).withMessage('Il contenuto deve essere tra 10 e 500 caratteri'),
+  check('tipologia').notEmpty().withMessage('La tipologia di servizio è obbligatoria')
+], async (req, res) => {
+  // Verifica autenticazione
+  if (!req.isAuthenticated()) {
+    req.flash('error', 'Devi essere autenticato per lasciare una recensione');
+    return res.redirect('/auth/login?redirect=/#recensioni');
+  }
+
+  // Validazione dei dati
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash('error', errors.array().map(e => e.msg));
+    return res.redirect('/#recensioni');
+  }
+
+  try {
+    const { valutazione, contenuto, tipologia } = req.body;
+    
+    // Preparazione dell'oggetto recensione - rimosso il campo nome
+    const recensione = {
+      ID_utente: req.user.ID_utente,
+      tipologia: tipologia,
+      valutazione: parseInt(valutazione, 10),
+      contenuto: contenuto
+    };
+    
+    // Salvataggio della recensione
+    await recensioniDAO.insertRecensione(recensione);
+    
+    req.flash('success', 'Recensione inviata con successo! Grazie per il tuo feedback.');
+    res.redirect('/#recensioni');
+  } catch (error) {
+    console.error('Errore durante l\'invio della recensione:', error);
+    req.flash('error', 'Si è verificato un errore durante l\'invio della recensione.');
+    res.redirect('/#recensioni');
+  }
+});
+
 // Visualizza pagina di errore generica
 router.get('/error', (req, res) => {
   res.render('pages/error', {
@@ -176,4 +220,5 @@ router.post('/servizi/prenota', [
   }
 });
 
+module.exports = router;
 module.exports = router;

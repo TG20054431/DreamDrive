@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="it">
+<head>
+    <title>DreamDrive | Prenotazione</title>
+    <%- include('../partials/head') %>
+    <style>
+        .content-wrapper {
+            min-height: 80vh;
+            padding: 2rem 0;
+        }
+        .prenotazione-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+        .btn-teal {
+            background-color: #20c997;
+            border-color: #20c997;
+            color: white;
+        }
+        .btn-teal:hover {
+            background-color: #1ba085;
+            border-color: #1ba085;
+        }
+        .debug-info {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/nav') %>
+    
+    <div class="content-wrapper">
+        <section class="py-5">
+            <div class="container">
+                <div class="prenotazione-container">
+                    <h1 class="text-center mb-4">Prenota un Servizio</h1>
+                    
+                    <!-- Debug info -->
+                    <div class="debug-info">
+                        <strong>🔍 DEBUG DETTAGLIATO:</strong><br>
+                        <strong>Variabile auto:</strong> <%= typeof auto %><br>
+                        <% if (typeof auto !== 'undefined') { %>
+                            <strong>Auto è array:</strong> <%= Array.isArray(auto) %><br>
+                            <strong>Lunghezza array:</strong> <%= auto.length %><br>
+                            <% if (auto.length > 0) { %>
+                                <strong>📋 Auto trovate:</strong><br>
+                                <% auto.forEach(function(car, index) { %>
+                                    &nbsp;&nbsp;<%= index + 1 %>. ID:<%= car.ID_auto %> - <%= car.marca %> <%= car.modello %> 
+                                    <% if (car.nazione) { %>(<%= car.nazione %>)<% } %><br>
+                                <% }) %>
+                            <% } else { %>
+                                <strong style="color: red;">❌ Array auto vuoto</strong><br>
+                            <% } %>
+                        <% } else { %>
+                            <strong style="color: red;">❌ Variabile auto NON DEFINITA</strong><br>
+                        <% } %>
+                        <hr>
+                        <strong>Altri parametri:</strong><br>
+                        Service: '<%= service %>'<br>
+                        AutoId: '<%= autoId %>'<br>
+                        User: <%= user ? user.email : 'Non loggato' %>
+                    </div>
+                    
+                    <!-- Alert messages -->
+                    <% if (locals.success_msg && success_msg.length > 0) { %>
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <%= success_msg %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+                    
+                    <% if (locals.error_msg && error_msg.length > 0) { %>
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <%= error_msg %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+                    
+                    <% if (locals.error) { %>
+                        <div class="alert alert-warning alert-dismissible fade show">
+                            <%= error %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <% } %>
+                    
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <form action="/prenotazioni" method="POST" id="prenotazione-form">
+                                <!-- Servizio -->
+                                <div class="mb-3">
+                                    <label for="servizio" class="form-label">Tipo di servizio *</label>
+                                    <select class="form-select" id="servizio" name="servizio" required>
+                                        <option value="" disabled <%= !service ? 'selected' : '' %>>Seleziona un servizio</option>
+                                        <option value="noleggio" <%= service === 'noleggio' ? 'selected' : '' %>>Noleggio</option>
+                                        <option value="track-day" <%= service === 'track-day' ? 'selected' : '' %>>Track Day</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Auto -->
+                                <div class="mb-3">
+                                    <label for="auto" class="form-label">Seleziona Auto *</label>
+                                    <select class="form-select" id="auto" name="auto" required>
+                                        <option value="">-- Scegli un'auto --</option>
+                                        <% if (typeof auto !== 'undefined' && auto && auto.length > 0) { %>
+                                            <% auto.forEach(function(car) { %>
+                                                <option value="<%= car.ID_auto %>" 
+                                                        <%= autoId == car.ID_auto ? 'selected' : '' %>>
+                                                    <%= car.marca %> <%= car.modello %>
+                                                    <% if (car.nazione) { %> - <%= car.nazione %><% } %>
+                                                </option>
+                                            <% }) %>
+                                        <% } else { %>
+                                            <option value="" disabled style="color: red;">❌ Nessuna auto disponibile</option>
+                                        <% } %>
+                                    </select>
+                                    <div class="form-text">
+                                        <% if (typeof auto !== 'undefined') { %>
+                                            <%= auto.length %> auto disponibili nel sistema
+                                        <% } else { %>
+                                            Errore nel caricamento delle auto
+                                        <% } %>
+                                    </div>
+                                </div>
+                                
+                                <!-- Data e Ora -->
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="data" class="form-label">Data *</label>
+                                        <input type="date" class="form-control" id="data" name="data" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="ora" class="form-label">Ora *</label>
+                                        <select class="form-select" id="ora" name="ora" required>
+                                            <option value="">Seleziona un orario</option>
+                                            <option value="09:00">09:00</option>
+                                            <option value="10:00">10:00</option>
+                                            <option value="11:00">11:00</option>
+                                            <option value="14:00">14:00</option>
+                                            <option value="15:00">15:00</option>
+                                            <option value="16:00">16:00</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Campi specifici per il noleggio -->
+                                <div class="mb-3" id="durata-container" style="display: none;">
+                                    <label for="durata" class="form-label">Durata (giorni)</label>
+                                    <select class="form-select" id="durata" name="durata">
+                                        <option value="">Seleziona durata</option>
+                                        <option value="1">1 giorno</option>
+                                        <option value="2">2 giorni</option>
+                                        <option value="3">3 giorni</option>
+                                        <option value="7">1 settimana</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Campi specifici per il track day -->
+                                <div class="mb-3" id="circuito-container" style="display: none;">
+                                    <label for="circuito" class="form-label">Circuito</label>
+                                    <select class="form-select" id="circuito" name="circuito">
+                                        <option value="">Seleziona un circuito</option>
+                                        <option value="monza">Autodromo di Monza</option>
+                                        <option value="imola">Autodromo di Imola</option>
+                                        <option value="mugello">Mugello Circuit</option>
+                                        <option value="vallelunga">Autodromo di Vallelunga</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Pulsanti -->
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="/" class="btn btn-outline-secondary me-md-2">Annulla</a>
+                                    <button type="submit" class="btn btn-teal">
+                                        <i class="bi bi-calendar-check"></i> Prenota ora
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <%- include('../partials/footer') %>
+    <%- include('../partials/scripts') %>
+    <script src="/js/prenotazione.js"></script>
+</body>
+</html>

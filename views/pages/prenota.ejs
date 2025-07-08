@@ -29,15 +29,20 @@
                                     </div>
                                     
                                     <div class="mb-3">
-                                        <label for="auto" class="form-label">Auto</label>
+                                        <label for="auto" class="form-label">Seleziona Auto</label>
                                         <select class="form-select" id="auto" name="auto" required>
-                                            <option value="" selected disabled>Seleziona un'auto</option>
-                                            <!-- Qui verranno caricate le auto in base al servizio selezionato -->
-                                            <option value="ferrari_458">Ferrari 458</option>
-                                            <option value="lamborghini_huracan">Lamborghini Huracán</option>
-                                            <option value="porsche_911">Porsche 911</option>
-                                            <option value="audi_r8">Audi R8</option>
-                                            <!-- Altre auto... -->
+                                            <option value="">Scegli un'auto...</option>
+                                            <% if (typeof auto !== 'undefined' && auto.length > 0) { %>
+                                                <% auto.forEach(function(car) { %>
+                                                    <option value="<%= car.ID_auto %>" 
+                                                            data-service="both"
+                                                            <%= autoId == car.ID_auto ? 'selected' : '' %>>
+                                                        <%= car.marca %> <%= car.modello %> (<%= car.nazione %>)
+                                                    </option>
+                                                <% }) %>
+                                            <% } else { %>
+                                                <option value="" disabled>Nessuna auto disponibile</option>
+                                            <% } %>
                                         </select>
                                     </div>
                                     

@@ -59,4 +59,4 @@ class PrenotazioniDAO {
   }
 }
 
-module.exports = new PrenotazioniDAO(db); 
+module.exports = new PrenotazioniDAO(db);

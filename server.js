@@ -16,6 +16,19 @@ const adminRouter = require('./routes/admin');
 const PORT = process.env.PORT || 3000;
 const app = express();
 
+// Aggiungere all'inizio del file principale dell'applicazione
+process.on('warning', (warning) => {
+  // Ignora l'avviso specifico DEP0044 (util.isArray deprecation)
+  if (warning.name === 'DeprecationWarning' && 
+      warning.code === 'DEP0044') {
+    return;
+  }
+  
+  // Mostra altri avvisi
+  console.warn(warning.name);
+  console.warn(warning.message);
+});
+
 // Configurazione middleware di base
 app.use(morgan("dev"));
 app.use(express.static('public'));

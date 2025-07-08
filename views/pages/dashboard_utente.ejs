@@ -69,8 +69,7 @@
                                     <% bookings.forEach(function(booking) { %>
                                         <div class="booking-item mb-3 p-3 border rounded">
                                             <h6>Servizio: <%= booking.service || booking.servizio || booking.tipologia || 'N/D' %></h6>
-                                            <p>Data: <%= new Date(booking.date || booking.data_prenotazione).toLocaleDateString('it-IT') %></p>
-                                            <!-- Uniformato il campo auto tra le due sezioni -->
+                                            <p>Data: <%= new Date(booking.date || booking.data_prenotazione || booking.data).toLocaleDateString('it-IT') %></p>
                                             <p>Auto: <%= booking.auto || (booking.marca ? booking.marca + ' ' + booking.modello : 'N/D') %></p>
                                             <% if (booking.circuito) { %>
                                                 <p>Circuito: <%= booking.circuito %></p>
@@ -79,23 +78,45 @@
                                                 <p>Durata: <%= booking.durata %> giorni</p>
                                             <% } %>
                                             <p class="text-success fw-bold">Status: Confermata</p>
-                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminaPrenotazioneModal-<%= booking.ID_prenotazione %>">Elimina</button>
+                                            <!-- Migliore UX per il pulsante di cancellazione -->
+                                            <button class="btn btn-danger btn-sm delete-booking" 
+                                                   data-bs-toggle="modal" 
+                                                   data-bs-target="#eliminaPrenotazioneModal-<%= booking.ID_prenotazione %>">
+                                                <i class="fas fa-trash-alt me-1"></i> Cancella prenotazione
+                                            </button>
                                         </div>
-                                        <!-- Modal elimina prenotazione -->
+                                        
+                                        <!-- Modal migliorato per eliminare prenotazione -->
                                         <div class="modal fade" id="eliminaPrenotazioneModal-<%= booking.ID_prenotazione %>" tabindex="-1" aria-labelledby="eliminaPrenotazioneModalLabel-<%= booking.ID_prenotazione %>" aria-hidden="true">
                                             <div class="modal-dialog modal-dialog-centered">
                                                 <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="eliminaPrenotazioneModalLabel-<%= booking.ID_prenotazione %>">Elimina Prenotazione</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    <div class="modal-header bg-danger text-white">
+                                                        <h5 class="modal-title" id="eliminaPrenotazioneModalLabel-<%= booking.ID_prenotazione %>">
+                                                            <i class="fas fa-exclamation-triangle me-2"></i>Conferma cancellazione
+                                                        </h5>
+                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                                     </div>
                                                     <div class="modal-body">
-                                                        Sei sicuro di voler eliminare questa prenotazione?
+                                                        <p>Sei sicuro di voler cancellare questa prenotazione?</p>
+                                                        <div class="alert alert-warning">
+                                                            <small>
+                                                                <i class="fas fa-info-circle me-1"></i>
+                                                                Questa azione non può essere annullata. La prenotazione sarà eliminata definitivamente.
+                                                            </small>
+                                                        </div>
+                                                        <div class="booking-details mt-3 p-2 bg-light rounded">
+                                                            <p class="mb-1"><strong>Servizio:</strong> <%= booking.service || booking.servizio || booking.tipologia || 'N/D' %></p>
+                                                            <p class="mb-1"><strong>Data:</strong> <%= new Date(booking.date || booking.data_prenotazione || booking.data).toLocaleDateString('it-IT') %></p>
+                                                            <p class="mb-0"><strong>Auto:</strong> <%= booking.auto || (booking.marca ? booking.marca + ' ' + booking.modello : 'N/D') %></p>
+                                                        </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                                                        <form action="/utente/prenotazioni/<%= booking.ID_prenotazione %>/elimina" method="POST">
-                                                            <button type="submit" class="btn btn-danger">Elimina</button>
+                                                        <form action="/utente/prenotazioni/<%= booking.ID_prenotazione %>/elimina" method="POST" class="delete-form">
+                                                            <button type="submit" class="btn btn-danger">
+                                                                <span class="spinner-border spinner-border-sm d-none me-1" role="status" aria-hidden="true"></span>
+                                                                Conferma cancellazione
+                                                            </button>
                                                         </form>
                                                     </div>
                                                 </div>
@@ -170,7 +191,23 @@
         <%- include('../partials/modals/elimina-account-modal') %>
     <% } %>
     <%- include('../partials/scripts') %>
-</body>
-</html>
+    
+    <!-- Script per gestire la cancellazione delle prenotazioni -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestisce la visualizzazione dell'animazione durante l'invio del form di cancellazione
+            document.querySelectorAll('.delete-form').forEach(form => {
+                form.addEventListener('submit', function() {
+                    const button = this.querySelector('button[type="submit"]');
+                    const spinner = button.querySelector('.spinner-border');
+                    
+                    // Mostra lo spinner e disabilita il pulsante
+                    spinner.classList.remove('d-none');
+                    button.disabled = true;
+                    button.textContent = 'Cancellazione in corso...';
+                });
+            });
+        });
+    </script>
 </body>
 </html>

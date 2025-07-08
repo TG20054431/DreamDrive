@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Script prenotazione caricato');
+    
     // Get URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const serviceParam = urlParams.get('service');
@@ -13,129 +15,68 @@ document.addEventListener('DOMContentLoaded', function() {
     const circuitoSelect = document.getElementById('circuito');
 
     // Pre-select service and car if parameters exist
-    if (serviceParam) {
+    if (serviceParam && servizioSelect) {
         servizioSelect.value = serviceParam;
-        if (serviceParam === 'noleggio') {
-            durataContainer.style.display = 'block';
-            durataSelect.required = true;
-            circuitoContainer.style.display = 'none';
-            circuitoSelect.required = false;
-        } else if (serviceParam === 'track-day') {
-            durataContainer.style.display = 'none';
-            durataSelect.required = false;
-            circuitoContainer.style.display = 'block';
-            circuitoSelect.required = true;
-        }
+        handleServiceChange(serviceParam);
     }
 
-    if (autoParam) {
+    if (autoParam && autoSelect) {
         autoSelect.value = autoParam;
     }
 
-    const noleggioOptions = Array.from(autoSelect.options).filter(option => 
-        ['porsche-911', 'ferrari-458', 'lambo-aventador', 'mustang-gt500', 'mercedes-amg', 'aston-vanquish']
-        .includes(option.value)
-    );
-    const trackDayOptions = Array.from(autoSelect.options).filter(option => 
-        ['audi-etron', 'pagani-zonda', 'mclaren-senna', 'lambo-huracan', 'bugatti-chiron', 'nissan-gtr']
-        .includes(option.value)
-    );
-
-    servizioSelect.addEventListener('change', function() {
-        // Clear all options except the first one
-        while (autoSelect.options.length > 1) {
-            autoSelect.remove(1);
-        }
-
-        // Add relevant options based on selected service
-        if (this.value === 'noleggio') {
-            noleggioOptions.forEach(option => autoSelect.add(option.cloneNode(true)));
-        } else if (this.value === 'track-day') {
-            trackDayOptions.forEach(option => autoSelect.add(option.cloneNode(true)));
-        }
-
-        // Reset car selection
-        autoSelect.value = '';
-
-        // Handle duration and track selection visibility
-        if (this.value === 'noleggio') {
-            durataContainer.style.display = 'block';
-            durataSelect.required = true;
-            circuitoContainer.style.display = 'none';
-            circuitoSelect.required = false;
-            circuitoSelect.value = '';
-        } else if (this.value === 'track-day') {
-            durataContainer.style.display = 'none';
-            durataSelect.required = false;
-            durataSelect.value = '';
-            circuitoContainer.style.display = 'block';
-            circuitoSelect.required = true;
+    // Funzione per gestire il cambio di servizio
+    function handleServiceChange(serviceType) {
+        if (serviceType === 'noleggio') {
+            if (durataContainer) {
+                durataContainer.style.display = 'block';
+                if (durataSelect) durataSelect.required = true;
+            }
+            if (circuitoContainer) {
+                circuitoContainer.style.display = 'none';
+                if (circuitoSelect) {
+                    circuitoSelect.required = false;
+                    circuitoSelect.value = '';
+                }
+            }
+        } else if (serviceType === 'track-day') {
+            if (durataContainer) {
+                durataContainer.style.display = 'none';
+                if (durataSelect) {
+                    durataSelect.required = false;
+                    durataSelect.value = '';
+                }
+            }
+            if (circuitoContainer) {
+                circuitoContainer.style.display = 'block';
+                if (circuitoSelect) circuitoSelect.required = true;
+            }
         } else {
-            durataContainer.style.display = 'none';
-            circuitoContainer.style.display = 'none';
-            durataSelect.required = false;
-            circuitoSelect.required = false;
-            durataSelect.value = '';
-            circuitoSelect.value = '';
+            if (durataContainer) durataContainer.style.display = 'none';
+            if (circuitoContainer) circuitoContainer.style.display = 'none';
+            if (durataSelect) {
+                durataSelect.required = false;
+                durataSelect.value = '';
+            }
+            if (circuitoSelect) {
+                circuitoSelect.required = false;
+                circuitoSelect.value = '';
+            }
         }
-    });
-
-    document.getElementById('servizio').addEventListener('change', function() {
-        const durataContainer = document.getElementById('durata-container');
-        const circuitoContainer = document.getElementById('circuito-container');
-        const durataSelect = document.getElementById('durata');
-        const circuitoSelect = document.getElementById('circuito');
-        
-        if (this.value === 'noleggio') {
-            durataContainer.style.display = 'block';
-            circuitoContainer.style.display = 'none';
-            durataSelect.required = true;
-            circuitoSelect.required = false;
-        } else if (this.value === 'track-day') {
-            durataContainer.style.display = 'none';
-            circuitoContainer.style.display = 'block';
-            durataSelect.required = false;
-            circuitoSelect.required = true;
-        }
-    });
-
-    function updatePaymentUrl(event) {
-        event.preventDefault();
-        
-        const service = document.getElementById('servizio').value;
-        const auto = document.getElementById('auto').value;
-        const duration = document.getElementById('durata')?.value || '1';
-        const circuit = document.getElementById('circuito')?.value || '';
-        const date = document.getElementById('data').value;
-        const time = document.getElementById('ora').value;
-
-        // Redirect to payment page with parameters
-        const paymentUrl = `../payment/pay.html?` + new URLSearchParams({
-            service: service,
-            auto: auto,
-            duration: duration,
-            circuito: circuit,
-            data: date,
-            ora: time
-        }).toString();
-
-        window.location.href = paymentUrl;
-        return false;
     }
 
-    function handleSubmit(event) {
-        event.preventDefault();
-        
-        const service = document.getElementById('servizio').value;
-        const auto = document.getElementById('auto').value;
-        const circuit = document.getElementById('circuito')?.value || '';
-        const duration = document.getElementById('durata')?.value || '1';
-        const date = document.getElementById('data').value;
-        const time = document.getElementById('ora').value;
-
-        const paymentUrl = `../payment/payment.html?service=${service}&auto=${auto}&duration=${duration}&circuito=${circuit}&data=${date}&ora=${time}`;
-        
-        window.location.href = paymentUrl;
-        return false;
+    // Event listener per il cambio di servizio
+    if (servizioSelect) {
+        servizioSelect.addEventListener('change', function() {
+            handleServiceChange(this.value);
+        });
     }
+
+    // Gestione date picker
+    const dataInput = document.getElementById('data');
+    if (dataInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dataInput.setAttribute('min', today);
+    }
+
+    console.log('Script prenotazione inizializzato');
 });
