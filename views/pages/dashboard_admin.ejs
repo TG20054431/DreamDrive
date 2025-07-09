@@ -37,6 +37,12 @@
                                     <span>Recensioni</span>
                                 </a>
                             </li>
+                            <li class="sidebar-item <%= currentSection === 'contatti' ? 'active' : '' %>">
+                                <a href="/admin/dashboard/contatti" class="sidebar-link">
+                                    <i class="bi bi-envelope"></i>
+                                    <span>Contatti</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     
@@ -129,8 +135,7 @@
                                                                     <button type="submit" class="btn btn-sm btn-outline-danger" 
                                                                             onclick="return confirm('Sei sicuro di voler eliminare questa prenotazione?')">
                                                                         <i class="bi bi-trash"></i>
-                                                                    </button>
-                                                                </form>
+                                                                    </form>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -390,6 +395,102 @@
                                 </div>
                             </div>
                         <% } %>
+
+                        <!-- Mostra sezione contatti solo se currentSection === 'contatti' -->
+                        <% if (currentSection === 'contatti') { %>
+                            <!-- Sezione Contatti -->
+                            <div class="content-section active" id="contatti-section">
+                                <h2 class="section-title">Gestione Contatti</h2>
+                                
+                                <!-- Statistics Cards -->
+                                <div class="stats-container">
+                                    <div class="stat-card">
+                                        <div class="stat-value" id="total-contacts">
+                                            <%= typeof contatti !== 'undefined' ? contatti.length : 0 %>
+                                        </div>
+                                        <div class="stat-label">Contatti Totali</div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-value" id="today-contacts">
+                                            <%= typeof contatti !== 'undefined' ? contatti.filter(c => new Date(c.data).toDateString() === new Date().toDateString()).length : 0 %>
+                                        </div>
+                                        <div class="stat-label">Oggi</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Contacts Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Email</th>
+                                                <th>Messaggio</th>
+                                                <th>Data</th>
+                                                <th>Azioni</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (typeof contatti !== 'undefined' && contatti.length > 0) { %>
+                                                <% contatti.forEach(function(contatto) { %>
+                                                    <tr>
+                                                        <td><%= contatto.ID_contatto %></td>
+                                                        <td><%= contatto.email %></td>
+                                                        <td class="message-cell">
+                                                            <div class="message-preview">
+                                                                <%= contatto.messaggio.length > 100 ? contatto.messaggio.substring(0, 100) + '...' : contatto.messaggio %>
+                                                            </div>
+                                                            <% if (contatto.messaggio.length > 100) { %>
+                                                                <button class="btn btn-sm btn-link show-full-message" data-message="<%= contatto.messaggio.replace(/"/g, '&quot;') %>">
+                                                                    Mostra tutto
+                                                                </button>
+                                                            <% } %>
+                                                        </td>
+                                                        <td><%= new Date(contatto.data).toLocaleDateString('it-IT') %> <%= new Date(contatto.data).toLocaleTimeString('it-IT') %></td>
+                                                        <td>
+                                                            <div class="action-buttons">
+                                                                <a href="mailto:<%= contatto.email %>" class="btn btn-sm btn-outline-info" title="Rispondi via email">
+                                                                    <i class="bi bi-reply"></i>
+                                                                </a>
+                                                                <form action="/admin/contatti/<%= contatto.ID_contatto %>/elimina" method="POST" style="display: inline;">
+                                                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                                            onclick="return confirm('Sei sicuro di voler eliminare questo contatto?')"
+                                                                            title="Elimina contatto">
+                                                                        <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <% }); %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="5" class="text-center">Nessun contatto trovato</td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <!-- Modal per mostrare messaggio completo -->
+                        <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="messageModalLabel">Messaggio Completo</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div id="fullMessage"></div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- Mostra sezione impostazioni solo se currentSection === 'impostazioni' -->
                         <% if (currentSection === 'impostazioni') { %>

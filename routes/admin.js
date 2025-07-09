@@ -13,6 +13,7 @@ const middleware = require('../middleware/permessi');
 const prenotazioniDAO = require('../models/dao/prenotazioni-dao');
 const autoDAO = require('../models/dao/auto-dao');
 const recensioniDAO = require('../models/dao/recensioni-dao');
+const contattiDAO = require('../models/dao/contatti-dao');
 
 // Configurazione di Multer per il caricamento delle immagini
 const storage = multer.diskStorage({
@@ -69,6 +70,7 @@ router.get('/dashboard/:section', async (req, res) => {
     'recensioni',
     'utenti',
     'impostazioni',
+    'contatti'
   ];
 
   if (!validSections.includes(section)) {
@@ -79,6 +81,7 @@ router.get('/dashboard/:section', async (req, res) => {
   let prenotazioni = [];
   let autos = [];
   let recensioni = [];
+  let contatti = [];
 
   try {
     if (section === 'utenti') {
@@ -111,6 +114,12 @@ router.get('/dashboard/:section', async (req, res) => {
       console.log('Recensioni caricate:', recensioni.length);
     }
 
+    if (section === 'contatti') {
+      console.log('Caricamento sezione contatti...');
+      contatti = await contattiDAO.getAllContatti();
+      console.log('Contatti caricati:', contatti.length);
+    }
+
     // Render unico per tutte le sezioni
     res.render('pages/dashboard_admin', {
       title: 'DreamDrive - Dashboard Admin',
@@ -119,6 +128,7 @@ router.get('/dashboard/:section', async (req, res) => {
       prenotazioni: prenotazioni,
       autos: autos,
       recensioni: recensioni,
+      contatti: contatti,
       utenteSelezionato: null,
       isAuth: req.isAuthenticated(),
       currentSection: section,
@@ -423,6 +433,22 @@ router.get('/dashboard/prenotazioni', async (req, res) => {
         req.flash('error', 'Errore nel caricamento delle prenotazioni');
         res.redirect('/admin/dashboard');
     }
+});
+
+// ROTTE PER GESTIONE CONTATTI
+
+// Eliminazione di un contatto
+router.post('/contatti/:id/elimina', async (req, res) => {
+  try {
+    const contattoId = req.params.id;
+    await contattiDAO.deleteContatto(contattoId);
+    req.flash('success', 'Contatto eliminato con successo');
+    res.redirect('/admin/dashboard/contatti');
+  } catch (error) {
+    console.error('Errore nell\'eliminazione del contatto:', error);
+    req.flash('error', 'Errore nell\'eliminazione del contatto');
+    res.redirect('/admin/dashboard/contatti');
+  }
 });
 
 module.exports = router;

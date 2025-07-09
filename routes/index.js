@@ -249,105 +249,137 @@ router.get('/prenotazioni', async (req, res) => {
 });
 
 // Gestisce l'invio delle prenotazioni
-router.post('/prenotazioni/invia', async (req, res) => {
-    try {
-        // Verifica che l'utente sia autenticato
-        if (!req.session.user && !req.user) {
-            req.flash('error', 'Devi essere autenticato per effettuare una prenotazione');
-            return res.redirect('/auth/login');
-        }
+router.post('/prenotazioni/invia', [
+    check('auto_id').notEmpty().withMessage('Seleziona un\'auto'),
+    check('data_inizio').isDate().withMessage('Data inizio non valida'),
+    check('nome').notEmpty().withMessage('Nome richiesto'),
+    check('cognome').notEmpty().withMessage('Cognome richiesto'),
+    check('telefono').notEmpty().withMessage('Telefono richiesto'),
+    check('email').isEmail().withMessage('Email non valida'),
+    check('importo').isNumeric().withMessage('Importo non valido'),
+    check('numero_carta').isLength({ min: 15, max: 19 }).withMessage('Numero carta non valido'),
+    check('cvv').isLength({ min: 3, max: 4 }).withMessage('CVV non valido'),
+    check('scadenza_mese').isIn(['01','02','03','04','05','06','07','08','09','10','11','12']).withMessage('Mese di scadenza non valido'),
+    check('scadenza_anno').isInt({ min: new Date().getFullYear() }).withMessage('Anno di scadenza non valido'),
+    check('titolare_carta').notEmpty().withMessage('Nome titolare carta richiesto')
+], async (req, res) => {
+    const errors = validationResult(req);
+    
+    if (!errors.isEmpty()) {
+        req.flash('error', 'Errore nei dati inseriti: ' + errors.array().map(e => e.msg).join(', '));
+        return res.redirect('/prenotazioni');
+    }
 
+    try {
         const {
-            servizio,
             auto_id,
+            servizio,
             data_inizio,
             data_fine,
             circuito,
+            importo,
             nome,
             cognome,
             telefono,
             email,
-            note
+            note,
+            numero_carta,
+            cvv,
+            scadenza_mese,
+            scadenza_anno,
+            titolare_carta
         } = req.body;
 
-        // Preparazione dei dati della prenotazione
+        // Validazione aggiuntiva della data di scadenza
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth() + 1;
+        
+        if (parseInt(scadenza_anno) === currentYear && parseInt(scadenza_mese) < currentMonth) {
+            req.flash('error', 'La carta di credito è scaduta');
+            return res.redirect('/prenotazioni');
+        }
+
+        // Simula il processamento del pagamento
+        // In un'applicazione reale, qui integreresti un servizio di pagamento come Stripe
+        console.log('Processamento pagamento per carta:', numero_carta.substring(0, 4) + '****');
+
+        // Crea l'oggetto prenotazione
         const prenotazione = {
-            ID_utente: req.session.user?.ID_utente || req.user?.ID_utente,
-            ID_auto: parseInt(auto_id),
+            ID_utente: req.user.ID_utente,
+            ID_auto: auto_id,
             tipologia: servizio === 'track-day' ? 'trackday' : 'noleggio',
             data: data_inizio,
-            circuito: servizio === 'track-day' ? circuito : null
+            circuito: circuito || null,
+            importo: parseFloat(importo)
         };
 
-        console.log('Dati prenotazione da salvare:', prenotazione);
-
         // Salva la prenotazione nel database
-        const prenotazioneId = await prenotazioniDAO.insertPrenotazione(prenotazione);
+        await prenotazioniDAO.insertPrenotazione(prenotazione);
+
+        req.flash('success', `Prenotazione confermata e pagamento elaborato con successo per un totale di €${parseFloat(importo).toFixed(2)}! Ti contatteremo presto per i dettagli.`);
         
-        console.log('Prenotazione creata con successo, ID:', prenotazioneId);
-        
-        // Messaggio di successo
-        req.flash('success', 'Prenotazione inviata con successo! Ti contatteremo presto per la conferma.');
-        
-        // Redirect alla dashboard utente
+        // Reindirizza alla dashboard utente
         res.redirect('/dashboard');
-        
+
     } catch (error) {
-        console.error('Errore durante l\'invio della prenotazione:', error);
-        req.flash('error', 'Si è verificato un errore durante l\'invio della prenotazione. Riprova più tardi.');
-        res.redirect('back');
+        console.error('Errore durante l\'inserimento della prenotazione:', error);
+        req.flash('error', 'Errore durante la prenotazione o il pagamento. Riprova più tardi.');
+        res.redirect('/prenotazioni');
     }
 });
 
-// Visualizza la dashboard utente
-router.get('/dashboard', async (req, res) => {
-    try {
-        // Verifica autenticazione
-        if (!req.session.user && !req.user) {
-            req.flash('error', 'Devi essere autenticato per accedere alla dashboard');
-            return res.redirect('/auth/login');
-        }
-
-        const user = req.session.user || req.user;
-        
-        // Recupera le prenotazioni dell'utente
-        const prenotazioni = await prenotazioniDAO.getPrenotazioniByUserId(user.ID_utente);
-        
-        console.log('Prenotazioni utente:', prenotazioni);
-        
-        res.render('pages/dashboard_utente', {
-            user: user,
-            isAuth: true,
-            prenotazioni: prenotazioni,
-            bookings: prenotazioni // Per compatibilità con il template
-        });
-        
-    } catch (error) {
-        console.error('Errore nel caricamento della dashboard:', error);
-        req.flash('error', 'Errore nel caricamento della dashboard');
-        res.redirect('/');
+// Dashboard utente
+router.get('/dashboard', (req, res) => {
+    if (!req.isAuthenticated()) {
+        req.flash('error', 'Devi effettuare l\'accesso per visualizzare la dashboard');
+        return res.redirect('/auth/login');
     }
+
+    if (req.user.ruolo === 'admin') {
+        return res.redirect('/admin/dashboard');
+    }
+
+    // Carica le prenotazioni dell'utente
+    prenotazioniDAO.getPrenotazioniByUtente(req.user.ID_utente)
+        .then(prenotazioni => {
+            res.render('pages/dashboard_utente', {
+                title: 'DreamDrive - Dashboard Utente',
+                user: req.user,
+                prenotazioni: prenotazioni,
+                isAuth: req.isAuthenticated()
+            });
+        })
+        .catch(error => {
+            console.error('Errore nel caricamento delle prenotazioni:', error);
+            res.render('pages/dashboard_utente', {
+                title: 'DreamDrive - Dashboard Utente',
+                user: req.user,
+                prenotazioni: [],
+                isAuth: req.isAuthenticated()
+            });
+        });
 });
 
 // Route per eliminare una prenotazione
 router.post('/prenotazioni/:id/elimina', async (req, res) => {
+    if (!req.isAuthenticated()) {
+        req.flash('error', 'Devi essere autenticato per eliminare una prenotazione');
+        return res.redirect('/auth/login');
+    }
+
     try {
-        // Verifica autenticazione
-        if (!req.session.user && !req.user) {
-            req.flash('error', 'Devi essere autenticato');
-            return res.redirect('/auth/login');
-        }
-
         const prenotazioneId = req.params.id;
-        const userId = req.session.user?.ID_utente || req.user?.ID_utente;
-
-        // Verifica che la prenotazione appartenga all'utente (opzionale, per sicurezza)
-        // const prenotazione = await prenotazioniDAO.getPrenotazioneById(prenotazioneId);
-        // if (prenotazione.ID_utente !== userId) {
-        //     req.flash('error', 'Non hai i permessi per eliminare questa prenotazione');
-        //     return res.redirect('/dashboard');
-        // }
-
+        
+        // Verifica che la prenotazione appartenga all'utente loggato
+        const prenotazioni = await prenotazioniDAO.getPrenotazioniByUtente(req.user.ID_utente);
+        const prenotazioneDaEliminare = prenotazioni.find(p => p.ID_prenotazione == prenotazioneId);
+        
+        if (!prenotazioneDaEliminare) {
+            req.flash('error', 'Prenotazione non trovata o non autorizzato');
+            return res.redirect('/dashboard');
+        }
+        
         // Elimina la prenotazione
         await prenotazioniDAO.deletePrenotazione(prenotazioneId);
         
@@ -356,7 +388,7 @@ router.post('/prenotazioni/:id/elimina', async (req, res) => {
         
     } catch (error) {
         console.error('Errore nell\'eliminazione della prenotazione:', error);
-        req.flash('error', 'Errore durante la cancellazione della prenotazione');
+        req.flash('error', 'Errore nell\'eliminazione della prenotazione');
         res.redirect('/dashboard');
     }
 });

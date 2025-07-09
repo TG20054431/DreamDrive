@@ -36,7 +36,11 @@
                 <p class="hero-subtitle">Vivi l'emozione di guidare auto sportive di lusso attraverso i nostri servizi di noleggio e track day</p>
                 <div class="mt-5">
                     <a href="/auto" class="btn btn-teal hero-btn">Scopri le nostre auto</a>
-                    <a href="#servizi" class="btn btn-outline-light hero-btn">I nostri servizi</a>
+                    <% if (isAuth && user && user.ruolo === 'admin') { %>
+                        <a href="#" class="btn btn-outline-light hero-btn admin-restricted" data-section="servizi">I nostri servizi</a>
+                    <% } else { %>
+                        <a href="#servizi" class="btn btn-outline-light hero-btn">I nostri servizi</a>
+                    <% } %>
                 </div>
             </div>
         </div>
@@ -53,7 +57,11 @@
                             <i class="fas fa-car service-icon"></i>
                             <h3>Noleggio</h3>
                             <p class="card-text">Noleggia una delle nostre auto sportive per un'esperienza di guida indimenticabile. Disponibili per eventi speciali, weekend o vacanze.</p>
-                            <a href="/prenotazioni?service=noleggio" class="btn btn-teal mt-3">Prenota ora</a>
+                            <% if (isAuth && user && user.ruolo === 'admin') { %>
+                                <a href="#" class="btn btn-teal mt-3 admin-restricted" data-section="prenotazioni">Prenota ora</a>
+                            <% } else { %>
+                                <a href="/prenotazioni?service=noleggio" class="btn btn-teal mt-3">Prenota ora</a>
+                            <% } %>
                         </div>
                     </div>
                 </div>
@@ -63,7 +71,11 @@
                             <i class="fas fa-flag-checkered service-icon"></i>
                             <h3>Track Day</h3>
                             <p class="card-text">Sperimenta l'adrenalina di guidare in pista con una delle nostre supercar. Istruttori professionisti ti guideranno per un'esperienza sicura e divertente.</p>
-                            <a href="/prenotazioni?service=track-day" class="btn btn-teal mt-3">Prenota ora</a>
+                            <% if (isAuth && user && user.ruolo === 'admin') { %>
+                                <a href="#" class="btn btn-teal mt-3 admin-restricted" data-section="prenotazioni">Prenota ora</a>
+                            <% } else { %>
+                                <a href="/prenotazioni?service=track-day" class="btn btn-teal mt-3">Prenota ora</a>
+                            <% } %>
                         </div>
                     </div>
                 </div>
@@ -131,39 +143,48 @@
                             <h3 class="text-center mb-4">Lascia una recensione</h3>
                             
                             <% if (isAuth) { %>
-                                <form action="/recensioni/invia" method="POST" id="review-form">
-                                    <div class="mb-4">
-                                        <label class="form-label">Valutazione</label>
-                                        <div class="rating-input text-center">
-                                            <% for (let i = 5; i >= 1; i--) { %>
-                                                <input type="radio" id="star<%= i %>" name="valutazione" value="<%= i %>" required />
-                                                <label for="star<%= i %>" class="star-label">
-                                                    <i class="fas fa-star fs-3 mx-1"></i>
-                                                </label>
-                                            <% } %>
+                                <% if (user && user.ruolo === 'admin') { %>
+                                    <div class="text-center py-3">
+                                        <i class="fas fa-exclamation-triangle text-warning fs-2 mb-3"></i>
+                                        <h5>Accesso Limitato</h5>
+                                        <p class="text-muted">Come amministratore non puoi lasciare recensioni. Effettua il logout per accedere come utente normale.</p>
+                                        <a href="/auth/logout" class="btn btn-teal">Logout</a>
+                                    </div>
+                                <% } else { %>
+                                    <form action="/recensioni/invia" method="POST" id="review-form">
+                                        <div class="mb-4">
+                                            <label class="form-label">Valutazione</label>
+                                            <div class="rating-input text-center">
+                                                <% for (let i = 5; i >= 1; i--) { %>
+                                                    <input type="radio" id="star<%= i %>" name="valutazione" value="<%= i %>" required />
+                                                    <label for="star<%= i %>" class="star-label">
+                                                        <i class="fas fa-star fs-3 mx-1"></i>
+                                                    </label>
+                                                <% } %>
+                                            </div>
                                         </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="contenuto" class="form-label">La tua esperienza</label>
-                                        <textarea class="form-control" id="contenuto" name="contenuto" rows="4" required 
-                                            placeholder="Raccontaci la tua esperienza con DreamDrive..."></textarea>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="tipologia" class="form-label">Tipo di servizio</label>
-                                        <select class="form-select" id="tipologia" name="tipologia" required>
-                                            <option value="" selected disabled>Seleziona un servizio</option>
-                                            <option value="noleggio">Noleggio</option>
-                                            <option value="trackday">Track Day</option>
-                                            <option value="altro">Altro</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-teal">Invia recensione</button>
-                                    </div>
-                                </form>
+                                        
+                                        <div class="mb-3">
+                                            <label for="contenuto" class="form-label">La tua esperienza</label>
+                                            <textarea class="form-control" id="contenuto" name="contenuto" rows="4" required 
+                                                placeholder="Raccontaci la tua esperienza con DreamDrive..."></textarea>
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label for="tipologia" class="form-label">Tipo di servizio</label>
+                                            <select class="form-select" id="tipologia" name="tipologia" required>
+                                                <option value="" selected disabled>Seleziona un servizio</option>
+                                                <option value="noleggio">Noleggio</option>
+                                                <option value="trackday">Track Day</option>
+                                                <option value="altro">Altro</option>
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-teal">Invia recensione</button>
+                                        </div>
+                                    </form>
+                                <% } %>
                             <% } else { %>
                                 <div class="text-center py-3">
                                     <p>Accedi per lasciare una recensione</p>
@@ -223,21 +244,30 @@
                 <div class="col-lg-6 mb-4">
                     <div class="contact-form">
                         <h3 class="contact-form-title">Inviaci un messaggio</h3>
-                        <form action="/contatti/invia" method="POST">
-                            <div class="mb-3">
-                                <label for="contactEmail" class="form-label fw-bold">Email</label>
-                                <input type="email" class="form-control" id="contactEmail" name="email" required placeholder="La tua email">
+                        <% if (isAuth && user && user.ruolo === 'admin') { %>
+                            <div class="text-center py-4">
+                                <i class="fas fa-exclamation-triangle text-warning fs-2 mb-3"></i>
+                                <h5>Accesso Limitato</h5>
+                                <p class="text-muted">Come amministratore non puoi utilizzare il form di contatto. Effettua il logout per accedere come utente normale.</p>
+                                <a href="/auth/logout" class="btn btn-teal">Logout</a>
                             </div>
-                            <div class="mb-3">
-                                <label for="contactMessage" class="form-label fw-bold">Messaggio</label>
-                                <textarea class="form-control" id="contactMessage" name="messaggio" rows="4" required placeholder="Scrivi il tuo messaggio qui..."></textarea>
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-teal">
-                                    Invia messaggio
-                                </button>
-                            </div>
-                        </form>
+                        <% } else { %>
+                            <form action="/contatti/invia" method="POST">
+                                <div class="mb-3">
+                                    <label for="contactEmail" class="form-label fw-bold">Email</label>
+                                    <input type="email" class="form-control" id="contactEmail" name="email" required placeholder="La tua email">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="contactMessage" class="form-label fw-bold">Messaggio</label>
+                                    <textarea class="form-control" id="contactMessage" name="messaggio" rows="4" required placeholder="Scrivi il tuo messaggio qui..."></textarea>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-teal">
+                                        Invia messaggio
+                                    </button>
+                                </div>
+                            </form>
+                        <% } %>
                     </div>
                 </div>
             </div>
@@ -247,5 +277,7 @@
     <%- include('../partials/footer') %>
     <%- include('../partials/scripts') %>
     <%- include('../partials/toast') %>
+    
+    <!-- NESSUN SCRIPT AGGIUNTIVO QUI -->
 </body>
 </html>

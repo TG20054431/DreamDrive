@@ -6,8 +6,8 @@ const db = require('../../db');
 const insertPrenotazione = (prenotazione) => {
     return new Promise((resolve, reject) => {
         const sql = `
-            INSERT INTO PRENOTAZIONI (ID_utente, ID_auto, tipologia, data, circuito)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO PRENOTAZIONI (ID_utente, ID_auto, tipologia, data, circuito, importo)
+            VALUES (?, ?, ?, ?, ?, ?)
         `;
         
         const params = [
@@ -15,7 +15,8 @@ const insertPrenotazione = (prenotazione) => {
             prenotazione.ID_auto,
             prenotazione.tipologia,
             prenotazione.data,
-            prenotazione.circuito || null  // Se non c'è circuito, inserisci NULL
+            prenotazione.circuito || null,
+            prenotazione.importo
         ];
         
         console.log('Inserimento prenotazione:', params);
@@ -41,6 +42,7 @@ const getAllPrenotazioni = () => {
                 p.tipologia,
                 p.data,
                 p.circuito,
+                p.importo,
                 u.nome as nome_utente,
                 u.cognome as cognome_utente,
                 u.email,
@@ -73,6 +75,7 @@ const getAllPrenotazioniForAdmin = () => {
                 p.tipologia,
                 p.data,
                 p.circuito,
+                p.importo,
                 u.nome as nome_utente,
                 u.cognome as cognome_utente,
                 u.email,
@@ -105,6 +108,7 @@ const getPrenotazioniByUserId = (userId) => {
                 p.tipologia,
                 p.data,
                 p.circuito,
+                p.importo,
                 a.marca,
                 a.modello,
                 a.nazione,
@@ -127,6 +131,9 @@ const getPrenotazioniByUserId = (userId) => {
     });
 };
 
+// Alias per compatibilità
+const getPrenotazioniByUtente = getPrenotazioniByUserId;
+
 // Elimina una prenotazione
 const deletePrenotazione = (prenotazioneId) => {
     return new Promise((resolve, reject) => {
@@ -148,5 +155,6 @@ module.exports = {
     getAllPrenotazioni,
     getAllPrenotazioniForAdmin,
     getPrenotazioniByUserId,
+    getPrenotazioniByUtente,
     deletePrenotazione
 };

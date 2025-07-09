@@ -2,8 +2,6 @@
 
 const db = require('../../db');
 
-console.log('Auto DAO caricato');
-
 // Ottieni tutte le auto
 exports.getAllAuto = () => {
     return new Promise((resolve, reject) => {

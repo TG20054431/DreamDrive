@@ -15,7 +15,10 @@ CREATE TABLE AUTO (
     modello TEXT NOT NULL,
     marca TEXT NOT NULL,
     nazione TEXT NOT NULL,
-    motore TEXT NOT NULL
+    motore TEXT NOT NULL,
+    prezzo_giornaliero REAL NOT NULL DEFAULT 300,    -- prezzo base per noleggio
+    prezzo_trackday REAL NOT NULL DEFAULT 500,       -- prezzo base per track day
+    immagine TEXT                                     -- campo per l'immagine se non c'è già
 );
 
 -- PRENOTAZIONI 
@@ -26,6 +29,7 @@ CREATE TABLE PRENOTAZIONI (
     tipologia TEXT NOT NULL CHECK (tipologia IN ('noleggio', 'trackday')),
     data TEXT NOT NULL,                 -- data noleggio o evento
     circuito TEXT,                      -- obbligatorio solo se tipologia = 'trackday'
+    importo REAL NOT NULL,              -- prezzo totale della prenotazione
     FOREIGN KEY (ID_utente) REFERENCES UTENTE(ID_utente) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (ID_auto) REFERENCES AUTO(ID_auto) ON DELETE CASCADE ON UPDATE CASCADE
 );

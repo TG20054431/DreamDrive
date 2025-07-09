@@ -160,56 +160,32 @@
                                                                 <%= prenotazione.nazione %>
                                                             </p>
                                                         <% } %>
+                                                        <% if (prenotazione.importo) { %>
+                                                            <p class="mb-1">
+                                                                <strong><i class="fas fa-euro-sign me-1"></i>Importo:</strong> 
+                                                                <span class="text-success fw-bold">€<%= parseFloat(prenotazione.importo).toFixed(2) %></span>
+                                                            </p>
+                                                        <% } %>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 text-end">
                                                     <p class="text-success fw-bold mb-2">
                                                         <i class="fas fa-check-circle me-1"></i>Confermata
                                                     </p>
+                                                    <% if (prenotazione.importo) { %>
+                                                        <p class="text-primary fw-bold mb-2">
+                                                            €<%= parseFloat(prenotazione.importo).toFixed(2) %>
+                                                        </p>
+                                                    <% } %>
                                                     <button class="btn btn-outline-danger btn-sm delete-booking" 
-                                                           data-bs-toggle="modal" 
-                                                           data-bs-target="#eliminaPrenotazioneModal-<%= prenotazione.ID_prenotazione %>">
+                                                           data-prenotazione-id="<%= prenotazione.ID_prenotazione %>"
+                                                           data-auto="<%= prenotazione.marca %> <%= prenotazione.modello %>"
+                                                           data-servizio="<%= prenotazione.tipologia === 'trackday' ? 'Track Day' : 'Noleggio' %>"
+                                                           data-data="<%= new Date(prenotazione.data).toLocaleDateString('it-IT') %>"
+                                                           data-circuito="<%= prenotazione.circuito || '' %>"
+                                                           data-importo="<%= prenotazione.importo || '' %>">
                                                         <i class="fas fa-trash-alt me-1"></i> Cancella
                                                     </button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        
-                                        <!-- Modal per eliminare prenotazione -->
-                                        <div class="modal fade" id="eliminaPrenotazioneModal-<%= prenotazione.ID_prenotazione %>" tabindex="-1" aria-labelledby="eliminaPrenotazioneModalLabel-<%= prenotazione.ID_prenotazione %>" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header bg-danger text-white">
-                                                        <h5 class="modal-title" id="eliminaPrenotazioneModalLabel-<%= prenotazione.ID_prenotazione %>">
-                                                            <i class="fas fa-exclamation-triangle me-2"></i>Conferma cancellazione
-                                                        </h5>
-                                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>Sei sicuro di voler cancellare questa prenotazione?</p>
-                                                        <div class="alert alert-warning">
-                                                            <small>
-                                                                <i class="fas fa-info-circle me-1"></i>
-                                                                Questa azione non può essere annullata. La prenotazione sarà eliminata definitivamente.
-                                                            </small>
-                                                        </div>
-                                                        <div class="booking-details mt-3 p-3 bg-light rounded">
-                                                            <p class="mb-1"><strong>Auto:</strong> <%= prenotazione.marca %> <%= prenotazione.modello %></p>
-                                                            <p class="mb-1"><strong>Servizio:</strong> <%= prenotazione.tipologia === 'trackday' ? 'Track Day' : 'Noleggio' %></p>
-                                                            <p class="mb-1"><strong>Data:</strong> <%= new Date(prenotazione.data).toLocaleDateString('it-IT') %></p>
-                                                            <% if (prenotazione.circuito) { %>
-                                                                <p class="mb-0"><strong>Circuito:</strong> <%= prenotazione.circuito %></p>
-                                                            <% } %>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                                                        <form action="/prenotazioni/<%= prenotazione.ID_prenotazione %>/elimina" method="POST" class="delete-form" style="display: inline;">
-                                                            <button type="submit" class="btn btn-danger">
-                                                                Conferma cancellazione
-                                                            </button>
-                                                        </form>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -219,7 +195,7 @@
                                         <i class="fas fa-calendar-times text-muted" style="font-size: 3rem;"></i>
                                         <h6 class="mt-3 text-muted">Nessuna prenotazione attiva</h6>
                                         <p class="text-muted">Non hai ancora effettuato nessuna prenotazione.</p>
-                                        <a href="/prenotazioni" class="btn btn-primary">
+                                        <a href="/#servizi" class="btn btn-teal">
                                             <i class="fas fa-plus me-1"></i>Effettua una prenotazione
                                         </a>
                                     </div>
@@ -227,32 +203,40 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Le tue prenotazioni</h5>
-                            <div id="userBookings">
-                                <% if (typeof prenotazioni !== 'undefined' && prenotazioni.length > 0) { %>
-                                    <% prenotazioni.forEach(function(prenotazione) { %>
-                                        <div class="card mb-2">
-                                            <div class="card-body">
-                                                <h6><%= prenotazione.marca %> <%= prenotazione.modello %></h6>
-                                                <p class="mb-1">
-                                                    <strong>Tipo:</strong> <%= prenotazione.tipologia %><br>
-                                                    <strong>Data:</strong> <%= prenotazione.data %>
-                                                    <% if (prenotazione.circuito) { %>
-                                                        <br><strong>Circuito:</strong> <%= prenotazione.circuito %>
-                                                    <% } %>
-                                                </p>
-                                            </div>
-                                        </div>
-                                    <% }); %>
-                                <% } else { %>
-                                    <p class="text-muted">Nessuna prenotazione trovata.</p>
-                                <% } %>
-                            </div>
-                        </div>
+    <!-- Modal unico per eliminare prenotazione -->
+    <div class="modal fade" id="eliminaPrenotazioneModal" tabindex="-1" aria-labelledby="eliminaPrenotazioneModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="eliminaPrenotazioneModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Conferma cancellazione
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Sei sicuro di voler cancellare questa prenotazione?</p>
+                    <div class="alert alert-warning">
+                        <small>
+                            <i class="fas fa-info-circle me-1"></i>
+                            Questa azione non può essere annullata. La prenotazione sarà eliminata definitivamente.
+                        </small>
                     </div>
+                    <div class="booking-details mt-3 p-3 bg-light rounded" id="prenotazioneDetails">
+                        <!-- Dettagli prenotazione verranno inseriti qui dinamicamente -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <form id="deleteForm" action="" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger" id="confirmDeleteBtn">
+                            Conferma cancellazione
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -268,34 +252,51 @@
     <!-- Script per gestire la cancellazione delle prenotazioni -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Gestisce la visualizzazione dell'animazione durante l'invio del form di cancellazione
-            document.querySelectorAll('.delete-form').forEach(form => {
-                form.addEventListener('submit', function() {
-                    const button = this.querySelector('button[type="submit"]');
-                    const spinner = button.querySelector('.spinner-border');
+            // Gestisce l'apertura del modal per la cancellazione
+            document.querySelectorAll('.delete-booking').forEach(button => {
+                button.addEventListener('click', function() {
+                    const prenotazioneId = this.getAttribute('data-prenotazione-id');
+                    const auto = this.getAttribute('data-auto');
+                    const servizio = this.getAttribute('data-servizio');
+                    const data = this.getAttribute('data-data');
+                    const circuito = this.getAttribute('data-circuito');
+                    const importo = this.getAttribute('data-importo');
                     
-                    // Mostra lo spinner e disabilita il pulsante
-                    spinner.classList.remove('d-none');
-                    button.disabled = true;
-                    button.textContent = 'Cancellazione in corso...';
+                    // Popola i dettagli nel modal
+                    const detailsDiv = document.getElementById('prenotazioneDetails');
+                    let detailsHtml = `
+                        <p class="mb-1"><strong>Auto:</strong> ${auto}</p>
+                        <p class="mb-1"><strong>Servizio:</strong> ${servizio}</p>
+                        <p class="mb-1"><strong>Data:</strong> ${data}</p>
+                    `;
+                    
+                    if (circuito && circuito.trim() !== '') {
+                        detailsHtml += `<p class="mb-1"><strong>Circuito:</strong> ${circuito}</p>`;
+                    }
+                    
+                    if (importo && importo.trim() !== '') {
+                        detailsHtml += `<p class="mb-0"><strong>Importo:</strong> <span class="text-success fw-bold">€${parseFloat(importo).toFixed(2)}</span></p>`;
+                    }
+                    
+                    detailsDiv.innerHTML = detailsHtml;
+                    
+                    // Imposta l'action del form
+                    const deleteForm = document.getElementById('deleteForm');
+                    deleteForm.action = `/prenotazioni/${prenotazioneId}/elimina`;
+                    
+                    // Mostra il modal
+                    const modal = new bootstrap.Modal(document.getElementById('eliminaPrenotazioneModal'));
+                    modal.show();
                 });
             });
-        });
-    </script>
-    <!-- Script semplificato -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Chiudi il modal quando il form viene inviato
-            document.querySelectorAll('.delete-form').forEach(form => {
-                form.addEventListener('submit', function() {
-                    const modal = this.closest('.modal');
-                    if (modal) {
-                        const bsModal = bootstrap.Modal.getInstance(modal);
-                        if (bsModal) {
-                            bsModal.hide();
-                        }
-                    }
-                });
+            
+            // Gestisce la visualizzazione dell'animazione durante l'invio del form di cancellazione
+            document.getElementById('deleteForm').addEventListener('submit', function() {
+                const button = document.getElementById('confirmDeleteBtn');
+                
+                // Disabilita il pulsante per evitare doppi click
+                button.disabled = true;
+                button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Cancellazione in corso...';
             });
         });
     </script>

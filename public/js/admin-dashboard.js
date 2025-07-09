@@ -262,5 +262,32 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // ========================================
+    // GESTIONE CONTATTI
+    // ========================================
+    
+    // Mostra messaggio completo nel modal
+    const showFullMessageButtons = document.querySelectorAll('.show-full-message');
+    const messageModal = document.getElementById('messageModal');
+    const fullMessageDiv = document.getElementById('fullMessage');
+    
+    showFullMessageButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const fullMessage = this.getAttribute('data-message');
+            if (fullMessageDiv) {
+                fullMessageDiv.textContent = fullMessage.replace(/&quot;/g, '"');
+            }
+            
+            if (messageModal) {
+                if (typeof bootstrap !== 'undefined') {
+                    const modalInstance = new bootstrap.Modal(messageModal);
+                    modalInstance.show();
+                } else {
+                    showModalManually(messageModal);
+                }
+            }
+        });
+    });
+
     console.log('Admin Dashboard JS inizializzato correttamente');
 });

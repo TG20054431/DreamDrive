@@ -51,11 +51,38 @@
         .auto-card input[type="radio"] {
             display: none;
         }
-        .price-info {
-            background: #e6fffa;
-            border-left: 4px solid #20B2AA;
+        .price-breakdown {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
             padding: 1rem;
-            margin: 1rem 0;
+        }
+        .total-price {
+            background: #e7f3ff;
+            border: 2px solid #20B2AA;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        .total-price h5 {
+            margin: 0;
+            font-weight: bold;
+        }
+        .price-breakdown p {
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .price-breakdown p:last-child {
+            margin-bottom: 0;
+        }
+        .price-tag {
+            background: #20B2AA;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -68,12 +95,12 @@
         <div class="container text-center">
             <% if (typeof service === 'undefined' || service === 'noleggio') { %>
                 <i class="fas fa-car service-icon"></i>
-                <h1>Prenotazione Noleggio</h1>
-                <p class="lead">Noleggia una delle nostre auto sportive per un'esperienza indimenticabile</p>
-            <% } else if (service === 'track-day') { %>
+                <h1 class="display-4 fw-bold mb-3">Noleggio Auto Sportive</h1>
+                <p class="lead">Noleggia le auto dei tuoi sogni per eventi speciali, weekend o vacanze indimenticabili</p>
+            <% } else { %>
                 <i class="fas fa-flag-checkered service-icon"></i>
-                <h1>Prenotazione Track Day</h1>
-                <p class="lead">Vivi l'adrenalina della pista con le nostre supercar</p>
+                <h1 class="display-4 fw-bold mb-3">Track Day</h1>
+                <p class="lead">Vivi l'emozione della pista con le nostre supercar e istruttori professionali</p>
             <% } %>
         </div>
     </section>
@@ -87,6 +114,7 @@
                         <% if (isAuth) { %>
                             <form action="/prenotazioni/invia" method="POST" id="booking-form">
                                 <input type="hidden" name="servizio" value="<%= typeof service !== 'undefined' ? service : 'noleggio' %>">
+                                <input type="hidden" name="importo" id="importo-hidden" value="0">
                                 
                                 <!-- Sezione Auto -->
                                 <div class="form-section">
@@ -96,18 +124,20 @@
                                             <% auto.forEach(function(car, index) { %>
                                                 <div class="col-md-6 col-lg-4 mb-3">
                                                     <label for="auto_<%= car.ID_auto %>" class="auto-card card h-100">
-                                                        <input type="radio" name="auto_id" value="<%= car.ID_auto %>" id="auto_<%= car.ID_auto %>" required>
+                                                        <input type="radio" name="auto_id" value="<%= car.ID_auto %>" id="auto_<%= car.ID_auto %>" 
+                                                               data-prezzo-noleggio="<%= car.prezzo_giornaliero || 300 %>"
+                                                               data-prezzo-trackday="<%= car.prezzo_trackday || 500 %>" required>
                                                         <% if (car.immagine) { %>
                                                             <img src="/uploads/auto/<%= car.immagine %>" class="card-img-top" alt="<%= car.marca %> <%= car.modello %>" style="height: 200px; object-fit: cover;">
                                                         <% } %>
                                                         <div class="card-body">
                                                             <h6 class="card-title"><%= car.marca %> <%= car.modello %></h6>
                                                             <p class="card-text small text-muted"><%= car.anno %> • <%= car.cilindrata || car.motore %></p>
-                                                            <div class="price-info">
+                                                            <div class="price-info mt-2">
                                                                 <% if (service === 'track-day') { %>
-                                                                    <strong>€<%= car.prezzo_trackday || '500' %>/giorno</strong>
+                                                                    <span class="price-tag">€<%= car.prezzo_trackday || '500' %>/evento</span>
                                                                 <% } else { %>
-                                                                    <strong>€<%= car.prezzo_giornaliero || '300' %>/giorno</strong>
+                                                                    <span class="price-tag">€<%= car.prezzo_giornaliero || '300' %>/giorno</span>
                                                                 <% } %>
                                                             </div>
                                                         </div>
@@ -140,9 +170,9 @@
                                                 <label for="orario" class="form-label">Orario</label>
                                                 <select class="form-select" id="orario" name="orario" required>
                                                     <option value="">Seleziona orario</option>
-                                                    <option value="09:00">09:00 - 12:00</option>
-                                                    <option value="14:00">14:00 - 17:00</option>
-                                                    <option value="10:00">10:00 - 16:00 (Giornata intera)</option>
+                                                    <option value="09:00" data-moltiplicatore="0.5">09:00 - 12:00 (Mezza giornata) -50%</option>
+                                                    <option value="14:00" data-moltiplicatore="0.5">14:00 - 17:00 (Mezza giornata) -50%</option>
+                                                    <option value="10:00" data-moltiplicatore="1">10:00 - 16:00 (Giornata intera)</option>
                                                 </select>
                                             </div>
                                             <!-- Selezione Circuito per Track Day -->
@@ -150,14 +180,14 @@
                                                 <label for="circuito" class="form-label">Circuito</label>
                                                 <select class="form-select" id="circuito" name="circuito" required>
                                                     <option value="">Seleziona circuito</option>
-                                                    <option value="Monza">Autodromo Nazionale di Monza</option>
-                                                    <option value="Imola">Autodromo Enzo e Dino Ferrari (Imola)</option>
-                                                    <option value="Mugello">Autodromo del Mugello</option>
-                                                    <option value="Misano">Misano World Circuit Marco Simoncelli</option>
-                                                    <option value="Vallelunga">Autodromo di Vallelunga</option>
-                                                    <option value="Spa-Francorchamps">Circuit de Spa-Francorchamps (Belgio)</option>
-                                                    <option value="Nurburgring">Nürburgring (Germania)</option>
-                                                    <option value="Silverstone">Silverstone Circuit (Regno Unito)</option>
+                                                    <option value="Monza" data-sovrapprezzo="0">Autodromo Nazionale di Monza</option>
+                                                    <option value="Imola" data-sovrapprezzo="50">Autodromo Enzo e Dino Ferrari (Imola) (+€50)</option>
+                                                    <option value="Mugello" data-sovrapprezzo="75">Autodromo del Mugello (+€75)</option>
+                                                    <option value="Misano" data-sovrapprezzo="25">Misano World Circuit Marco Simoncelli (+€25)</option>
+                                                    <option value="Vallelunga" data-sovrapprezzo="30">Autodromo di Vallelunga (+€30)</option>
+                                                    <option value="Spa-Francorchamps" data-sovrapprezzo="200">Circuit de Spa-Francorchamps (Belgio) (+€200)</option>
+                                                    <option value="Nurburgring" data-sovrapprezzo="250">Nürburgring (Germania) (+€250)</option>
+                                                    <option value="Silverstone" data-sovrapprezzo="180">Silverstone Circuit (Regno Unito) (+€180)</option>
                                                 </select>
                                                 <div class="form-text">
                                                     <i class="fas fa-info-circle me-1"></i>
@@ -175,6 +205,25 @@
                                                 <input type="date" class="form-control" id="data_fine" name="data_fine" required>
                                             </div>
                                         <% } %>
+                                    </div>
+                                </div>
+
+                                <!-- Riepilogo Prezzo -->
+                                <div class="form-section" id="price-summary" style="display: none;">
+                                    <h4><i class="fas fa-euro-sign me-2"></i>Riepilogo Prezzo</h4>
+                                    <div class="price-breakdown">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div id="price-details">
+                                                    <!-- Dettagli prezzo verranno inseriti qui -->
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="total-price">
+                                                    <h5>Totale: <span id="total-amount" class="text-primary">€0</span></h5>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -198,34 +247,82 @@
                                             <label for="email" class="form-label">Email</label>
                                             <input type="email" class="form-control" id="email" name="email" required>
                                         </div>
+                                        <div class="col-12 mb-3">
+                                            <label for="note" class="form-label">Note aggiuntive</label>
+                                            <textarea class="form-control" id="note" name="note" rows="3" placeholder="Eventuali richieste speciali..."></textarea>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- Note aggiuntive -->
+                                <!-- Sezione Pagamento -->
                                 <div class="form-section">
-                                    <h4><i class="fas fa-comment me-2"></i>Note aggiuntive (opzionale)</h4>
-                                    <textarea class="form-control" name="note" rows="3" placeholder="Inserisci eventuali richieste speciali o note..."></textarea>
+                                    <h4><i class="fas fa-credit-card me-2"></i>Dati di Pagamento</h4>
+                                    <div class="row">
+                                        <div class="col-md-8 mb-3">
+                                            <label for="numero_carta" class="form-label">Numero Carta di Credito</label>
+                                            <input type="text" class="form-control" id="numero_carta" name="numero_carta" 
+                                                   placeholder="1234 5678 9012 3456" maxlength="19" required>
+                                            <div class="form-text">
+                                                <i class="fas fa-lock me-1"></i>I tuoi dati sono protetti e sicuri
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="cvv" class="form-label">CVV</label>
+                                            <input type="text" class="form-control" id="cvv" name="cvv" 
+                                                   placeholder="123" maxlength="4" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="scadenza_mese" class="form-label">Mese di Scadenza</label>
+                                            <select class="form-select" id="scadenza_mese" name="scadenza_mese" required>
+                                                <option value="">Seleziona mese</option>
+                                                <option value="01">01 - Gennaio</option>
+                                                <option value="02">02 - Febbraio</option>
+                                                <option value="03">03 - Marzo</option>
+                                                <option value="04">04 - Aprile</option>
+                                                <option value="05">05 - Maggio</option>
+                                                <option value="06">06 - Giugno</option>
+                                                <option value="07">07 - Luglio</option>
+                                                <option value="08">08 - Agosto</option>
+                                                <option value="09">09 - Settembre</option>
+                                                <option value="10">10 - Ottobre</option>
+                                                <option value="11">11 - Novembre</option>
+                                                <option value="12">12 - Dicembre</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="scadenza_anno" class="form-label">Anno di Scadenza</label>
+                                            <select class="form-select" id="scadenza_anno" name="scadenza_anno" required>
+                                                <option value="">Seleziona anno</option>
+                                                <% 
+                                                const currentYear = new Date().getFullYear();
+                                                for(let year = currentYear; year <= currentYear + 20; year++) { 
+                                                %>
+                                                    <option value="<%= year %>"><%= year %></option>
+                                                <% } %>
+                                            </select>
+                                        </div>
+                                        <div class="col-12 mb-3">
+                                            <label for="titolare_carta" class="form-label">Nome del Titolare della Carta</label>
+                                            <input type="text" class="form-control" id="titolare_carta" name="titolare_carta" 
+                                                   placeholder="Nome Cognome come appare sulla carta" required>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-info-circle me-2"></i>
+                                                <strong>Informazioni sul Pagamento:</strong><br>
+                                                • La carta verrà addebitata solo al momento della conferma della prenotazione<br>
+                                                • Accettiamo Visa, Mastercard e American Express<br>
+                                                • Tutti i pagamenti sono elaborati in modo sicuro
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <!-- Privacy e Submit -->
-                                <div class="form-section">
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
-                                        <label class="form-check-label" for="privacy">
-                                            Accetto il trattamento dei dati personali secondo la <a href="/privacy" target="_blank">Privacy Policy</a>
-                                        </label>
-                                    </div>
-                                    <div class="form-check mb-4">
-                                        <input class="form-check-input" type="checkbox" id="termini" name="termini" required>
-                                        <label class="form-check-label" for="termini">
-                                            Accetto i <a href="/termini" target="_blank">Termini e Condizioni</a> del servizio
-                                        </label>
-                                    </div>
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-teal btn-lg">
-                                            <i class="fas fa-check me-2"></i>Conferma prenotazione
-                                        </button>
-                                    </div>
+                                <!-- Submit Button -->
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-teal btn-lg px-5">
+                                        <i class="fas fa-check me-2"></i>Conferma Prenotazione
+                                    </button>
                                 </div>
                             </form>
                         <% } else { %>
@@ -253,58 +350,280 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const autoCards = document.querySelectorAll('.auto-card');
-            const circuitCards = document.querySelectorAll('.circuit-card');
             const dateInputs = document.querySelectorAll('input[type="date"]');
+            const serviceType = '<%= service %>';
+            
+            // Elementi per il calcolo del prezzo
+            const startDateInput = document.getElementById('data_inizio');
+            const endDateInput = document.getElementById('data_fine');
+            const orarioSelect = document.getElementById('orario');
+            const circuitoSelect = document.getElementById('circuito');
+            const priceSummary = document.getElementById('price-summary');
+            const priceDetails = document.getElementById('price-details');
+            const totalAmount = document.getElementById('total-amount');
+            const importoHidden = document.getElementById('importo-hidden');
             
             // Handle auto selection
             autoCards.forEach(card => {
                 card.addEventListener('click', function() {
                     autoCards.forEach(c => c.classList.remove('selected'));
                     this.classList.add('selected');
+                    calculatePrice();
                 });
             });
             
-            // Handle circuit selection
-            circuitCards.forEach(card => {
-                card.addEventListener('click', function() {
-                    circuitCards.forEach(c => c.classList.remove('selected'));
-                    this.classList.add('selected');
-                });
-            });
+            // Imposta data minima a DOMANI (non oggi) per evitare selezioni di orari passati
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowString = tomorrow.toISOString().split('T')[0];
             
-            // Set minimum date to today
-            const today = new Date().toISOString().split('T')[0];
             dateInputs.forEach(input => {
-                input.min = today;
+                input.min = tomorrowString;
             });
             
-            // Validate end date is after start date
-            const startDate = document.getElementById('data_inizio');
-            const endDate = document.getElementById('data_fine');
-            const serviceType = '<%= service %>';
-            
-            if (startDate && endDate && serviceType !== 'track-day') {
-                startDate.addEventListener('change', function() {
-                    endDate.min = this.value;
-                    if (endDate.value && endDate.value < this.value) {
-                        endDate.value = this.value;
-                    }
-                });
+            // Funzione per verificare se un orario è già passato per oggi
+            function isTimePassedToday(timeString) {
+                const now = new Date();
+                const today = now.toISOString().split('T')[0];
+                const selectedDate = startDateInput.value;
+                
+                // Se la data selezionata non è oggi, tutti gli orari sono validi
+                if (selectedDate !== today) {
+                    return false;
+                }
+                
+                // Se è oggi, controlla se l'orario è passato
+                const currentHour = now.getHours();
+                const currentMinute = now.getMinutes();
+                const [hour, minute] = timeString.split(':').map(Number);
+                
+                return (hour < currentHour) || (hour === currentHour && minute <= currentMinute);
             }
             
-            // Per Track Day, imposta la data di fine uguale alla data di inizio
-            if (serviceType === 'track-day' && startDate) {
-                startDate.addEventListener('change', function() {
-                    if (endDate) {
-                        endDate.value = this.value;
-                    }
+            // Funzione per aggiornare le opzioni dell'orario per Track Day
+            function updateTimeOptions() {
+                if (serviceType !== 'track-day' || !orarioSelect || !startDateInput.value) {
+                    return;
+                }
+                
+                const now = new Date();
+                const today = now.toISOString().split('T')[0];
+                const selectedDate = startDateInput.value;
+                
+                // Reset di tutte le opzioni
+                Array.from(orarioSelect.options).forEach((option, index) => {
+                    if (index === 0) return; // Salta l'opzione "Seleziona orario"
+                    
+                    option.disabled = false;
+                    option.style.display = '';
                 });
                 
-                // Imposta subito il valore al caricamento se data_inizio ha già un valore
-                if (startDate.value && endDate) {
-                    endDate.value = startDate.value;
+                // Se la data selezionata è oggi, disabilita gli orari passati
+                if (selectedDate === today) {
+                    const currentHour = now.getHours();
+                    const currentMinute = now.getMinutes();
+                    
+                    Array.from(orarioSelect.options).forEach((option, index) => {
+                        if (index === 0) return; // Salta l'opzione "Seleziona orario"
+                        
+                        const timeValue = option.value;
+                        if (timeValue) {
+                            const [hour, minute] = timeValue.split(':').map(Number);
+                            
+                            // Disabilita se l'orario è già passato (con margine di 2 ore per preparazione)
+                            if ((hour < currentHour + 2) || (hour === currentHour + 2 && minute <= currentMinute)) {
+                                option.disabled = true;
+                                option.style.color = '#999';
+                                option.textContent = option.textContent + ' (Non disponibile)';
+                                
+                                // Se questa opzione era selezionata, deselezionala
+                                if (orarioSelect.value === timeValue) {
+                                    orarioSelect.value = '';
+                                    calculatePrice();
+                                }
+                            }
+                        }
+                    });
                 }
             }
+            
+            // Validate end date is after start date
+            if (startDateInput && endDateInput && serviceType !== 'track-day') {
+                startDateInput.addEventListener('change', function() {
+                    const selectedStartDate = new Date(this.value);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    // Verifica che la data di inizio non sia nel passato
+                    if (selectedStartDate < today) {
+                        alert('Non puoi selezionare una data nel passato');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    endDateInput.min = this.value;
+                    if (endDateInput.value && endDateInput.value < this.value) {
+                        endDateInput.value = this.value;
+                    }
+                    calculatePrice();
+                });
+                
+                endDateInput.addEventListener('change', function() {
+                    const selectedEndDate = new Date(this.value);
+                    const selectedStartDate = new Date(startDateInput.value);
+                    
+                    // Verifica che la data di fine non sia prima della data di inizio
+                    if (selectedEndDate < selectedStartDate) {
+                        alert('La data di fine non può essere precedente alla data di inizio');
+                        this.value = startDateInput.value;
+                        return;
+                    }
+                    
+                    calculatePrice();
+                });
+            }
+            
+            // Per Track Day, imposta la data di fine uguale alla data di inizio e aggiorna orari
+            if (serviceType === 'track-day' && startDateInput) {
+                startDateInput.addEventListener('change', function() {
+                    const selectedDate = new Date(this.value);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    // Verifica che la data non sia nel passato
+                    if (selectedDate < today) {
+                        alert('Non puoi selezionare una data nel passato');
+                        this.value = '';
+                        return;
+                    }
+                    
+                    if (endDateInput) {
+                        endDateInput.value = this.value;
+                    }
+                    
+                    // Aggiorna le opzioni dell'orario
+                    updateTimeOptions();
+                    
+                    calculatePrice();
+                });
+                
+                if (orarioSelect) {
+                    orarioSelect.addEventListener('change', function() {
+                        // Verifica aggiuntiva per orari nel Track Day
+                        if (startDateInput.value) {
+                            const now = new Date();
+                            const today = now.toISOString().split('T')[0];
+                            const selectedDate = startDateInput.value;
+                            
+                            if (selectedDate === today && this.value) {
+                                const currentHour = now.getHours();
+                                const [selectedHour] = this.value.split(':').map(Number);
+                                
+                                if (selectedHour < currentHour + 2) {
+                                    alert('Non puoi selezionare un orario troppo vicino all\'orario attuale. Seleziona un orario con almeno 2 ore di anticipo.');
+                                    this.value = '';
+                                    return;
+                                }
+                            }
+                        }
+                        
+                        calculatePrice();
+                    });
+                }
+                
+                if (circuitoSelect) {
+                    circuitoSelect.addEventListener('change', calculatePrice);
+                }
+                
+                // Inizializza le opzioni dell'orario al caricamento della pagina
+                updateTimeOptions();
+            }
+            
+            // Verifica periodica ogni minuto per aggiornare le opzioni disponibili
+            if (serviceType === 'track-day') {
+                setInterval(updateTimeOptions, 60000); // Aggiorna ogni minuto
+            }
+            
+            function calculatePrice() {
+                const selectedAuto = document.querySelector('input[name="auto_id"]:checked');
+                
+                if (!selectedAuto || !startDateInput.value) {
+                    priceSummary.style.display = 'none';
+                    return;
+                }
+                
+                let basePrice = 0;
+                let days = 1;
+                let multiplier = 1;
+                let surcharge = 0;
+                let details = '';
+                
+                // Ottieni il prezzo base
+                if (serviceType === 'track-day') {
+                    basePrice = parseFloat(selectedAuto.dataset.prezzoTrackday) || 500;
+                    
+                    // Calcola moltiplicatore per mezza/intera giornata
+                    if (orarioSelect && orarioSelect.value) {
+                        const selectedOption = orarioSelect.options[orarioSelect.selectedIndex];
+                        multiplier = parseFloat(selectedOption.dataset.moltiplicatore) || 1;
+                    }
+                    
+                    // Calcola sovrapprezzo circuito
+                    if (circuitoSelect && circuitoSelect.value) {
+                        const selectedCircuit = circuitoSelect.options[circuitoSelect.selectedIndex];
+                        surcharge = parseFloat(selectedCircuit.dataset.sovrapprezzo) || 0;
+                    }
+                    
+                    details = `
+                        <p><span>Track Day:</span> <span>€${basePrice}</span></p>
+                        ${multiplier !== 1 ? `<p><span>Durata:</span> <span>${multiplier === 0.5 ? 'Mezza giornata (-50%)' : 'Giornata intera'}</span></p>` : ''}
+                        ${surcharge > 0 ? `<p><span>Sovrapprezzo circuito:</span> <span>+€${surcharge}</span></p>` : ''}
+                    `;
+                } else {
+                    basePrice = parseFloat(selectedAuto.dataset.prezzoNoleggio) || 300;
+                    
+                    // Calcola giorni per noleggio
+                    if (endDateInput && endDateInput.value) {
+                        const startDate = new Date(startDateInput.value);
+                        const endDate = new Date(endDateInput.value);
+                        days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+                    }
+                    
+                    details = `
+                        <p><span>Prezzo giornaliero:</span> <span>€${basePrice}</span></p>
+                        <p><span>Numero giorni:</span> <span>${days}</span></p>
+                    `;
+                }
+                
+                const total = (basePrice * multiplier * days) + surcharge;
+                
+                priceDetails.innerHTML = details;
+                totalAmount.textContent = `€${total.toFixed(2)}`;
+                importoHidden.value = total.toFixed(2);
+                priceSummary.style.display = 'block';
+            }
+            
+            // Formattazione automatica del numero di carta
+            const numeroCartaInput = document.getElementById('numero_carta');
+            const cvvInput = document.getElementById('cvv');
+            
+            // Formatta il numero di carta con spazi ogni 4 cifre
+            numeroCartaInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                e.target.value = formattedValue;
+            });
+            
+            // Solo numeri per CVV
+            cvvInput.addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            });
+            
+            // Solo lettere e spazi per il titolare della carta
+            const titolareCartaInput = document.getElementById('titolare_carta');
+            titolareCartaInput.addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, '').toUpperCase();
+            });
         });
     </script>
 </body>
