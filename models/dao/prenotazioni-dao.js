@@ -64,6 +64,38 @@ const getAllPrenotazioni = () => {
     });
 };
 
+// Ottiene tutte le prenotazioni per admin
+const getAllPrenotazioniForAdmin = () => {
+    return new Promise((resolve, reject) => {
+        const sql = `
+            SELECT 
+                p.ID_prenotazione,
+                p.tipologia,
+                p.data,
+                p.circuito,
+                u.nome as nome_utente,
+                u.cognome as cognome_utente,
+                u.email,
+                a.marca,
+                a.modello,
+                a.nazione
+            FROM PRENOTAZIONI p
+            JOIN UTENTE u ON p.ID_utente = u.ID_utente
+            JOIN AUTO a ON p.ID_auto = a.ID_auto
+            ORDER BY p.data DESC
+        `;
+        
+        db.all(sql, [], (err, rows) => {
+            if (err) {
+                console.error('Errore nel recupero delle prenotazioni per admin:', err);
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+};
+
 // Ottiene le prenotazioni per un utente specifico
 const getPrenotazioniByUserId = (userId) => {
     return new Promise((resolve, reject) => {
@@ -75,7 +107,8 @@ const getPrenotazioniByUserId = (userId) => {
                 p.circuito,
                 a.marca,
                 a.modello,
-                a.nazione
+                a.nazione,
+                a.motore
             FROM PRENOTAZIONI p
             JOIN AUTO a ON p.ID_auto = a.ID_auto
             WHERE p.ID_utente = ?
@@ -87,6 +120,7 @@ const getPrenotazioniByUserId = (userId) => {
                 console.error('Errore nel recupero delle prenotazioni utente:', err);
                 reject(err);
             } else {
+                console.log(`Trovate ${rows.length} prenotazioni per l'utente ${userId}`);
                 resolve(rows);
             }
         });
@@ -112,6 +146,7 @@ const deletePrenotazione = (prenotazioneId) => {
 module.exports = {
     insertPrenotazione,
     getAllPrenotazioni,
+    getAllPrenotazioniForAdmin,
     getPrenotazioniByUserId,
     deletePrenotazione
 };

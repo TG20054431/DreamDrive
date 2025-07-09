@@ -300,29 +300,64 @@ router.post('/prenotazioni/invia', async (req, res) => {
 });
 
 // Visualizza la dashboard utente
-router.get('/dashboard', (req, res) => {
-    // Verifica autenticazione
-    if (!req.session.user && !req.user) {
-        req.flash('error', 'Devi essere autenticato per accedere alla dashboard');
-        return res.redirect('/auth/login');
-    }
-
+router.get('/dashboard', async (req, res) => {
     try {
-        // Recupera le prenotazioni dell'utente
-        const userId = req.session.user?.ID_utente || req.user?.ID_utente;
+        // Verifica autenticazione
+        if (!req.session.user && !req.user) {
+            req.flash('error', 'Devi essere autenticato per accedere alla dashboard');
+            return res.redirect('/auth/login');
+        }
+
+        const user = req.session.user || req.user;
         
-        // Potresti voler recuperare le prenotazioni dell'utente qui
-        // const prenotazioni = await prenotazioniDAO.getPrenotazioniByUserId(userId);
+        // Recupera le prenotazioni dell'utente
+        const prenotazioni = await prenotazioniDAO.getPrenotazioniByUserId(user.ID_utente);
+        
+        console.log('Prenotazioni utente:', prenotazioni);
         
         res.render('pages/dashboard_utente', {
-            user: req.session.user || req.user,
+            user: user,
             isAuth: true,
-            // prenotazioni: prenotazioni
+            prenotazioni: prenotazioni,
+            bookings: prenotazioni // Per compatibilità con il template
         });
+        
     } catch (error) {
         console.error('Errore nel caricamento della dashboard:', error);
         req.flash('error', 'Errore nel caricamento della dashboard');
         res.redirect('/');
+    }
+});
+
+// Route per eliminare una prenotazione
+router.post('/prenotazioni/:id/elimina', async (req, res) => {
+    try {
+        // Verifica autenticazione
+        if (!req.session.user && !req.user) {
+            req.flash('error', 'Devi essere autenticato');
+            return res.redirect('/auth/login');
+        }
+
+        const prenotazioneId = req.params.id;
+        const userId = req.session.user?.ID_utente || req.user?.ID_utente;
+
+        // Verifica che la prenotazione appartenga all'utente (opzionale, per sicurezza)
+        // const prenotazione = await prenotazioniDAO.getPrenotazioneById(prenotazioneId);
+        // if (prenotazione.ID_utente !== userId) {
+        //     req.flash('error', 'Non hai i permessi per eliminare questa prenotazione');
+        //     return res.redirect('/dashboard');
+        // }
+
+        // Elimina la prenotazione
+        await prenotazioniDAO.deletePrenotazione(prenotazioneId);
+        
+        req.flash('success', 'Prenotazione cancellata con successo');
+        res.redirect('/dashboard');
+        
+    } catch (error) {
+        console.error('Errore nell\'eliminazione della prenotazione:', error);
+        req.flash('error', 'Errore durante la cancellazione della prenotazione');
+        res.redirect('/dashboard');
     }
 });
 

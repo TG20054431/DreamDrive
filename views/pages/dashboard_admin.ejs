@@ -56,37 +56,37 @@
                                         <div class="stat-label">Prenotazioni Totali</div>
                                     </div>
                                     <div class="stat-card">
-                                        <div class="stat-value" id="confirmed-bookings">
-                                            <%= typeof prenotazioni !== 'undefined' ? prenotazioni.filter(p => p.stato === 'confermata').length : 0 %>
+                                        <div class="stat-value" id="noleggio-bookings">
+                                            <%= typeof prenotazioni !== 'undefined' ? prenotazioni.filter(p => p.tipologia === 'noleggio').length : 0 %>
                                         </div>
-                                        <div class="stat-label">Confermate</div>
+                                        <div class="stat-label">Noleggi</div>
                                     </div>
                                     <div class="stat-card">
-                                        <div class="stat-value" id="pending-bookings">
-                                            <%= typeof prenotazioni !== 'undefined' ? prenotazioni.filter(p => p.stato === 'in_attesa').length : 0 %>
+                                        <div class="stat-value" id="trackday-bookings">
+                                            <%= typeof prenotazioni !== 'undefined' ? prenotazioni.filter(p => p.tipologia === 'trackday').length : 0 %>
                                         </div>
-                                        <div class="stat-label">In Attesa</div>
+                                        <div class="stat-label">Track Day</div>
                                     </div>
                                     <div class="stat-card">
-                                        <div class="stat-value" id="cancelled-bookings">
-                                            <%= typeof prenotazioni !== 'undefined' ? prenotazioni.filter(p => p.stato === 'cancellata').length : 0 %>
+                                        <div class="stat-value" id="today-bookings">
+                                            <%= typeof prenotazioni !== 'undefined' ? prenotazioni.filter(p => new Date(p.data).toDateString() === new Date().toDateString()).length : 0 %>
                                         </div>
-                                        <div class="stat-label">Cancellate</div>
+                                        <div class="stat-label">Oggi</div>
                                     </div>
                                 </div>
                                 
                                 <div class="booking-controls">
                                     <div class="filter-container">
-                                        <select class="form-select" id="status-filter">
-                                            <option value="all">Tutti gli stati</option>
-                                            <option value="confermata">Confermata</option>
-                                            <option value="in_attesa">In attesa</option>
-                                            <option value="cancellata">Cancellata</option>
-                                        </select>
                                         <select class="form-select" id="service-filter">
                                             <option value="all">Tutti i servizi</option>
-                                            <option value="Noleggio">Noleggio</option>
-                                            <option value="Track Day">Track Day</option>
+                                            <option value="noleggio">Noleggio</option>
+                                            <option value="trackday">Track Day</option>
+                                        </select>
+                                        <select class="form-select" id="date-filter">
+                                            <option value="all">Tutte le date</option>
+                                            <option value="today">Oggi</option>
+                                            <option value="week">Questa settimana</option>
+                                            <option value="month">Questo mese</option>
                                         </select>
                                     </div>
                                     <div class="search-container">
@@ -104,42 +104,33 @@
                                                 <th>Servizio</th>
                                                 <th>Auto</th>
                                                 <th>Data</th>
-                                                <th>Stato</th>
+                                                <th>Circuito</th>
                                                 <th>Azioni</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <% if (typeof prenotazioni !== 'undefined' && prenotazioni.length > 0) { %>
                                                 <% prenotazioni.forEach(function(prenotazione) { %>
-                                                    <tr data-status="<%= prenotazione.stato %>" data-service="<%= prenotazione.tipo_servizio %>">
+                                                    <tr data-service="<%= prenotazione.tipologia %>">
                                                         <td><%= prenotazione.ID_prenotazione %></td>
-                                                        <td><%= prenotazione.nome_cliente || 'N/A' %> <%= prenotazione.cognome_cliente || '' %></td>
-                                                        <td><%= prenotazione.email_cliente || 'N/A' %></td>
-                                                        <td><%= prenotazione.tipo_servizio %></td>
-                                                        <td><%= prenotazione.marca_auto %> <%= prenotazione.modello_auto %></td>
-                                                        <td><%= new Date(prenotazione.data_prenotazione).toLocaleDateString('it-IT') %></td>
+                                                        <td><%= prenotazione.nome_utente || 'N/A' %> <%= prenotazione.cognome_utente || '' %></td>
+                                                        <td><%= prenotazione.email || 'N/A' %></td>
                                                         <td>
-                                                            <span class="status-badge <%= prenotazione.stato === 'confermata' ? 'status-confirmed' : 
-                                                                prenotazione.stato === 'in_attesa' ? 'status-pending' : 'status-cancelled' %>">
-                                                                <%= prenotazione.stato === 'in_attesa' ? 'In Attesa' : 
-                                                                    prenotazione.stato === 'confermata' ? 'Confermata' : 'Cancellata' %>
+                                                            <span class="badge <%= prenotazione.tipologia === 'trackday' ? 'bg-warning' : 'bg-success' %>">
+                                                                <%= prenotazione.tipologia === 'trackday' ? 'Track Day' : 'Noleggio' %>
                                                             </span>
                                                         </td>
+                                                        <td><%= prenotazione.marca %> <%= prenotazione.modello %></td>
+                                                        <td><%= new Date(prenotazione.data).toLocaleDateString('it-IT') %></td>
+                                                        <td><%= prenotazione.circuito || '-' %></td>
                                                         <td>
                                                             <div class="action-buttons">
-                                                                <% if (prenotazione.stato !== 'confermata') { %>
-                                                                    <button class="btn btn-sm btn-outline-success approve-booking" data-id="<%= prenotazione.ID_prenotazione %>">
-                                                                        <i class="bi bi-check-lg"></i>
+                                                                <form action="/admin/prenotazioni/<%= prenotazione.ID_prenotazione %>/elimina" method="POST" style="display: inline;">
+                                                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                                            onclick="return confirm('Sei sicuro di voler eliminare questa prenotazione?')">
+                                                                        <i class="bi bi-trash"></i>
                                                                     </button>
-                                                                <% } %>
-                                                                <% if (prenotazione.stato !== 'cancellata') { %>
-                                                                    <form action="/admin/prenotazioni/<%= prenotazione.ID_prenotazione %>/elimina" method="POST" style="display: inline;">
-                                                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                                                                onclick="return confirm('Sei sicuro di voler eliminare questa prenotazione?')">
-                                                                            <i class="bi bi-trash"></i>
-                                                                        </button>
-                                                                    </form>
-                                                                <% } %>
+                                                                </form>
                                                             </div>
                                                         </td>
                                                     </tr>

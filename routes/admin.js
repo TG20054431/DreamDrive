@@ -399,4 +399,30 @@ router.put('/account/cambia-password', [
   }
 });
 
+// Nuova rotta per prenotazioni
+router.get('/dashboard/prenotazioni', async (req, res) => {
+    try {
+        // Verifica che sia admin
+        if (!req.session.user || req.session.user.ruolo !== 'admin') {
+            req.flash('error', 'Accesso negato');
+            return res.redirect('/auth/login');
+        }
+
+        // Recupera tutte le prenotazioni
+        const prenotazioni = await prenotazioniDAO.getAllPrenotazioniForAdmin();
+        
+        res.render('pages/dashboard_admin', {
+            user: req.session.user,
+            isAuth: true,
+            currentSection: 'prenotazioni',
+            prenotazioni: prenotazioni
+        });
+        
+    } catch (error) {
+        console.error('Errore nel caricamento prenotazioni admin:', error);
+        req.flash('error', 'Errore nel caricamento delle prenotazioni');
+        res.redirect('/admin/dashboard');
+    }
+});
+
 module.exports = router;
