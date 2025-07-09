@@ -6,6 +6,7 @@ const { check, validationResult } = require('express-validator');
 const autoDAO = require('../models/dao/auto-dao');
 const recensioniDAO = require('../models/dao/recensioni-dao');
 const contattiDAO = require('../models/dao/contatti-dao');
+const prenotazioniDAO = require('../models/dao/prenotazioni-dao');
 
 // Visualizza la pagina home del sito
 router.get('/', async (req, res) => {
@@ -220,5 +221,109 @@ router.post('/servizi/prenota', [
   }
 });
 
-module.exports = router;
+// Visualizza la pagina prenotazioni
+router.get('/prenotazioni', async (req, res) => {
+  const service = req.query.service || 'noleggio';
+  
+  try {
+    // Recupera tutte le auto disponibili
+    const auto = await autoDAO.getAllAuto();
+    
+    res.render('pages/prenotazioni', {
+      title: 'DreamDrive - Prenotazioni',
+      user: req.user || null,
+      isAuth: req.isAuthenticated(),
+      service: service,
+      auto: auto
+    });
+  } catch (err) {
+    console.error('Errore nel caricamento delle auto per prenotazioni:', err);
+    res.render('pages/prenotazioni', {
+      title: 'DreamDrive - Prenotazioni',
+      user: req.user || null,
+      isAuth: req.isAuthenticated(),
+      service: service,
+      auto: []
+    });
+  }
+});
+
+// Gestisce l'invio delle prenotazioni
+router.post('/prenotazioni/invia', async (req, res) => {
+    try {
+        // Verifica che l'utente sia autenticato
+        if (!req.session.user && !req.user) {
+            req.flash('error', 'Devi essere autenticato per effettuare una prenotazione');
+            return res.redirect('/auth/login');
+        }
+
+        const {
+            servizio,
+            auto_id,
+            data_inizio,
+            data_fine,
+            circuito,
+            nome,
+            cognome,
+            telefono,
+            email,
+            note
+        } = req.body;
+
+        // Preparazione dei dati della prenotazione
+        const prenotazione = {
+            ID_utente: req.session.user?.ID_utente || req.user?.ID_utente,
+            ID_auto: parseInt(auto_id),
+            tipologia: servizio === 'track-day' ? 'trackday' : 'noleggio',
+            data: data_inizio,
+            circuito: servizio === 'track-day' ? circuito : null
+        };
+
+        console.log('Dati prenotazione da salvare:', prenotazione);
+
+        // Salva la prenotazione nel database
+        const prenotazioneId = await prenotazioniDAO.insertPrenotazione(prenotazione);
+        
+        console.log('Prenotazione creata con successo, ID:', prenotazioneId);
+        
+        // Messaggio di successo
+        req.flash('success', 'Prenotazione inviata con successo! Ti contatteremo presto per la conferma.');
+        
+        // Redirect alla dashboard utente
+        res.redirect('/dashboard');
+        
+    } catch (error) {
+        console.error('Errore durante l\'invio della prenotazione:', error);
+        req.flash('error', 'Si è verificato un errore durante l\'invio della prenotazione. Riprova più tardi.');
+        res.redirect('back');
+    }
+});
+
+// Visualizza la dashboard utente
+router.get('/dashboard', (req, res) => {
+    // Verifica autenticazione
+    if (!req.session.user && !req.user) {
+        req.flash('error', 'Devi essere autenticato per accedere alla dashboard');
+        return res.redirect('/auth/login');
+    }
+
+    try {
+        // Recupera le prenotazioni dell'utente
+        const userId = req.session.user?.ID_utente || req.user?.ID_utente;
+        
+        // Potresti voler recuperare le prenotazioni dell'utente qui
+        // const prenotazioni = await prenotazioniDAO.getPrenotazioniByUserId(userId);
+        
+        res.render('pages/dashboard_utente', {
+            user: req.session.user || req.user,
+            isAuth: true,
+            // prenotazioni: prenotazioni
+        });
+    } catch (error) {
+        console.error('Errore nel caricamento della dashboard:', error);
+        req.flash('error', 'Errore nel caricamento della dashboard');
+        res.redirect('/');
+    }
+});
+
 module.exports = router;

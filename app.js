@@ -124,6 +124,20 @@ app.use((err, req, res, next) => {
   res.status(500).send('Errore del server');
 });
 
+// Reindirizza alla pagina di prenotazione corretta
+app.get('/prenotazioni', (req, res) => {
+    res.redirect('/servizi/prenota');
+});
+
+// Oppure renderizza direttamente la pagina
+app.get('/prenotazioni', (req, res) => {
+    res.render('pages/prenotazione', {
+        service: req.query.service || null,
+        auto: [], // Dati delle auto dal database
+        autoId: req.query.autoId || null
+    });
+});
+
 // Start server
 app.listen(port, () => {
   console.log(`Server DreamDrive avviato su porta ${port}`);

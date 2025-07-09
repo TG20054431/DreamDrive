@@ -132,50 +132,25 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Storico Prenotazioni</h5>
-                            <div id="bookingHistory">
-                                <% if (typeof bookings !== 'undefined' && bookings && bookings.length > 0) { %>
-                                    <% bookings.forEach(function(booking) { %>
-                                        <div class="booking-item mb-3 p-3 border rounded">
-                                            <h6>Servizio: <%= booking.servizio || booking.service || booking.tipologia || 'N/D' %></h6>
-                                            <p>Data: <%= new Date(booking.date || booking.data_prenotazione).toLocaleDateString('it-IT') %></p>
-                                            <!-- Uniformato il campo auto tra le due sezioni -->
-                                            <p>Auto: <%= booking.auto || (booking.marca ? booking.marca + ' ' + booking.modello : 'N/D') %></p>
-                                            <% if (booking.circuito) { %>
-                                                <p>Circuito: <%= booking.circuito %></p>
-                                            <% } %>
-                                            <% if (booking.durata) { %>
-                                                <p>Durata: <%= booking.durata %> giorni</p>
-                                            <% } %>
-                                            <p>Importo: € <%= booking.amount || booking.importo || '0.00' %></p>
-                                            <p>Pagamento: <%= booking.paymentMethod === 'card' ? 'Carta di Credito' : 
-                                                            booking.paymentMethod === 'paypal' ? 'PayPal' : 'Bonifico Bancario' %></p>
-                                            <p class="text-success fw-bold">Status: <%= booking.status || 'Completata' %></p>
-                                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminaPrenotazioneModal-<%= booking.ID_prenotazione %>">Elimina</button>
-                                        </div>
-                                        <!-- Modal elimina prenotazione -->
-                                        <div class="modal fade" id="eliminaPrenotazioneModal-<%= booking.ID_prenotazione %>" tabindex="-1" aria-labelledby="eliminaPrenotazioneModalLabel-<%= booking.ID_prenotazione %>" aria-hidden="true">
-                                            <div class="modal-dialog modal-dialog-centered">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="eliminaPrenotazioneModalLabel-<%= booking.ID_prenotazione %>">Elimina Prenotazione</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        Sei sicuro di voler eliminare questa prenotazione?
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-                                                        <form action="/utente/prenotazioni/<%= booking.ID_prenotazione %>/elimina" method="POST">
-                                                            <button type="submit" class="btn btn-danger">Elimina</button>
-                                                        </form>
-                                                    </div>
-                                                </div>
+                            <h5 class="card-title">Le tue prenotazioni</h5>
+                            <div id="userBookings">
+                                <% if (typeof prenotazioni !== 'undefined' && prenotazioni.length > 0) { %>
+                                    <% prenotazioni.forEach(function(prenotazione) { %>
+                                        <div class="card mb-2">
+                                            <div class="card-body">
+                                                <h6><%= prenotazione.marca %> <%= prenotazione.modello %></h6>
+                                                <p class="mb-1">
+                                                    <strong>Tipo:</strong> <%= prenotazione.tipologia %><br>
+                                                    <strong>Data:</strong> <%= prenotazione.data %>
+                                                    <% if (prenotazione.circuito) { %>
+                                                        <br><strong>Circuito:</strong> <%= prenotazione.circuito %>
+                                                    <% } %>
+                                                </p>
                                             </div>
                                         </div>
-                                    <% }) %>
+                                    <% }); %>
                                 <% } else { %>
-                                    <p class="text-muted">Nessuna prenotazione precedente</p>
+                                    <p class="text-muted">Nessuna prenotazione trovata.</p>
                                 <% } %>
                             </div>
                         </div>

@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="it">
+<head>
+    <title>DreamDrive | Prenotazioni</title>
+    <%- include('../partials/head') %>
+    <style>
+        .service-header {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: 4rem 0;
+        }
+        .booking-form {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-top: -2rem;
+            position: relative;
+            z-index: 2;
+        }
+        .service-icon {
+            font-size: 3rem;
+            color: #20B2AA;
+            margin-bottom: 1rem;
+        }
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .form-section h4 {
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #20B2AA;
+            padding-bottom: 0.5rem;
+        }
+        .auto-card {
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .auto-card:hover {
+            border-color: #20B2AA;
+            transform: translateY(-2px);
+        }
+        .auto-card.selected {
+            border-color: #20B2AA;
+            background-color: #f0fdfc;
+        }
+        .auto-card input[type="radio"] {
+            display: none;
+        }
+        .price-info {
+            background: #e6fffa;
+            border-left: 4px solid #20B2AA;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/nav') %>
+    <%- include('../partials/alerts') %>
+
+    <!-- Service Header -->
+    <section class="service-header">
+        <div class="container text-center">
+            <% if (typeof service === 'undefined' || service === 'noleggio') { %>
+                <i class="fas fa-car service-icon"></i>
+                <h1>Prenotazione Noleggio</h1>
+                <p class="lead">Noleggia una delle nostre auto sportive per un'esperienza indimenticabile</p>
+            <% } else if (service === 'track-day') { %>
+                <i class="fas fa-flag-checkered service-icon"></i>
+                <h1>Prenotazione Track Day</h1>
+                <p class="lead">Vivi l'adrenalina della pista con le nostre supercar</p>
+            <% } %>
+        </div>
+    </section>
+
+    <!-- Booking Form -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="booking-form">
+                        <% if (isAuth) { %>
+                            <form action="/prenotazioni/invia" method="POST" id="booking-form">
+                                <input type="hidden" name="servizio" value="<%= typeof service !== 'undefined' ? service : 'noleggio' %>">
+                                
+                                <!-- Sezione Auto -->
+                                <div class="form-section">
+                                    <h4><i class="fas fa-car me-2"></i>Scegli la tua auto</h4>
+                                    <div class="row">
+                                        <% if (typeof auto !== 'undefined' && auto.length > 0) { %>
+                                            <% auto.forEach(function(car, index) { %>
+                                                <div class="col-md-6 col-lg-4 mb-3">
+                                                    <label for="auto_<%= car.ID_auto %>" class="auto-card card h-100">
+                                                        <input type="radio" name="auto_id" value="<%= car.ID_auto %>" id="auto_<%= car.ID_auto %>" required>
+                                                        <% if (car.immagine) { %>
+                                                            <img src="/uploads/auto/<%= car.immagine %>" class="card-img-top" alt="<%= car.marca %> <%= car.modello %>" style="height: 200px; object-fit: cover;">
+                                                        <% } %>
+                                                        <div class="card-body">
+                                                            <h6 class="card-title"><%= car.marca %> <%= car.modello %></h6>
+                                                            <p class="card-text small text-muted"><%= car.anno %> • <%= car.cilindrata || car.motore %></p>
+                                                            <div class="price-info">
+                                                                <% if (service === 'track-day') { %>
+                                                                    <strong>€<%= car.prezzo_trackday || '500' %>/giorno</strong>
+                                                                <% } else { %>
+                                                                    <strong>€<%= car.prezzo_giornaliero || '300' %>/giorno</strong>
+                                                                <% } %>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <div class="col-12">
+                                                <div class="alert alert-warning">
+                                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                                    Nessuna auto disponibile al momento. Contattaci per maggiori informazioni.
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+
+                                <!-- Sezione Date -->
+                                <div class="form-section">
+                                    <h4><i class="fas fa-calendar-alt me-2"></i>Date e Orari</h4>
+                                    <div class="row">
+                                        <% if (service === 'track-day') { %>
+                                            <!-- Solo data singola per Track Day -->
+                                            <div class="col-md-6 mb-3">
+                                                <label for="data_inizio" class="form-label">Data</label>
+                                                <input type="date" class="form-control" id="data_inizio" name="data_inizio" required>
+                                                <input type="hidden" name="data_fine" value="" id="data_fine">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="orario" class="form-label">Orario</label>
+                                                <select class="form-select" id="orario" name="orario" required>
+                                                    <option value="">Seleziona orario</option>
+                                                    <option value="09:00">09:00 - 12:00</option>
+                                                    <option value="14:00">14:00 - 17:00</option>
+                                                    <option value="10:00">10:00 - 16:00 (Giornata intera)</option>
+                                                </select>
+                                            </div>
+                                            <!-- Selezione Circuito per Track Day -->
+                                            <div class="col-12 mb-3">
+                                                <label for="circuito" class="form-label">Circuito</label>
+                                                <select class="form-select" id="circuito" name="circuito" required>
+                                                    <option value="">Seleziona circuito</option>
+                                                    <option value="Monza">Autodromo Nazionale di Monza</option>
+                                                    <option value="Imola">Autodromo Enzo e Dino Ferrari (Imola)</option>
+                                                    <option value="Mugello">Autodromo del Mugello</option>
+                                                    <option value="Misano">Misano World Circuit Marco Simoncelli</option>
+                                                    <option value="Vallelunga">Autodromo di Vallelunga</option>
+                                                    <option value="Spa-Francorchamps">Circuit de Spa-Francorchamps (Belgio)</option>
+                                                    <option value="Nurburgring">Nürburgring (Germania)</option>
+                                                    <option value="Silverstone">Silverstone Circuit (Regno Unito)</option>
+                                                </select>
+                                                <div class="form-text">
+                                                    <i class="fas fa-info-circle me-1"></i>
+                                                    Il prezzo può variare in base al circuito selezionato
+                                                </div>
+                                            </div>
+                                        <% } else { %>
+                                            <!-- Data inizio e fine per Noleggio -->
+                                            <div class="col-md-6 mb-3">
+                                                <label for="data_inizio" class="form-label">Data inizio</label>
+                                                <input type="date" class="form-control" id="data_inizio" name="data_inizio" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="data_fine" class="form-label">Data fine</label>
+                                                <input type="date" class="form-control" id="data_fine" name="data_fine" required>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+
+                                <!-- Sezione Dati Personali -->
+                                <div class="form-section">
+                                    <h4><i class="fas fa-user me-2"></i>Dati Personali</h4>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="nome" class="form-label">Nome</label>
+                                            <input type="text" class="form-control" id="nome" name="nome" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="cognome" class="form-label">Cognome</label>
+                                            <input type="text" class="form-control" id="cognome" name="cognome" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="telefono" class="form-label">Telefono</label>
+                                            <input type="tel" class="form-control" id="telefono" name="telefono" required>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="email" name="email" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Note aggiuntive -->
+                                <div class="form-section">
+                                    <h4><i class="fas fa-comment me-2"></i>Note aggiuntive (opzionale)</h4>
+                                    <textarea class="form-control" name="note" rows="3" placeholder="Inserisci eventuali richieste speciali o note..."></textarea>
+                                </div>
+
+                                <!-- Privacy e Submit -->
+                                <div class="form-section">
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="privacy" name="privacy" required>
+                                        <label class="form-check-label" for="privacy">
+                                            Accetto il trattamento dei dati personali secondo la <a href="/privacy" target="_blank">Privacy Policy</a>
+                                        </label>
+                                    </div>
+                                    <div class="form-check mb-4">
+                                        <input class="form-check-input" type="checkbox" id="termini" name="termini" required>
+                                        <label class="form-check-label" for="termini">
+                                            Accetto i <a href="/termini" target="_blank">Termini e Condizioni</a> del servizio
+                                        </label>
+                                    </div>
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-teal btn-lg">
+                                            <i class="fas fa-check me-2"></i>Conferma prenotazione
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        <% } else { %>
+                            <div class="text-center py-5">
+                                <i class="fas fa-lock service-icon"></i>
+                                <h3>Accesso richiesto</h3>
+                                <p class="lead">Devi effettuare l'accesso per poter prenotare i nostri servizi.</p>
+                                <a href="/auth/login?redirect=/prenotazioni<%= typeof service !== 'undefined' ? '?service=' + service : '' %>" class="btn btn-teal btn-lg">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Accedi
+                                </a>
+                                <p class="mt-3">
+                                    Non hai un account? <a href="/auth/register">Registrati qui</a>
+                                </p>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('../partials/footer') %>
+    <%- include('../partials/scripts') %>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const autoCards = document.querySelectorAll('.auto-card');
+            const circuitCards = document.querySelectorAll('.circuit-card');
+            const dateInputs = document.querySelectorAll('input[type="date"]');
+            
+            // Handle auto selection
+            autoCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    autoCards.forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+            
+            // Handle circuit selection
+            circuitCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    circuitCards.forEach(c => c.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            dateInputs.forEach(input => {
+                input.min = today;
+            });
+            
+            // Validate end date is after start date
+            const startDate = document.getElementById('data_inizio');
+            const endDate = document.getElementById('data_fine');
+            const serviceType = '<%= service %>';
+            
+            if (startDate && endDate && serviceType !== 'track-day') {
+                startDate.addEventListener('change', function() {
+                    endDate.min = this.value;
+                    if (endDate.value && endDate.value < this.value) {
+                        endDate.value = this.value;
+                    }
+                });
+            }
+            
+            // Per Track Day, imposta la data di fine uguale alla data di inizio
+            if (serviceType === 'track-day' && startDate) {
+                startDate.addEventListener('change', function() {
+                    if (endDate) {
+                        endDate.value = this.value;
+                    }
+                });
+                
+                // Imposta subito il valore al caricamento se data_inizio ha già un valore
+                if (startDate.value && endDate) {
+                    endDate.value = startDate.value;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -15,8 +15,10 @@ const insertPrenotazione = (prenotazione) => {
             prenotazione.ID_auto,
             prenotazione.tipologia,
             prenotazione.data,
-            prenotazione.circuito
+            prenotazione.circuito || null  // Se non c'è circuito, inserisci NULL
         ];
+        
+        console.log('Inserimento prenotazione:', params);
         
         db.run(sql, params, function(err) {
             if (err) {
@@ -30,7 +32,7 @@ const insertPrenotazione = (prenotazione) => {
     });
 };
 
-// Ottiene tutte le prenotazioni
+// Ottiene tutte le prenotazioni con JOIN per mostrare info complete
 const getAllPrenotazioni = () => {
     return new Promise((resolve, reject) => {
         const sql = `
@@ -39,7 +41,6 @@ const getAllPrenotazioni = () => {
                 p.tipologia,
                 p.data,
                 p.circuito,
-                p.stato,
                 u.nome as nome_utente,
                 u.cognome as cognome_utente,
                 u.email,
@@ -47,7 +48,7 @@ const getAllPrenotazioni = () => {
                 a.modello,
                 a.nazione
             FROM PRENOTAZIONI p
-            JOIN UTENTI u ON p.ID_utente = u.ID_utente
+            JOIN UTENTE u ON p.ID_utente = u.ID_utente
             JOIN AUTO a ON p.ID_auto = a.ID_auto
             ORDER BY p.data DESC
         `;
@@ -72,7 +73,6 @@ const getPrenotazioniByUserId = (userId) => {
                 p.tipologia,
                 p.data,
                 p.circuito,
-                p.stato,
                 a.marca,
                 a.modello,
                 a.nazione
@@ -109,26 +109,9 @@ const deletePrenotazione = (prenotazioneId) => {
     });
 };
 
-// Approva una prenotazione
-const approvaPrenotazione = (prenotazioneId) => {
-    return new Promise((resolve, reject) => {
-        const sql = 'UPDATE PRENOTAZIONI SET stato = ? WHERE ID_prenotazione = ?';
-        
-        db.run(sql, ['confermata', prenotazioneId], function(err) {
-            if (err) {
-                console.error('Errore nell\'approvazione della prenotazione:', err);
-                reject(err);
-            } else {
-                resolve(this.changes);
-            }
-        });
-    });
-};
-
 module.exports = {
     insertPrenotazione,
     getAllPrenotazioni,
     getPrenotazioniByUserId,
-    deletePrenotazione,
-    approvaPrenotazione
+    deletePrenotazione
 };
