@@ -8,7 +8,7 @@ L'admin dell'applicazione può visualizzare gli utenti registrati con le relativ
 L'accesso con le credenziali: 
 _______________________________________________________
 
-• email: admin@gmail.com
+• email: admin@dreamdrive.com
 • password: admin1234
 
 _______________________________________________________
