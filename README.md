@@ -41,10 +41,6 @@ npm install
 
 far partire l'applicazione tramite:
 
-npm start
-
-aprire l'applicazione tramite:
-
 npm run dev
 
 una volta fatta partire verrà creato un link del tipo http://localhost:3000, al quale sarà disponibile l'applicazione web.
