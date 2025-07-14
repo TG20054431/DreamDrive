@@ -10,7 +10,17 @@ L'admin dell'applicazione può visualizzare gli utenti registrati con le relativ
 
 # 📊 Dashboard Admin
 
-La dashboard dell'admin permette di visualizzare le informazioni inerenti ai vari utenti registrati, come ad esempio nome utente, importo pagato, data prenotazione; è presente inoltre la possibilità di ricerca tramite filtri delle informazioni inerenti una cerchia di utenti più ristretta e dettagliata.
+La dashboard admin presenta una sidebar con 5 pulsanti (Prenotazioni, Auto, Utenti, Recensioni, Contatti) dove:
+
+* Prenotazioni: permette all'admin di controllare il numero totale di prenotazioni, ID dell'utente con relativa mail, tipo di servizio, auto scelta e data prevista dell'evento, dando anche la possibilità di cancellarle.
+
+* Auto: permette all'admin di aggiungere, eliminare o modificare un auto. E' possibile caricare immagini andando a riempire campi descrittivi inerenti a marca, modello, nazione e motore.
+  
+* Utenti: permette all'admin di visionare gli utenti registrati, dando anche la possibilità di eliminarli ( a propria discrezione ).
+
+* Recensioni: permette all'admin di visionare le varie recensioni, dando la possibilità di eliminarle.
+
+* Contatti: permette all'admin di leggere i vari messaggi lasciati dagli utenti nel form dedicato, potendo anche rispondere o cancellarli.
 
 # 👨‍💻 Utente registrato
 
