@@ -79,12 +79,6 @@
                                         </div>
                                         <div class="stat-label">Track Day</div>
                                     </div>
-                                    <div class="stat-card">
-                                        <div class="stat-value" id="today-bookings">
-                                            <%= typeof prenotazioni !== 'undefined' ? prenotazioni.filter(p => new Date(p.data).toDateString() === new Date().toDateString()).length : 0 %>
-                                        </div>
-                                        <div class="stat-label">Oggi</div>
-                                    </div>
                                 </div>
                                 
                                 <div class="table-responsive booking-table">
