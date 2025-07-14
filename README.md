@@ -39,6 +39,8 @@ L'utente non registrato ha la possibilità di navigare all'interno del sito per 
 
 git clone https://github.com/TG20054431/DreamDrive-Progetto.git
 
+# Entrare nella directory del progetto
+
 # Installazione delle dipendenze
 
 npm install
