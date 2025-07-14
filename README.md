@@ -57,13 +57,13 @@ L'applicazione sarà disponibile al link:  *http://localhost:3000*
 
 **Admin**
 
-* • Email: admin@dreamdrive.com 
-* • Password: admin 1234
+* Email: admin@dreamdrive.com 
+* Password: admin 1234
 
 **Utente**
 
-* • Email: claudio.rossi@gmail.com
-* • Password: claudio1234
+* Email: claudio.rossi@gmail.com
+* Password: claudio1234
 
 # 🙋🏻‍♂️ Autore
 
