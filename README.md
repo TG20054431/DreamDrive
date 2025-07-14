@@ -12,14 +12,6 @@ L'admin dell'applicazione può visualizzare gli utenti registrati con le relativ
 
 La dashboard dell'admin permette di visualizzare le informazioni inerenti ai vari utenti registrati, come ad esempio nome utente, importo pagato, data prenotazione; è presente inoltre la possibilità di ricerca tramite filtri delle informazioni inerenti una cerchia di utenti più ristretta e dettagliata.
 
-L'accesso con le credenziali: 
-_______________________________________________________
-
-• email: admin@dreamdrive.com
-• password: admin1234
-
-_______________________________________________________
-
 # 👨‍💻 Utente registrato - Funzionalità
 
 L'utente, una volta registrato può selezionare il servizio che più desidera, scegliendo l'auto e il numero di giorni per il noleggio o l'auto e il circuito in caso di track-day 
@@ -70,10 +62,8 @@ L'applicazione sarà disponibile al link:  *http://localhost:3000*
 
 **Utente**
 
-• Email: claudio.rossi@gmail.com
-• Password: claudio1234
-
-
+* • Email: claudio.rossi@gmail.com
+* • Password: claudio1234
 
 # 🙋🏻‍♂️ Autore
 
