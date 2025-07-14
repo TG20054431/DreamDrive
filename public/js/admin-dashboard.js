@@ -312,27 +312,67 @@ document.addEventListener('DOMContentLoaded', function() {
     // Gestione eliminazione utente
     document.addEventListener('click', function(e) {
         if (e.target.closest('.delete-user')) {
+            e.preventDefault();
+            
             const button = e.target.closest('.delete-user');
             const userId = button.dataset.userId;
             const userName = button.dataset.userName;
             
-            if (confirm(`Sei sicuro di voler eliminare l'utente ${userName}? Questa azione non può essere annullata.`)) {
-                // Crea e invia form per eliminazione
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/admin/utenti/elimina';
-                
-                const userIdInput = document.createElement('input');
-                userIdInput.type = 'hidden';
-                userIdInput.name = 'userId';
-                userIdInput.value = userId;
-                
-                form.appendChild(userIdInput);
-                document.body.appendChild(form);
-                form.submit();
+            // Trova l'email dell'utente dalla tabella (4° colonna)
+            const row = button.closest('tr');
+            const userEmail = row.cells[3].textContent; // Indice 3 = colonna email
+            
+            // Popola il modal con i dati dell'utente
+            const deleteUserIdInput = document.getElementById('delete_user_id');
+            const deleteUserNameSpan = document.getElementById('delete_user_name');
+            const deleteUserEmailSpan = document.getElementById('delete_user_email');
+            
+            if (deleteUserIdInput) deleteUserIdInput.value = userId;
+            if (deleteUserNameSpan) deleteUserNameSpan.textContent = userName;
+            if (deleteUserEmailSpan) deleteUserEmailSpan.textContent = userEmail;
+            
+            // Mostra il modal
+            const deleteUserModal = document.getElementById('deleteUserModal');
+            if (deleteUserModal) {
+                if (typeof bootstrap !== 'undefined') {
+                    const deleteModal = new bootstrap.Modal(deleteUserModal);
+                    deleteModal.show();
+                } else {
+                    // Fallback manuale
+                    showModalManually(deleteUserModal);
+                }
+            } else {
+                console.error('Modal deleteUserModal non trovato');
             }
         }
     });
+
+    // Chiusura modal eliminazione utente
+    const deleteUserModal = document.getElementById('deleteUserModal');
+    if (deleteUserModal) {
+        const closeButtons = deleteUserModal.querySelectorAll('.btn-close, [data-bs-dismiss="modal"]');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (typeof bootstrap !== 'undefined') {
+                    const modalInstance = bootstrap.Modal.getInstance(deleteUserModal);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    }
+                } else {
+                    hideModalManually(deleteUserModal);
+                }
+            });
+        });
+    }
+
+    // Gestione submit del form di eliminazione utente
+    const deleteUserForm = document.getElementById('deleteUserForm');
+    if (deleteUserForm) {
+        deleteUserForm.addEventListener('submit', function(e) {
+            console.log('Eliminazione utente in corso...');
+            // Il form viene inviato normalmente al server
+        });
+    }
 
     console.log('Admin Dashboard JS inizializzato correttamente');
 });

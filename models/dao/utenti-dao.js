@@ -135,6 +135,58 @@ class UtentiDAO {
       });
     });
   }
+
+  // Elimina un utente e tutti i suoi dati correlati
+  deleteUser(userId) {
+    return new Promise((resolve, reject) => {
+      console.log(`Tentativo di eliminazione utente con ID: ${userId}`);
+      
+      // Prima elimina tutte le recensioni dell'utente
+      const deleteRecensioniSql = 'DELETE FROM RECENSIONI WHERE ID_utente = ?';
+      
+      this.db.run(deleteRecensioniSql, [userId], (err) => {
+        if (err) {
+          console.error('Errore nell\'eliminazione recensioni:', err);
+          reject(err);
+          return;
+        }
+        
+        console.log('Recensioni dell\'utente eliminate');
+        
+        // Poi elimina tutte le prenotazioni dell'utente
+        const deletePrenotazioniSql = 'DELETE FROM PRENOTAZIONI WHERE ID_utente = ?';
+        
+        this.db.run(deletePrenotazioniSql, [userId], (err) => {
+          if (err) {
+            console.error('Errore nell\'eliminazione prenotazioni:', err);
+            reject(err);
+            return;
+          }
+          
+          console.log('Prenotazioni dell\'utente eliminate');
+          
+          // Infine elimina l'utente
+          const deleteUserSql = 'DELETE FROM UTENTE WHERE ID_utente = ?';
+          
+          this.db.run(deleteUserSql, [userId], function(err) {
+            if (err) {
+              console.error('Errore nell\'eliminazione utente:', err);
+              reject(err);
+            } else {
+              console.log(`Query eseguita. Righe modificate: ${this.changes}`);
+              if (this.changes > 0) {
+                console.log(`Utente con ID ${userId} eliminato con successo`);
+                resolve(true);
+              } else {
+                console.log(`Nessun utente trovato con ID ${userId}`);
+                resolve(false);
+              }
+            }
+          });
+        });
+      });
+    });
+  }
 }
 
 module.exports = new UtentiDAO(db);

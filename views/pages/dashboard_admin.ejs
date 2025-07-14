@@ -386,6 +386,42 @@
                             </div>
                         <% } %>
 
+                        <!-- Modal per eliminazione utente -->
+                        <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteUserModalLabel">Conferma Eliminazione Utente</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="alert alert-warning">
+                                            <i class="bi bi-exclamation-triangle"></i>
+                                            <strong>Attenzione!</strong> Questa azione non può essere annullata.
+                                        </div>
+                                        <p>Sei sicuro di voler eliminare l'utente:</p>
+                                        <ul>
+                                            <li><strong>Nome:</strong> <span id="delete_user_name"></span></li>
+                                            <li><strong>Email:</strong> <span id="delete_user_email"></span></li>
+                                        </ul>
+                                        <p class="text-danger">
+                                            <small>Tutti i dati associati (prenotazioni, recensioni, ecc.) verranno eliminati permanentemente.</small>
+                                        </p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                                        <form id="deleteUserForm" action="/admin/utenti/elimina" method="POST" style="display: inline;">
+                                            <input type="hidden" name="userId" id="delete_user_id">
+                                            <input type="hidden" name="redirect" value="/admin/dashboard/utenti">
+                                            <button type="submit" class="btn btn-danger">
+                                                <i class="bi bi-trash"></i> Elimina Utente
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Mostra sezione recensioni solo se currentSection === 'recensioni' -->
                         <% if (currentSection === 'recensioni') { %>
                             <!-- Sezione Recensioni -->

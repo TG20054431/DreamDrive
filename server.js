@@ -11,7 +11,7 @@ const flash = require("express-flash");
 const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const utenteRouter = require('./routes/utente');
-const adminRouter = require('./routes/admin');
+const adminRoutes = require('./routes/admin');
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -72,7 +72,7 @@ app.use((req, res, next) => {
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/utente', utenteRouter);
-app.use('/admin', adminRouter);
+app.use('/admin', adminRoutes);
 
 // Avvio del server
 app.listen(PORT, () => {

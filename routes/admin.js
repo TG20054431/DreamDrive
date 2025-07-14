@@ -451,4 +451,43 @@ router.post('/contatti/:id/elimina', async (req, res) => {
   }
 });
 
+// Eliminazione di un utente
+router.post('/utenti/elimina', middleware.isAdmin, async (req, res) => {
+    const redirectUrl = req.body.redirect || '/admin/dashboard/utenti';
+    
+    try {
+        const userId = req.body.userId;
+        
+        console.log('Request body:', req.body); // Debug
+        console.log('User ID da eliminare:', userId);
+        console.log('Redirect URL:', redirectUrl);
+        
+        if (!userId) {
+            req.flash('error', 'ID utente mancante');
+            return res.redirect(redirectUrl);
+        }
+
+        // Verifica che l'utente non stia eliminando se stesso
+        if (userId == req.user.ID_utente) {
+            req.flash('error', 'Non puoi eliminare il tuo stesso account');
+            return res.redirect(redirectUrl);
+        }
+
+        // Usa il DAO per eliminare l'utente (che gestisce automaticamente i record correlati)
+        const result = await utentiDAO.deleteUser(userId);
+        
+        if (result) {
+            req.flash('success', 'Utente eliminato con successo');
+        } else {
+            req.flash('error', 'Utente non trovato');
+        }
+        
+    } catch (error) {
+        console.error('Errore durante eliminazione utente:', error);
+        req.flash('error', 'Errore durante l\'eliminazione dell\'utente');
+    }
+    
+    res.redirect(redirectUrl);
+});
+
 module.exports = router;
