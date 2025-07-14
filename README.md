@@ -1,6 +1,6 @@
 # 🏁 DreamDrive 
 
-Applicazione web che permette la prenotazione di Noleggio Auto o Track-Day in circuiti autorizzati.
+Applicazione web che permette la prenotazione di Noleggio Auto o Track-Day in circuiti autorizzati. E' presente una vasta gamma di auto sportive e di lusso 
 
 # 👁 Admin
 
