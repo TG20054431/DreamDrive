@@ -35,20 +35,20 @@ L'utente non registrato ha la possibilità di navigare all'interno del sito per 
 
 # 📥 Procedura di installazione
 ```bash
-# Clonare la repo di GitHub
+# Clonazione la repo di GitHub
 
-git clone
+git clone https://github.com/TG20054431/DreamDrive-Progetto.git
 
-Da terminale, nella cartella del progetto, per procedere con l'installazione, è necessario installare le dipendenze necessarie tramite:
+# Installazione delle dipendenze
 
 npm install
 
-far partire l'applicazione tramite:
+# Avvio applicazione
 
 npm run dev
 
-```bash
-una volta fatta partire verrà creato un link del tipo http://localhost:3000, al quale sarà disponibile l'applicazione web.
+```
+L'applicazione sarà disponibile al link:  *http://localhost:3000*
 
 # 🙋🏻‍♂️ Autore
 
