@@ -45,11 +45,6 @@ npm run dev
 
 una volta fatta partire verrà creato un link del tipo http://localhost:3000, al quale sarà disponibile l'applicazione web.
 
-_______________________________________________________
-
-‼️NOTA: appena fatta partire l'applicazione, bisognerà eseguire il login/registrazione con le credenziali di prova di un utente, oppure visitare il sito come un utente non navigato e non registrato.
-_______________________________________________________
-
 # 🙋🏻‍♂️ Autore
 
 Timothy Giolito, studente di Informatica presso l'Università del Piemonte Orientale, sede di Vercelli.
