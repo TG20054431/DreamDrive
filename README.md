@@ -26,7 +26,7 @@ La dashboard admin presenta una sidebar con 5 pulsanti (Prenotazioni, Auto, Uten
 
 L'utente, una volta registrato può selezionare il servizio che più desidera, scegliendo l'auto e il numero di giorni per il noleggio o l'auto e il circuito in caso di track-day 
 
-# 🪪 Profilo utente
+# 🪪 Dashboard Utente
 
 All'interno del profilo utente sono disponibili le informazioni riguardo l'utente loggato, come email e prenotazioni attive con relativi importi e possibilità di cancellazione delle stesse. 
 E' presente una dashboard utente che contiene il tutto; inoltre se non ci sono prenotazioni attive, è possibile effettuare la prima prenotazione direttamente dalla dashboard utente. 
