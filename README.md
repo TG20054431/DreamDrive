@@ -41,6 +41,15 @@ git clone https://github.com/TG20054431/DreamDrive-Progetto.git
 
 # Entrare nella directory del progetto
 
+cd DreamDrive
+
+# In caso non fosse presente, bisogna configurare un file .env
+
+PORT=3000
+DB_NAME="dreamdrive.db"
+SECRET_SESSION="dreamdrive"
+NODE_ENV="development"
+
 # Installazione delle dipendenze
 
 npm install
@@ -51,6 +60,12 @@ npm run dev
 
 ```
 L'applicazione sarà disponibile al link:  *http://localhost:3000*
+
+# Account di test
+
+**Utente**
+
+**Admin**
 
 # 🙋🏻‍♂️ Autore
 
