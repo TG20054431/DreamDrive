@@ -289,5 +289,50 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Gestione cambio ruolo utente
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.change-role')) {
+            const button = e.target.closest('.change-role');
+            const userId = button.dataset.userId;
+            const userName = button.dataset.userName;
+            const currentRole = button.dataset.currentRole;
+            
+            document.getElementById('change_user_id').value = userId;
+            document.getElementById('change_user_name').textContent = userName;
+            
+            // Preseleziona il ruolo opposto
+            const newRoleSelect = document.getElementById('new_role');
+            newRoleSelect.value = currentRole === 'admin' ? 'cliente' : 'admin';
+            
+            const modal = new bootstrap.Modal(document.getElementById('changeRoleModal'));
+            modal.show();
+        }
+    });
+
+    // Gestione eliminazione utente
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.delete-user')) {
+            const button = e.target.closest('.delete-user');
+            const userId = button.dataset.userId;
+            const userName = button.dataset.userName;
+            
+            if (confirm(`Sei sicuro di voler eliminare l'utente ${userName}? Questa azione non può essere annullata.`)) {
+                // Crea e invia form per eliminazione
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/admin/utenti/elimina';
+                
+                const userIdInput = document.createElement('input');
+                userIdInput.type = 'hidden';
+                userIdInput.name = 'userId';
+                userIdInput.value = userId;
+                
+                form.appendChild(userIdInput);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    });
+
     console.log('Admin Dashboard JS inizializzato correttamente');
 });

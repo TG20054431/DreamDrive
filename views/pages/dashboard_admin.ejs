@@ -31,6 +31,12 @@
                                     <span>Auto</span>
                                 </a>
                             </li>
+                            <li class="sidebar-item <%= currentSection === 'utenti' ? 'active' : '' %>">
+                                <a href="/admin/dashboard/utenti" class="sidebar-link">
+                                    <i class="bi bi-people"></i>
+                                    <span>Utenti</span>
+                                </a>
+                            </li>
                             <li class="sidebar-item <%= currentSection === 'recensioni' ? 'active' : '' %>">
                                 <a href="/admin/dashboard/recensioni" class="sidebar-link">
                                     <i class="bi bi-star"></i>
@@ -321,6 +327,61 @@
                                             </form>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                        <% } %>
+
+                        <!-- Mostra sezione utenti solo se currentSection === 'utenti' -->
+                        <% if (currentSection === 'utenti') { %>
+                            <!-- Sezione Utenti -->
+                            <div class="content-section active" id="utenti-section">
+                                <h2 class="section-title">Gestione Utenti</h2>
+                                <!-- Users Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Nome</th>
+                                                <th>Cognome</th>
+                                                <th>Email</th>
+                                                <th>Data Nascita</th>
+                                                <th>Elimina</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (typeof utenti !== 'undefined' && utenti.length > 0) { %>
+                                                <% utenti.forEach(function(utente) { %>
+                                                    <tr>
+                                                        <td><%= utente.ID_utente %></td>
+                                                        <td><%= utente.nome %></td>
+                                                        <td><%= utente.cognome %></td>
+                                                        <td><%= utente.email %></td>
+                                                        <td><%= new Date(utente.data_nascita).toLocaleDateString('it-IT') %></td>
+                                                        <td>
+                                                            <div class="action-buttons">
+                                                                <% if (utente.ID_utente !== user.ID_utente) { %>
+                                                                    <button type="button" 
+                                                                            class="btn btn-sm btn-outline-danger delete-user" 
+                                                                            data-user-id="<%= utente.ID_utente %>"
+                                                                            data-user-name="<%= utente.nome %> <%= utente.cognome %>"
+                                                                            title="Elimina utente">
+                                                                        <i class="bi bi-trash"></i>
+                                                                    </button>
+                                                                <% } else { %>
+                                                                    <span class="text-muted small">Account corrente</span>
+                                                                <% } %>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                <% }); %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="6" class="text-center">Nessun utente trovato</td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         <% } %>
