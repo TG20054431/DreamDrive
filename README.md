@@ -35,7 +35,7 @@ L'utente non registrato ha la possibilità di navigare all'interno del sito per 
 
 # 🌀 Procedura di installazione
 
-📁 Da terminale, nella cartella del progetto, per procedere con l'installazione, è necessario installare le dipendenze necessarie tramite:
+Da terminale, nella cartella del progetto, per procedere con l'installazione, è necessario installare le dipendenze necessarie tramite:
 
 npm install
 
