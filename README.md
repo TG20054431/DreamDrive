@@ -63,9 +63,17 @@ L'applicazione sarà disponibile al link:  *http://localhost:3000*
 
 # Account di test
 
+**Admin**
+
+• Email: admin@dreamdrive.com 
+• Password: admin 1234
+
 **Utente**
 
-**Admin**
+• Email: claudio.rossi@gmail.com
+• Password: claudio1234
+
+
 
 # 🙋🏻‍♂️ Autore
 
