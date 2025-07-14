@@ -6,7 +6,8 @@ Applicazione web che permette la prenotazione di Noleggio Auto o Track-Day in ci
 
 # 👁 Admin
 
-L'admin dell'applicazione può visualizzare gli utenti registrati con le relative prenotazioni attive, con la facoltà di eliminare le prenotazioni e gli utenti. 
+L'admin dell'applicazione può visualizzare gli utenti registrati con le relative prenotazioni attive, visionare e cancellare le recenzioni, aggiungere auto al database e alla gallery dedicata, rispondere ai contatti Q&A, il tutto attraverso la **Dashborard Admin**.
+
 L'accesso con le credenziali: 
 _______________________________________________________
 
@@ -14,8 +15,6 @@ _______________________________________________________
 • password: admin1234
 
 _______________________________________________________
-
-da (all'admin) di visionare solamente la propria dashboard. 
 
 # 📊 Dashboard Admin
 
