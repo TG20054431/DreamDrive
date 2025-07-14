@@ -20,21 +20,24 @@ _______________________________________________________
 
 _______________________________________________________
 
-# 👨‍💻 Utente registrato 
+# 👨‍💻 Utente registrato - Funzionalità
 
 L'utente, una volta registrato può selezionare il servizio che più desidera, scegliendo l'auto e il numero di giorni per il noleggio o l'auto e il circuito in caso di track-day 
 
-Per tutti e due i servizi vengono salvate le varie informazioni in una tabella del database che contiene data e ora della prenotazione, tipo di servizio, importo del pagamento e auto scelta.
-
 # 🪪 Profilo utente
 
-All'interno del profilo utente sono disponibili le informazioni riguardo l'utente loggato, come email e prenotazioni attive, con un resoconto della/e stessa/e.
+All'interno del profilo utente sono disponibili le informazioni riguardo l'utente loggato, come email e prenotazioni attive con relativi importi e possibilità di cancellazione delle stesse. 
+E' presente una dashboard utente che contiene il tutto; inoltre se non ci sono prenotazioni attive, è possibile effettuare la prima prenotazione direttamente dalla dashboard utente. 
 
 # 👤 Utente non registrato 
 
-L'utente non registrato ha la possibilità di navigare all'interno del sito per scoprire le tipologie di servizio, visionare una gallery dove sono contenute le varie auto disponibili, leggere le recensioni degli utenti, visionare un listino prezzi con relative auto disponibili e creare un nuovo account.
+L'utente non registrato ha la possibilità di navigare all'interno del sito per scoprire le tipologie di servizio, visionare una gallery dove sono contenute le varie auto disponibili con relativi prezzi calcolati in base al tipo di servizio, leggere le recensioni degli utenti e creare un nuovo account.
 
 # 📥 Procedura di installazione
+```bash
+# Clonare la repo di GitHub
+
+git clone
 
 Da terminale, nella cartella del progetto, per procedere con l'installazione, è necessario installare le dipendenze necessarie tramite:
 
