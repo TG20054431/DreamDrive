@@ -26,6 +26,7 @@ E' presente una dashboard utente che contiene il tutto; inoltre se non ci sono p
 L'utente non registrato ha la possibilità di navigare all'interno del sito per scoprire le tipologie di servizio, visionare una gallery dove sono contenute le varie auto disponibili con relativi prezzi calcolati in base al tipo di servizio, leggere le recensioni degli utenti e creare un nuovo account.
 
 # 📥 Procedura di installazione
+
 ```bash
 # Clonazione la repo di GitHub
 
@@ -51,9 +52,10 @@ npm install
 npm run dev
 
 ```
+
 L'applicazione sarà disponibile al link:  *http://localhost:3000*
 
-# Account di test
+# 🛠 Account di test
 
 **Admin**
 
