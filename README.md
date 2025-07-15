@@ -77,6 +77,10 @@ L'applicazione sarà disponibile, in locale,  al link:  *http://localhost:3000*
 * Email: marco.rossi@gmail.com
 * Password: marco1234
 
+# Link al video di presentazione
+
+https://youtu.be/71yw4ih7IfA
+
 # 🙋🏻‍♂️ Autore
 
 Timothy Giolito, studente di Informatica presso l'Università del Piemonte Orientale, sede di Vercelli.
