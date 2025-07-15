@@ -1,6 +1,6 @@
 # 🏁 DreamDrive 
 
-Applicazione web che permette la prenotazione di Noleggio Auto o Track-Day in circuiti autorizzati.
+Sviluppo applicazione web che permette la prenotazione di Noleggio Auto o Track-Day in circuiti autorizzati.
 
 # Funzionalità principali
 
@@ -10,13 +10,23 @@ L'admin dell'applicazione può visualizzare gli utenti registrati con le relativ
 
 # 📊 Dashboard Admin
 
-La dashboard dell'admin permette di visualizzare le informazioni inerenti ai vari utenti registrati, come ad esempio nome utente, importo pagato, data prenotazione; è presente inoltre la possibilità di ricerca tramite filtri delle informazioni inerenti una cerchia di utenti più ristretta e dettagliata.
+La dashboard admin presenta una sidebar con 5 pulsanti (Prenotazioni, Auto, Utenti, Recensioni, Contatti) dove:
+
+* Prenotazioni: permette all'admin di controllare il numero totale di prenotazioni, ID dell'utente con relativa mail, tipo di servizio, auto scelta e data prevista dell'evento, dando anche la possibilità di cancellarle.
+
+* Auto: permette all'admin di aggiungere, eliminare o modificare un auto. E' possibile caricare immagini andando a riempire campi descrittivi inerenti a marca, modello, nazione e motore.
+  
+* Utenti: permette all'admin di visionare gli utenti registrati, dando anche la possibilità di eliminarli ( a propria discrezione ).
+
+* Recensioni: permette all'admin di visionare le varie recensioni, dando la possibilità di eliminarle.
+
+* Contatti: permette all'admin di leggere i vari messaggi lasciati dagli utenti nel form dedicato, potendo anche rispondere o cancellarli.
 
 # 👨‍💻 Utente registrato
 
 L'utente, una volta registrato può selezionare il servizio che più desidera, scegliendo l'auto e il numero di giorni per il noleggio o l'auto e il circuito in caso di track-day 
 
-# 🪪 Profilo utente
+# 🪪 Dashboard Utente
 
 All'interno del profilo utente sono disponibili le informazioni riguardo l'utente loggato, come email e prenotazioni attive con relativi importi e possibilità di cancellazione delle stesse. 
 E' presente una dashboard utente che contiene il tutto; inoltre se non ci sono prenotazioni attive, è possibile effettuare la prima prenotazione direttamente dalla dashboard utente. 
@@ -30,7 +40,7 @@ L'utente non registrato ha la possibilità di navigare all'interno del sito per 
 ```bash
 # Clonazione la repo di GitHub
 
-git clone https://github.com/TG20054431/DreamDrive-Progetto.git
+git clone https://github.com/TG20054431/DreamDrive.git
 
 # Entrare nella directory del progetto
 
@@ -53,7 +63,7 @@ npm run dev
 
 ```
 
-L'applicazione sarà disponibile al link:  *http://localhost:3000*
+L'applicazione sarà disponibile, in locale,  al link:  *http://localhost:3000*
 
 # 🛠 Account di test
 
