@@ -40,7 +40,7 @@ L'utente non registrato ha la possibilità di navigare all'interno del sito per 
 ```bash
 # Clonazione la repo di GitHub
 
-git clone https://github.com/TG20054431/DreamDrive-Progetto.git
+git clone https://github.com/TG20054431/DreamDrive.git
 
 # Entrare nella directory del progetto
 
