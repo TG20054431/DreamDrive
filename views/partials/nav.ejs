@@ -6,186 +6,281 @@
         <img src="/images/logo_bianco.jpg" alt="DreamDrive" height="70" class="logo-img">
       </a>
       
-      <!-- Hamburger menu per mobile -->
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      <div class="d-flex flex-grow-1 justify-content-between">
+        <!-- Menu di navigazione principale -->
+        <div class="side-menu" id="navbarNav">
+          <div class="side-menu-header">
+            <button type="button" class="btn-close btn-close-white" id="closeMenu" aria-label="Close"></button>
+            <h5 class="text-white">Menu</h5>
+          </div>
+          
+          <!-- Links principali -->
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/auto">Le nostre Auto</a>
+            </li>
+            <li class="nav-item">
+              <% if (isAuth && user && user.ruolo === 'admin') { %>
+                <a class="nav-link admin-restricted" href="#" data-section="servizi">Servizi</a>
+              <% } else { %>
+                <a class="nav-link" href="/#servizi">Servizi</a>
+              <% } %>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/#recensioni">Recensioni</a>
+            </li>
+            <li class="nav-item">
+              <% if (isAuth && user && user.ruolo === 'admin') { %>
+                <a class="nav-link admin-restricted" href="#" data-section="contatti">Contatti</a>
+              <% } else { %>
+                <a class="nav-link" href="/#contatti">Contatti</a>
+              <% } %>
+            </li>
+            
+            <!-- Area utente - solo per utenti loggati e SOLO SU MOBILE -->
+            <% if (isAuth) { %>
+              <li class="nav-item mt-3 d-lg-none">
+                <% if (user && user.ruolo === 'admin') { %>
+                  <a class="nav-link btn btn-teal text-white px-3" href="/admin/dashboard">
+                    <i class="fas fa-user-shield me-1"></i>Admin Panel
+                  </a>
+                <% } else { %>
+                  <a class="nav-link btn btn-teal text-white px-3" href="/dashboard">
+                    <i class="fas fa-user me-1"></i>Area Personale
+                  </a>
+                <% } %>
+              </li>
+              <li class="nav-item mt-2 d-lg-none">
+                <a class="nav-link btn btn-outline-light px-3 logout-btn" href="/auth/logout">
+                  <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </a>
+              </li>
+            <% } %>
+          </ul>
+        </div>
+        
+        <!-- Pulsanti autenticazione (sempre a destra) -->
+        <div class="auth-container d-none d-lg-flex align-items-center">
+          <% if (isAuth) { %>
+            <div class="d-flex">
+              <% if (user && user.ruolo === 'admin') { %>
+                <a class="btn btn-teal text-white px-3 me-2" href="/admin/dashboard">
+                  <i class="fas fa-user-shield me-1"></i>Admin Panel
+                </a>
+              <% } else { %>
+                <a class="btn btn-teal text-white px-3 me-2" href="/dashboard">
+                  <i class="fas fa-user me-1"></i>Area Personale
+                </a>
+              <% } %>
+              <a class="btn btn-outline-light px-3 logout-btn" href="/auth/logout">
+                <i class="fas fa-sign-out-alt me-1"></i>Logout
+              </a>
+            </div>
+          <% } else { %>
+            <div class="d-flex">
+              <a class="btn btn-outline-light px-3 me-2" href="/auth/login">
+                <i class="fas fa-sign-in-alt me-1"></i>Login
+              </a>
+              <a class="btn btn-teal text-white px-3" href="/auth/register">
+                <i class="fas fa-user-plus me-1"></i>Registrati
+              </a>
+            </div>
+          <% } %>
+        </div>
+      </div>
+      
+      <!-- Hamburger menu per mobile - spostato a destra -->
+      <button class="navbar-toggler ms-2" type="button" id="navToggler"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       
-      <!-- Menu di navigazione -->
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/auto">Le nostre Auto</a>
-          </li>
-          <li class="nav-item">
-            <% if (isAuth && user && user.ruolo === 'admin') { %>
-              <a class="nav-link admin-restricted" href="#" data-section="servizi">Servizi</a>
-            <% } else { %>
-              <a class="nav-link" href="/#servizi">Servizi</a>
-            <% } %>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/#recensioni">Recensioni</a>
-          </li>
-          <li class="nav-item">
-            <% if (isAuth && user && user.ruolo === 'admin') { %>
-              <a class="nav-link admin-restricted" href="#" data-section="contatti">Contatti</a>
-            <% } else { %>
-              <a class="nav-link" href="/#contatti">Contatti</a>
-            <% } %>
-          </li>
-        </ul>
-        
-        <!-- Pulsanti autenticazione - SPOSTATI DENTRO UL PER MOBILE -->
-        <ul class="navbar-nav ms-auto">
-          <% if (isAuth) { %>
-              <li class="nav-item">
-                  <% if (user && user.ruolo === 'admin') { %>
-                      <a class="nav-link btn btn-teal text-white px-3 mb-2 mb-lg-0 me-lg-2" href="/admin/dashboard">
-                          <i class="fas fa-user-shield me-1"></i>Admin Panel
-                      </a>
-                  <% } else { %>
-                      <a class="nav-link btn btn-teal text-white px-3 mb-2 mb-lg-0 me-lg-2" href="/dashboard">
-                          <i class="fas fa-user me-1"></i>Area Personale
-                      </a>
-                  <% } %>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link btn btn-outline-light px-3 logout-btn" href="/auth/logout">
-                      <i class="fas fa-sign-out-alt me-1"></i>Logout
-                  </a>
-              </li>
-          <% } else { %>
-              <li class="nav-item">
-                  <a class="nav-link btn btn-outline-light px-3 mb-2 mb-lg-0 me-lg-2" href="/auth/login">
-                      <i class="fas fa-sign-in-alt me-1"></i>Login
-                  </a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link btn btn-teal text-white px-3" href="/auth/register">
-                      <i class="fas fa-user-plus me-1"></i>Registrati
-                  </a>
-              </li>
-          <% } %>
-        </ul>
-      </div>
+      <!-- Overlay scuro quando menu laterale è aperto -->
+      <div class="menu-overlay" id="menuOverlay"></div>
     </div>
   </nav>
 </header>
 
 <style>
-    /* Stili per il pulsante logout nella navbar */
-    .navbar .logout-btn {
-        border-color: #6c757d !important;
-        color: #6c757d !important;
-        background-color: transparent !important;
+    /* Stili navbar base */
+    .navbar-toggler {
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 0.25rem 0.75rem;
+        background: transparent;
+        border-radius: 4px;
+        z-index: 1030;
+        position: relative;
     }
     
-    .navbar .logout-btn:hover {
-        background-color: transparent !important;
-        border-color: #6c757d !important;
-        color: #dc3545 !important; /* Solo il testo diventa rosso */
-        transform: scale(1.05);
-        transition: all 0.2s ease;
+    .navbar-toggler:focus {
+        box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
     }
     
-    .navbar .logout-btn:focus,
-    .navbar .logout-btn.focus {
-        background-color: transparent !important;
-        border-color: #6c757d !important;
-        color: #dc3545 !important;
-        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.85%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        width: 1.5em;
+        height: 1.5em;
     }
     
-    .navbar .logout-btn:active,
-    .navbar .logout-btn.active {
-        background-color: transparent !important;
-        border-color: #6c757d !important;
-        color: #dc3545 !important;
+    /* Menu laterale su mobile */
+    @media (max-width: 991.98px) {
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -280px; /* Inizialmente fuori dalla viewport */
+            width: 280px;
+            height: 100vh;
+            background-color: #212529;
+            z-index: 1050;
+            padding: 1rem;
+            transition: transform 0.3s ease-in-out;
+            overflow-y: auto;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .side-menu.mobile-open {
+            transform: translateX(-280px); /* Sposta il menu dentro la viewport */
+        }
+        
+        .side-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1040;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Stile per nav-items nel menu laterale */
+        .side-menu .navbar-nav {
+            width: 100%;
+        }
+        
+        .side-menu .nav-item {
+            margin-bottom: 0.5rem;
+            width: 100%;
+        }
+        
+        .side-menu .nav-link {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+        }
+        
+        .side-menu .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Separatore per i pulsanti di autenticazione nel menu mobile */
+        .side-menu .navbar-nav .nav-item.mt-3 {
+            margin-top: 1.5rem !important;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Posizione pulsante hamburger */
+        .navbar-toggler {
+            margin-left: auto;
+        }
     }
     
-    /* Stili per il pulsante login nella navbar */
-    .navbar .btn-outline-light:not(.logout-btn) {
-        border-color: #f8f9fa !important;
-        color: #f8f9fa !important;
-        background-color: transparent !important;
+    /* Desktop sempre visibile */
+    @media (min-width: 992px) {
+        .side-menu {
+            display: flex !important;
+            position: static;
+            background-color: transparent;
+            padding: 0;
+            width: auto;
+            height: auto;
+            box-shadow: none;
+            align-items: center;
+        }
+        
+        .side-menu-header {
+            display: none;
+        }
+        
+        .menu-overlay {
+            display: none;
+        }
+        
+        .navbar-toggler {
+            display: none;
+        }
     }
     
-    .navbar .btn-outline-light:not(.logout-btn):hover {
-        background-color: transparent !important;
-        border-color: #f8f9fa !important;
-        color: #20B2AA !important; /* Solo il testo diventa teal */
-        transform: scale(1.05);
-        transition: all 0.2s ease;
-    }
-    
-    .navbar .btn-outline-light:not(.logout-btn):focus,
-    .navbar .btn-outline-light:not(.logout-btn).focus {
-        background-color: transparent !important;
-        border-color: #f8f9fa !important;
-        color: #20B2AA !important;
-        box-shadow: 0 0 0 0.2rem rgba(32, 178, 170, 0.25) !important;
-    }
-    
-    .navbar .btn-outline-light:not(.logout-btn):active,
-    .navbar .btn-outline-light:not(.logout-btn).active {
-        background-color: transparent !important;
-        border-color: #f8f9fa !important;
-        color: #20B2AA !important;
-    }
-    
-    /* Stili per il pulsante teal */
+    /* Stili pulsanti */
     .btn-teal {
-        background-color: #20B2AA !important;
-        border-color: #20B2AA !important;
-        color: white !important;
+        background-color: #20B2AA;
+        border-color: #20B2AA;
+        color: white;
     }
     
     .btn-teal:hover {
-        background-color: #1a9a94 !important;
-        border-color: #1a9a94 !important;
-        color: white !important;
+        background-color: #1a9a94;
+        border-color: #1a9a94;
+        color: white;
     }
     
-    /* Stili per link admin ristretti */
+    .navbar .logout-btn {
+        border-color: #6c757d;
+        color: #fff;
+        background-color: transparent;
+    }
+    
+    .navbar .logout-btn:hover {
+        background-color: transparent;
+        border-color: #6c757d;
+        color: #dc3545;
+    }
+    
+    .navbar .btn-outline-light:not(.logout-btn) {
+        border-color: #f8f9fa;
+        color: #f8f9fa;
+        background-color: transparent;
+    }
+    
+    .navbar .btn-outline-light:not(.logout-btn):hover {
+        background-color: transparent;
+        border-color: #f8f9fa;
+        color: #20B2AA;
+    }
+    
     .admin-restricted {
         cursor: pointer;
     }
     
-    /* Stili specifici per mobile */
-    @media (max-width: 991.98px) {
-        .navbar-nav .nav-link.btn {
-            margin-bottom: 0.5rem;
-            text-align: center;
-            display: block;
-            width: 100%;
-        }
-        
-        .navbar-nav .nav-link.btn:last-child {
-            margin-bottom: 0;
-        }
-        
-        .navbar-collapse {
-            margin-top: 1rem;
-        }
-        
-        /* Rimuovi transform scale su mobile per evitare problemi di layout */
-        .navbar .logout-btn:hover,
-        .navbar .btn-outline-light:not(.logout-btn):hover {
-            transform: none;
-        }
+    /* Animazione per il menu laterale */
+    @keyframes slideIn {
+        from { transform: translateX(280px); }
+        to { transform: translateX(0); }
     }
     
-    /* Stili per desktop */
-    @media (min-width: 992px) {
-        .navbar-nav .nav-link.btn {
-            display: inline-block;
-            width: auto;
-        }
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 </style>
 
@@ -215,31 +310,93 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Gestione click sui link ristretti per admin
-    const adminRestrictedLinks = document.querySelectorAll('.admin-restricted');
-    const adminWarningModal = document.getElementById('adminWarningModal');
+    console.log('Navbar script - menu laterale');
     
-    adminRestrictedLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+    const toggler = document.getElementById('navToggler');
+    const menu = document.getElementById('navbarNav');
+    const closeBtn = document.getElementById('closeMenu');
+    const overlay = document.getElementById('menuOverlay');
+    
+    // Gestione apertura/chiusura menu
+    function openMenu() {
+        menu.classList.add('mobile-open');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Blocca lo scroll della pagina
+    }
+    
+    function closeMenu() {
+        menu.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+        document.body.style.overflow = ''; // Ripristina lo scroll della pagina
+    }
+    
+    if (toggler && menu && overlay) {
+        console.log('Elementi menu laterale trovati');
+        
+        // Click sul pulsante hamburger
+        toggler.addEventListener('click', function(e) {
             e.preventDefault();
-            
-            if (adminWarningModal) {
-                const modalInstance = new bootstrap.Modal(adminWarningModal);
-                modalInstance.show();
+            console.log('Click sul toggler');
+            openMenu();
+        });
+        
+        // Click sul pulsante chiudi
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Click sul pulsante chiudi');
+                closeMenu();
+            });
+        }
+        
+        // Click sull'overlay scuro
+        overlay.addEventListener('click', function() {
+            console.log('Click sull\'overlay');
+            closeMenu();
+        });
+        
+        // Chiudi menu al click sui link
+        const links = menu.querySelectorAll('.nav-link');
+        links.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth < 992) {
+                    console.log('Click su link: chiusura menu');
+                    closeMenu();
+                }
+            });
+        });
+        
+        // Chiudi menu al resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 992 && menu.classList.contains('mobile-open')) {
+                console.log('Resize: chiusura menu');
+                closeMenu();
             }
         });
-    });
+        
+        // Chiudi menu quando si preme ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && menu.classList.contains('mobile-open')) {
+                console.log('ESC premuto: chiusura menu');
+                closeMenu();
+            }
+        });
+    } else {
+        console.log('ERRORE: Elementi menu laterale non trovati');
+        console.log('Toggler:', !!toggler);
+        console.log('Menu:', !!menu);
+        console.log('Overlay:', !!overlay);
+    }
     
-    // Chiudi automaticamente il menu mobile quando si clicca su un link
-    const navbarToggler = document.querySelector('.navbar-toggler');
-    const navbarCollapse = document.querySelector('.navbar-collapse');
-    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    // Gestione link admin
+    const adminLinks = document.querySelectorAll('.admin-restricted');
+    const modal = document.getElementById('adminWarningModal');
     
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            // Se siamo su mobile e il menu è aperto, chiudilo
-            if (window.innerWidth < 992 && navbarCollapse.classList.contains('show')) {
-                navbarToggler.click();
+    adminLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (modal && typeof bootstrap !== 'undefined') {
+                new bootstrap.Modal(modal).show();
             }
         });
     });
