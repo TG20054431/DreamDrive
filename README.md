@@ -74,8 +74,8 @@ L'applicazione sarà disponibile, in locale,  al link:  *http://localhost:3000*
 
 **Utente**
 
-* Email: claudio.rossi@gmail.com
-* Password: claudio1234
+* Email: marco.rossi@gmail.com
+* Password: marco1234
 
 # 🙋🏻‍♂️ Autore
 
