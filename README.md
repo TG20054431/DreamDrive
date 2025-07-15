@@ -81,6 +81,10 @@ L'applicazione sarà disponibile, in locale,  al link:  *http://localhost:3000*
 
 https://youtu.be/71yw4ih7IfA
 
+# 🌐 Link deploy 
+
+https://dreamdrive-motorsport-rent.up.railway.app
+
 # 🙋🏻‍♂️ Autore
 
 Timothy Giolito, studente di Informatica presso l'Università del Piemonte Orientale, sede di Vercelli.
