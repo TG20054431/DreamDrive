@@ -10,29 +10,4 @@
 <!-- Altri script se necessari -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<script>
-// AGGIUNGI QUESTO TEMPORANEAMENTE nella route GET prima di caricare le auto:
-console.log('=== TEST INSERIMENTO AUTO ===');
-try {
-    // Prima controlla se esistono auto
-    const autoEsistenti = await autoDAO.getAllAuto();
-    console.log('Auto esistenti prima del test:', autoEsistenti.length);
-    
-    if (autoEsistenti.length === 0) {
-        console.log('Inserimento auto di test...');
-        const autoTest = {
-            marca: 'Ferrari',
-            modello: 'F8 Tributo',
-            nazione: 'Italia',
-            motore: 'V8 Turbo',
-            immagine: 'ferrari-f8.jpg'
-        };
-        
-        const result = await autoDAO.insertAuto(autoTest);
-        console.log('Auto di test inserita:', result);
-    }
-} catch (error) {
-    console.error('Errore inserimento auto test:', error);
-}
-console.log('=============================');
-</script>
+
