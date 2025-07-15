@@ -112,11 +112,14 @@
                                                         <td><%= prenotazione.circuito || '-' %></td>
                                                         <td>
                                                             <div class="action-buttons">
-                                                                <form action="/admin/prenotazioni/<%= prenotazione.ID_prenotazione %>/elimina" method="POST" style="display: inline;">
-                                                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                                                            onclick="return confirm('Sei sicuro di voler eliminare questa prenotazione?')">
-                                                                        <i class="bi bi-trash"></i>
-                                                                    </form>
+                                                                <button type="button" 
+                                                                        class="btn btn-sm btn-outline-danger delete-prenotazione" 
+                                                                        data-prenotazione-id="<%= prenotazione.ID_prenotazione %>"
+                                                                        data-prenotazione-cliente="<%= prenotazione.nome_utente %> <%= prenotazione.cognome_utente %>"
+                                                                        data-prenotazione-servizio="<%= prenotazione.tipologia %>"
+                                                                        title="Elimina prenotazione">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -187,6 +190,7 @@
                                                                         class="btn btn-sm btn-outline-danger delete-auto" 
                                                                         data-auto-id="<%= auto.ID_auto %>"
                                                                         data-auto-nome="<%= auto.marca %> <%= auto.modello %>"
+                                                                        data-auto-immagine="<%= auto.immagine %>"
                                                                         title="Elimina auto">
                                                                     <i class="bi bi-trash"></i>
                                                                 </button>
@@ -445,14 +449,14 @@
                                                         <td><%= new Date(recensione.data_creazione).toLocaleDateString('it-IT') %></td>
                                                         <td>
                                                             <div class="action-buttons">
-                                                                <form action="/admin/recensioni/elimina" method="POST" style="display: inline;">
-                                                                    <input type="hidden" name="recensioneId" value="<%= recensione.ID_recensione %>">
-                                                                    <button type="submit" 
-                                                                            class="btn btn-sm btn-outline-danger" 
-                                                                            onclick="return confirm('Sei sicuro di voler eliminare questa recensione di <%= recensione.nome_utente %>?')">
-                                                                        <i class="bi bi-trash"></i>
-                                                                    </button>
-                                                                </form>
+                                                                <button type="button" 
+                                                                        class="btn btn-sm btn-outline-danger delete-recensione" 
+                                                                        data-recensione-id="<%= recensione.ID_recensione %>"
+                                                                        data-recensione-utente="<%= recensione.nome_utente || 'Anonimo' %>"
+                                                                        data-recensione-contenuto="<%= recensione.contenuto.substring(0, 50) %>..."
+                                                                        title="Elimina recensione">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -524,13 +528,14 @@
                                                                 <a href="mailto:<%= contatto.email %>" class="btn btn-sm btn-outline-info" title="Rispondi via email">
                                                                     <i class="bi bi-reply"></i>
                                                                 </a>
-                                                                <form action="/admin/contatti/<%= contatto.ID_contatto %>/elimina" method="POST" style="display: inline;">
-                                                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
-                                                                            onclick="return confirm('Sei sicuro di voler eliminare questo contatto?')"
-                                                                            title="Elimina contatto">
-                                                                        <i class="bi bi-trash"></i>
-                                                                    </button>
-                                                                </form>
+                                                                <button type="button" 
+                                                                        class="btn btn-sm btn-outline-danger delete-contatto" 
+                                                                        data-contatto-id="<%= contatto.ID_contatto %>"
+                                                                        data-contatto-email="<%= contatto.email %>"
+                                                                        data-contatto-data="<%= new Date(contatto.data).toLocaleDateString('it-IT') %>"
+                                                                        title="Elimina contatto">
+                                                                    <i class="bi bi-trash"></i>
+                                                                </button>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -621,5 +626,132 @@
     <%- include('../partials/footer') %>
     <%- include('../partials/scripts') %>
     <script src="/js/admin-dashboard.js"></script>
+    
+    <!-- Modal per eliminazione prenotazione -->
+    <div class="modal fade" id="deletePrenotazioneModal" tabindex="-1" aria-labelledby="deletePrenotazioneModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deletePrenotazioneModalLabel">Conferma Eliminazione Prenotazione</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Attenzione!</strong> Questa azione non può essere annullata.
+                    </div>
+                    <p>Sei sicuro di voler eliminare la prenotazione:</p>
+                    <ul>
+                        <li><strong>Cliente:</strong> <span id="delete_prenotazione_cliente"></span></li>
+                        <li><strong>Servizio:</strong> <span id="delete_prenotazione_servizio"></span></li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <form id="deletePrenotazioneForm" action="/admin/prenotazioni/0/elimina" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Elimina Prenotazione
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per eliminazione auto -->
+    <div class="modal fade" id="deleteAutoModal" tabindex="-1" aria-labelledby="deleteAutoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteAutoModalLabel">Conferma Eliminazione Auto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Attenzione!</strong> Questa azione non può essere annullata.
+                    </div>
+                    <p>Sei sicuro di voler eliminare l'auto:</p>
+                    <ul>
+                        <li><strong>Modello:</strong> <span id="delete_auto_nome"></span></li>
+                    </ul>
+                    <p class="text-danger">
+                        <small>L'immagine associata verrà eliminata permanentemente dal server.</small>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <form id="deleteAutoForm" action="/admin/auto/0/delete" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Elimina Auto
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per eliminazione recensione -->
+    <div class="modal fade" id="deleteRecensioneModal" tabindex="-1" aria-labelledby="deleteRecensioneModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteRecensioneModalLabel">Conferma Eliminazione Recensione</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Attenzione!</strong> Questa azione non può essere annullata.
+                    </div>
+                    <p>Sei sicuro di voler eliminare la recensione di:</p>
+                    <ul>
+                        <li><strong>Utente:</strong> <span id="delete_recensione_utente"></span></li>
+                        <li><strong>Contenuto:</strong> <span id="delete_recensione_contenuto"></span></li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <form id="deleteRecensioneForm" action="/admin/recensioni/elimina" method="POST" style="display: inline;">
+                        <input type="hidden" name="recensioneId" id="delete_recensione_id">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Elimina Recensione
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per eliminazione contatto -->
+    <div class="modal fade" id="deleteContattoModal" tabindex="-1" aria-labelledby="deleteContattoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteContattoModalLabel">Conferma Eliminazione Contatto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Attenzione!</strong> Questa azione non può essere annullata.
+                    </div>
+                    <p>Sei sicuro di voler eliminare il contatto:</p>
+                    <ul>
+                        <li><strong>Email:</strong> <span id="delete_contatto_email"></span></li>
+                        <li><strong>Data:</strong> <span id="delete_contatto_data"></span></li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+                    <form id="deleteContattoForm" action="/admin/contatti/0/elimina" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Elimina Contatto
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

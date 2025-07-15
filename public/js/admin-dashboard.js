@@ -2,43 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Admin Dashboard JS caricato');
 
     // ========================================
-    // GESTIONE FILTRI PRENOTAZIONI
-    // ========================================
-    const statusFilter = document.getElementById('status-filter');
-    const serviceFilter = document.getElementById('service-filter');
-    const bookingSearch = document.getElementById('booking-search');
-    
-    if (statusFilter && serviceFilter && bookingSearch) {
-        const filterBookings = () => {
-            const statusValue = statusFilter.value;
-            const serviceValue = serviceFilter.value;
-            const searchValue = bookingSearch.value.toLowerCase();
-            
-            const bookingRows = document.querySelectorAll('tbody tr');
-            
-            bookingRows.forEach(row => {
-                const status = row.getAttribute('data-status');
-                const service = row.getAttribute('data-service');
-                const rowText = row.textContent.toLowerCase();
-                
-                const matchesStatus = statusValue === 'all' || status === statusValue;
-                const matchesService = serviceValue === 'all' || service === serviceValue;
-                const matchesSearch = searchValue === '' || rowText.includes(searchValue);
-                
-                if (matchesStatus && matchesService && matchesSearch) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        };
-        
-        statusFilter.addEventListener('change', filterBookings);
-        serviceFilter.addEventListener('change', filterBookings);
-        bookingSearch.addEventListener('input', filterBookings);
-    }
-    
-    // ========================================
     // GESTIONE PRENOTAZIONI
     // ========================================
     const approveButtons = document.querySelectorAll('.approve-booking');
@@ -136,6 +99,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Pulsanti MODIFICA Auto
     const editAutoButtons = document.querySelectorAll('.edit-auto');
+    const editAutoModal = document.getElementById('editAutoModal');
+    
     editAutoButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
@@ -171,7 +136,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (editImgInput) editImgInput.value = '';
                 
                 // Apri modal
-                const editAutoModal = document.getElementById('editAutoModal');
                 if (editAutoModal) {
                     if (typeof bootstrap !== 'undefined') {
                         const modalInstance = new bootstrap.Modal(editAutoModal);
@@ -208,26 +172,155 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Pulsanti ELIMINA Auto
+    // ========================================
+    // GESTIONE ELIMINAZIONI CON MODAL
+    // ========================================
+
+    // Gestione eliminazione prenotazioni
+    const deletePrenotazioneButtons = document.querySelectorAll('.delete-prenotazione');
+    if (deletePrenotazioneButtons.length > 0) {
+        const deletePrenotazioneModal = document.getElementById('deletePrenotazioneModal');
+        if (deletePrenotazioneModal && typeof bootstrap !== 'undefined') {
+            const modalInstance = new bootstrap.Modal(deletePrenotazioneModal);
+            
+            deletePrenotazioneButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const prenotazioneId = this.getAttribute('data-prenotazione-id');
+                    const cliente = this.getAttribute('data-prenotazione-cliente');
+                    const servizio = this.getAttribute('data-prenotazione-servizio');
+                    
+                    document.getElementById('delete_prenotazione_cliente').textContent = cliente;
+                    document.getElementById('delete_prenotazione_servizio').textContent = servizio;
+                    document.getElementById('deletePrenotazioneForm').action = `/admin/prenotazioni/${prenotazioneId}/elimina`;
+                    
+                    modalInstance.show();
+                });
+            });
+        }
+    }
+
+    // Gestione eliminazione auto
     const deleteAutoButtons = document.querySelectorAll('.delete-auto');
-    deleteAutoButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Pulsante Elimina Auto cliccato');
+    if (deleteAutoButtons.length > 0) {
+        const deleteAutoModal = document.getElementById('deleteAutoModal');
+        if (deleteAutoModal && typeof bootstrap !== 'undefined') {
+            const modalInstance = new bootstrap.Modal(deleteAutoModal);
             
-            const autoId = this.getAttribute('data-auto-id');
-            const autoNome = this.getAttribute('data-auto-nome') || 'questa auto';
+            deleteAutoButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const autoId = this.getAttribute('data-auto-id');
+                    const autoNome = this.getAttribute('data-auto-nome');
+                    
+                    document.getElementById('delete_auto_nome').textContent = autoNome;
+                    document.getElementById('deleteAutoForm').action = `/admin/auto/${autoId}/delete`;
+                    
+                    modalInstance.show();
+                });
+            });
+        }
+    }
+
+    // Gestione eliminazione recensioni
+    const deleteRecensioneButtons = document.querySelectorAll('.delete-recensione');
+    if (deleteRecensioneButtons.length > 0) {
+        const deleteRecensioneModal = document.getElementById('deleteRecensioneModal');
+        if (deleteRecensioneModal && typeof bootstrap !== 'undefined') {
+            const modalInstance = new bootstrap.Modal(deleteRecensioneModal);
             
-            if (confirm(`Sei sicuro di voler eliminare ${autoNome}? Questa azione non può essere annullata.`)) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = `/admin/auto/${autoId}/delete`;
-                
-                document.body.appendChild(form);
-                form.submit();
-            }
-        });
-    });
+            deleteRecensioneButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const recensioneId = this.getAttribute('data-recensione-id');
+                    const utente = this.getAttribute('data-recensione-utente');
+                    const contenuto = this.getAttribute('data-recensione-contenuto');
+                    
+                    document.getElementById('delete_recensione_utente').textContent = utente;
+                    document.getElementById('delete_recensione_contenuto').textContent = contenuto;
+                    document.getElementById('delete_recensione_id').value = recensioneId;
+                    
+                    modalInstance.show();
+                });
+            });
+        }
+    }
+
+    // Gestione eliminazione contatti
+    const deleteContattoButtons = document.querySelectorAll('.delete-contatto');
+    if (deleteContattoButtons.length > 0) {
+        const deleteContattoModal = document.getElementById('deleteContattoModal');
+        if (deleteContattoModal && typeof bootstrap !== 'undefined') {
+            const modalInstance = new bootstrap.Modal(deleteContattoModal);
+            
+            deleteContattoButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const contattoId = this.getAttribute('data-contatto-id');
+                    const email = this.getAttribute('data-contatto-email');
+                    const data = this.getAttribute('data-contatto-data');
+                    
+                    document.getElementById('delete_contatto_email').textContent = email;
+                    document.getElementById('delete_contatto_data').textContent = data;
+                    document.getElementById('deleteContattoForm').action = `/admin/contatti/${contattoId}/elimina`;
+                    
+                    modalInstance.show();
+                });
+            });
+        }
+    }
+
+    // Gestione eliminazione utenti
+    const deleteUserButtons = document.querySelectorAll('.delete-user');
+    if (deleteUserButtons.length > 0) {
+        const deleteUserModal = document.getElementById('deleteUserModal');
+        if (deleteUserModal && typeof bootstrap !== 'undefined') {
+            const modalInstance = new bootstrap.Modal(deleteUserModal);
+            
+            deleteUserButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const userId = this.getAttribute('data-user-id');
+                    const userName = this.getAttribute('data-user-name');
+                    
+                    // Trova l'utente nella tabella per ottenere l'email
+                    const userRow = this.closest('tr');
+                    const userEmail = userRow.querySelector('td:nth-child(4)').textContent;
+                    
+                    document.getElementById('delete_user_name').textContent = userName;
+                    document.getElementById('delete_user_email').textContent = userEmail;
+                    document.getElementById('delete_user_id').value = userId;
+                    
+                    modalInstance.show();
+                });
+            });
+        }
+    }
+
+    // ========================================
+    // GESTIONE CONTATTI
+    // ========================================
+    
+    // Mostra messaggio completo nel modal
+    const showFullMessageButtons = document.querySelectorAll('.show-full-message');
+    if (showFullMessageButtons.length > 0) {
+        const messageModal = document.getElementById('messageModal');
+        const fullMessageDiv = document.getElementById('fullMessage');
+        
+        if (messageModal && typeof bootstrap !== 'undefined') {
+            const modalInstance = new bootstrap.Modal(messageModal);
+            
+            showFullMessageButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const fullMessage = this.getAttribute('data-message');
+                    if (fullMessageDiv) {
+                        fullMessageDiv.innerHTML = fullMessage.replace(/\n/g, '<br>');
+                    }
+                    modalInstance.show();
+                });
+            });
+        }
+    }
 
     // ========================================
     // GESTIONE CHIUSURA MODAL
@@ -262,33 +355,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // ========================================
-    // GESTIONE CONTATTI
-    // ========================================
-    
-    // Mostra messaggio completo nel modal
-    const showFullMessageButtons = document.querySelectorAll('.show-full-message');
-    const messageModal = document.getElementById('messageModal');
-    const fullMessageDiv = document.getElementById('fullMessage');
-    
-    showFullMessageButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const fullMessage = this.getAttribute('data-message');
-            if (fullMessageDiv) {
-                fullMessageDiv.textContent = fullMessage.replace(/&quot;/g, '"');
-            }
-            
-            if (messageModal) {
-                if (typeof bootstrap !== 'undefined') {
-                    const modalInstance = new bootstrap.Modal(messageModal);
-                    modalInstance.show();
-                } else {
-                    showModalManually(messageModal);
-                }
-            }
-        });
-    });
-
     // Gestione cambio ruolo utente
     document.addEventListener('click', function(e) {
         if (e.target.closest('.change-role')) {
@@ -308,71 +374,4 @@ document.addEventListener('DOMContentLoaded', function() {
             modal.show();
         }
     });
-
-    // Gestione eliminazione utente
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.delete-user')) {
-            e.preventDefault();
-            
-            const button = e.target.closest('.delete-user');
-            const userId = button.dataset.userId;
-            const userName = button.dataset.userName;
-            
-            // Trova l'email dell'utente dalla tabella (4° colonna)
-            const row = button.closest('tr');
-            const userEmail = row.cells[3].textContent; // Indice 3 = colonna email
-            
-            // Popola il modal con i dati dell'utente
-            const deleteUserIdInput = document.getElementById('delete_user_id');
-            const deleteUserNameSpan = document.getElementById('delete_user_name');
-            const deleteUserEmailSpan = document.getElementById('delete_user_email');
-            
-            if (deleteUserIdInput) deleteUserIdInput.value = userId;
-            if (deleteUserNameSpan) deleteUserNameSpan.textContent = userName;
-            if (deleteUserEmailSpan) deleteUserEmailSpan.textContent = userEmail;
-            
-            // Mostra il modal
-            const deleteUserModal = document.getElementById('deleteUserModal');
-            if (deleteUserModal) {
-                if (typeof bootstrap !== 'undefined') {
-                    const deleteModal = new bootstrap.Modal(deleteUserModal);
-                    deleteModal.show();
-                } else {
-                    // Fallback manuale
-                    showModalManually(deleteUserModal);
-                }
-            } else {
-                console.error('Modal deleteUserModal non trovato');
-            }
-        }
-    });
-
-    // Chiusura modal eliminazione utente
-    const deleteUserModal = document.getElementById('deleteUserModal');
-    if (deleteUserModal) {
-        const closeButtons = deleteUserModal.querySelectorAll('.btn-close, [data-bs-dismiss="modal"]');
-        closeButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                if (typeof bootstrap !== 'undefined') {
-                    const modalInstance = bootstrap.Modal.getInstance(deleteUserModal);
-                    if (modalInstance) {
-                        modalInstance.hide();
-                    }
-                } else {
-                    hideModalManually(deleteUserModal);
-                }
-            });
-        });
-    }
-
-    // Gestione submit del form di eliminazione utente
-    const deleteUserForm = document.getElementById('deleteUserForm');
-    if (deleteUserForm) {
-        deleteUserForm.addEventListener('submit', function(e) {
-            console.log('Eliminazione utente in corso...');
-            // Il form viene inviato normalmente al server
-        });
-    }
-
-    console.log('Admin Dashboard JS inizializzato correttamente');
 });
