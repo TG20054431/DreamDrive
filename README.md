@@ -1,6 +1,6 @@
 # 🏁 DreamDrive 
 
-Applicazione web che permette la prenotazione di Noleggio Auto o Track-Day in circuiti autorizzati.
+Sviluppo applicazione web che permette la prenotazione di Noleggio Auto o Track-Day in circuiti autorizzati.
 
 # Funzionalità principali
 
