@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <!-- Logo -->
       <a class="navbar-brand" href="/">
-        <img src="/images/logo_bianco.jpg" alt="DreamDrive" height="70" class="logo-img">
+        <img src="/images/logo_bianco.jpg" alt="DreamDrive" class="logo-img">
       </a>
       
       <!-- Hamburger menu per mobile -->
@@ -40,34 +40,44 @@
           </li>
         </ul>
         
-        <!-- Pulsanti autenticazione - SPOSTATI DENTRO UL PER MOBILE -->
+        <!-- Pulsanti autenticazione -->
         <ul class="navbar-nav ms-auto">
           <% if (isAuth) { %>
               <li class="nav-item">
                   <% if (user && user.ruolo === 'admin') { %>
                       <a class="nav-link btn btn-teal text-white px-3 mb-2 mb-lg-0 me-lg-2" href="/admin/dashboard">
-                          <i class="fas fa-user-shield me-1"></i>Admin Panel
+                          <i class="fas fa-user-shield me-1"></i>
+                          <span class="d-lg-inline d-none">Admin Panel</span>
+                          <span class="d-lg-none">Admin</span>
                       </a>
                   <% } else { %>
-                      <a class="nav-link btn btn-teal text-white px-3 mb-2 mb-lg-0 me-lg-2" href="/dashboard">
-                          <i class="fas fa-user me-1"></i>Area Personale
+                      <a class="nav-link btn btn-teal text-white px-3 mb-2 mb-lg-0 me-lg-2" href="/utente/dashboard">
+                          <i class="fas fa-user me-1"></i>
+                          <span class="d-lg-inline d-none">Area Personale</span>
+                          <span class="d-lg-none">Profilo</span>
                       </a>
                   <% } %>
               </li>
               <li class="nav-item">
                   <a class="nav-link btn btn-outline-light px-3 logout-btn" href="/auth/logout">
-                      <i class="fas fa-sign-out-alt me-1"></i>Logout
+                      <i class="fas fa-sign-out-alt me-1"></i>
+                      <span class="d-lg-inline d-none">Logout</span>
+                      <span class="d-lg-none">Esci</span>
                   </a>
               </li>
           <% } else { %>
               <li class="nav-item">
                   <a class="nav-link btn btn-outline-light px-3 mb-2 mb-lg-0 me-lg-2" href="/auth/login">
-                      <i class="fas fa-sign-in-alt me-1"></i>Login
+                      <i class="fas fa-sign-in-alt me-1"></i>
+                      <span class="d-lg-inline d-none">Login</span>
+                      <span class="d-lg-none">Accedi</span>
                   </a>
               </li>
               <li class="nav-item">
                   <a class="nav-link btn btn-teal text-white px-3" href="/auth/register">
-                      <i class="fas fa-user-plus me-1"></i>Registrati
+                      <i class="fas fa-user-plus me-1"></i>
+                      <span class="d-lg-inline d-none">Registrati</span>
+                      <span class="d-lg-none">Iscriviti</span>
                   </a>
               </li>
           <% } %>
@@ -78,136 +88,314 @@
 </header>
 
 <style>
-    /* Stili per il pulsante logout nella navbar */
-    .navbar .logout-btn {
-        border-color: #6c757d !important;
-        color: #6c757d !important;
-        background-color: transparent !important;
+    /* Reset e base navbar */
+    .navbar {
+        min-height: 70px;
+        padding: 0.5rem 0;
+        position: relative;
+        z-index: 1030; /* Z-index alto per navbar */
     }
     
-    .navbar .logout-btn:hover {
-        background-color: transparent !important;
-        border-color: #6c757d !important;
-        color: #dc3545 !important; /* Solo il testo diventa rosso */
-        transform: scale(1.05);
-        transition: all 0.2s ease;
+    .navbar-brand {
+        margin-right: 2rem;
     }
     
-    .navbar .logout-btn:focus,
-    .navbar .logout-btn.focus {
-        background-color: transparent !important;
-        border-color: #6c757d !important;
-        color: #dc3545 !important;
-        box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+    /* Logo responsivo */
+    .logo-img {
+        height: 45px;
+        max-width: 180px;
+        object-fit: contain;
+        transition: all 0.3s ease;
     }
     
-    .navbar .logout-btn:active,
-    .navbar .logout-btn.active {
-        background-color: transparent !important;
-        border-color: #6c757d !important;
-        color: #dc3545 !important;
+    @media (min-width: 768px) {
+        .logo-img {
+            height: 60px;
+        }
     }
     
-    /* Stili per il pulsante login nella navbar */
-    .navbar .btn-outline-light:not(.logout-btn) {
-        border-color: #f8f9fa !important;
-        color: #f8f9fa !important;
-        background-color: transparent !important;
+    /* Hamburger menu */
+    .navbar-toggler {
+        border: 2px solid rgba(255,255,255,0.3);
+        padding: 0.4rem 0.6rem;
+        border-radius: 0.375rem;
+        z-index: 1031; /* Z-index per toggler */
     }
     
-    .navbar .btn-outline-light:not(.logout-btn):hover {
-        background-color: transparent !important;
-        border-color: #f8f9fa !important;
-        color: #20B2AA !important; /* Solo il testo diventa teal */
-        transform: scale(1.05);
-        transition: all 0.2s ease;
+    .navbar-toggler:focus {
+        box-shadow: 0 0 0 0.25rem rgba(32, 178, 170, 0.25);
+        border-color: #20B2AA;
     }
     
-    .navbar .btn-outline-light:not(.logout-btn):focus,
-    .navbar .btn-outline-light:not(.logout-btn).focus {
-        background-color: transparent !important;
-        border-color: #f8f9fa !important;
+    .navbar-toggler-icon {
+        width: 20px;
+        height: 20px;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+    
+    /* CORREZIONE PRINCIPALE - Collapse con z-index alto */
+    .navbar-collapse {
+        position: relative;
+        z-index: 1050; /* Z-index molto alto per il menu */
+        background-color: inherit; /* Mantieni sfondo navbar */
+    }
+    
+    /* Navigation links */
+    .navbar-nav .nav-link {
+        color: rgba(255,255,255,0.9) !important;
+        font-weight: 500;
+        padding: 0.5rem 1rem !important;
+        border-radius: 0.375rem;
+        margin: 0 0.2rem;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1051; /* Z-index per i link */
+    }
+    
+    .navbar-nav .nav-link:hover {
         color: #20B2AA !important;
-        box-shadow: 0 0 0 0.2rem rgba(32, 178, 170, 0.25) !important;
+        background-color: rgba(32, 178, 170, 0.1);
     }
     
-    .navbar .btn-outline-light:not(.logout-btn):active,
-    .navbar .btn-outline-light:not(.logout-btn).active {
-        background-color: transparent !important;
-        border-color: #f8f9fa !important;
-        color: #20B2AA !important;
-    }
-    
-    /* Stili per il pulsante teal */
+    /* Button styles */
     .btn-teal {
         background-color: #20B2AA !important;
         border-color: #20B2AA !important;
         color: white !important;
+        font-weight: 500;
+        position: relative;
+        z-index: 1052;
     }
     
     .btn-teal:hover {
         background-color: #1a9a94 !important;
         border-color: #1a9a94 !important;
         color: white !important;
+        transform: translateY(-1px);
     }
     
-    /* Stili per link admin ristretti */
+    .navbar .btn-outline-light {
+        border-color: rgba(255,255,255,0.5) !important;
+        color: rgba(255,255,255,0.9) !important;
+        background-color: transparent !important;
+        font-weight: 500;
+        position: relative;
+        z-index: 1052;
+    }
+    
+    .navbar .btn-outline-light:hover {
+        background-color: rgba(255,255,255,0.1) !important;
+        border-color: rgba(255,255,255,0.7) !important;
+        color: white !important;
+        transform: translateY(-1px);
+    }
+    
+    .logout-btn:hover {
+        color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
+    
     .admin-restricted {
         cursor: pointer;
     }
     
-    /* Stili specifici per mobile */
+    /* Mobile styles - CORREZIONE Z-INDEX */
     @media (max-width: 991.98px) {
-        .navbar-nav .nav-link.btn {
-            margin-bottom: 0.5rem;
-            text-align: center;
-            display: block;
+        .navbar-collapse {
+            margin-top: 1rem;
+            padding: 1rem 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            background-color: #212529 !important; /* Sfondo esplicito per mobile */
+            border-radius: 0 0 0.5rem 0.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Ombra più forte */
+            position: absolute !important; /* Posizionamento assoluto FORZATO */
+            top: 100%; /* Sotto la navbar */
+            left: 0;
+            right: 0;
+            z-index: 9999 !important; /* Z-index molto molto alto */
             width: 100%;
         }
         
-        .navbar-nav .nav-link.btn:last-child {
-            margin-bottom: 0;
+        .navbar-nav {
+            text-align: center;
+            background-color: #212529;
+            position: relative;
+            z-index: 10000 !important;
         }
         
-        .navbar-collapse {
+        .navbar-nav .nav-item {
+            margin: 0.3rem 0;
+            background-color: transparent;
+        }
+        
+        .navbar-nav .nav-link {
+            padding: 0.75rem 1.5rem !important;
+            margin: 0.2rem auto;
+            display: block;
+            background-color: transparent !important;
+            position: relative;
+            z-index: 10001 !important;
+        }
+        
+        .navbar-nav .nav-link.btn {
+            max-width: 200px;
+            margin: 0.5rem auto;
+            text-align: center;
+            z-index: 10002 !important;
+        }
+        
+        .navbar-nav.ms-auto {
             margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            background-color: #212529;
         }
         
-        /* Rimuovi transform scale su mobile per evitare problemi di layout */
-        .navbar .logout-btn:hover,
-        .navbar .btn-outline-light:not(.logout-btn):hover {
+        /* Rimuovi hover effects su mobile */
+        .navbar .btn-teal:hover,
+        .navbar .btn-outline-light:hover {
             transform: none;
+        }
+        
+        /* Assicurati che il container navbar abbia position relative */
+        .navbar {
+            position: relative;
+            z-index: 9998;
+        }
+        
+        .container-fluid {
+            position: relative;
+            z-index: 9998;
+        }
+        
+        /* OVERLAY BACKDROP per bloccare interazioni */
+        .navbar-collapse.show::after {
+            content: '';
+            position: fixed !important;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 9990 !important;
+            pointer-events: auto;
+        }
+        
+        /* Assicurati che il menu sia sopra il backdrop */
+        .navbar-collapse.show {
+            z-index: 9999 !important;
+            position: absolute !important;
         }
     }
     
-    /* Stili per desktop */
-    @media (min-width: 992px) {
+    /* Assicurati che nessun elemento della pagina superi il menu */
+    .hero-section,
+    .btn-primary,
+    .btn-teal,
+    .content-wrapper,
+    main,
+    section {
+        position: relative;
+        z-index: 1 !important;
+    }
+    
+    /* Forza tutti i pulsanti della hero ad avere z-index basso */
+    .hero-section .btn,
+    .hero-section .btn-primary,
+    .hero-section .btn-teal {
+        z-index: 1 !important;
+        position: relative;
+    }
+    
+    /* Tablet styles */
+    @media (min-width: 768px) and (max-width: 991.98px) {
         .navbar-nav .nav-link.btn {
-            display: inline-block;
-            width: auto;
+            max-width: 220px;
+        }
+    }
+    
+    /* Desktop styles */
+    @media (min-width: 992px) {
+        .navbar-collapse {
+            position: static; /* Reset posizionamento su desktop */
+            background-color: transparent;
+            box-shadow: none;
+            border-radius: 0;
+            margin-top: 0;
+            padding: 0;
+            border-top: none;
+        }
+        
+        .navbar-nav .nav-link.btn {
+            margin: 0 0.3rem;
+            max-width: none;
+        }
+        
+        .navbar-nav.ms-auto {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+    }
+    
+    /* Accessibility */
+    .nav-link:focus,
+    .navbar-toggler:focus {
+        outline: 2px solid #20B2AA;
+        outline-offset: 2px;
+    }
+    
+    /* Smooth transitions */
+    .navbar-collapse {
+        transition: all 0.35s ease-in-out;
+    }
+    
+    .nav-link,
+    .btn {
+        transition: all 0.3s ease;
+    }
+    
+    /* OVERLAY PER MOBILE - Previene click attraverso */
+    @media (max-width: 991.98px) {
+        .navbar-collapse.show::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1040;
+            pointer-events: none;
         }
     }
 </style>
 
 <!-- Modal per avviso admin -->
 <div class="modal fade" id="adminWarningModal" tabindex="-1" aria-labelledby="adminWarningModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="adminWarningModalLabel">Accesso Limitato</h5>
+                <h5 class="modal-title" id="adminWarningModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                    Accesso Limitato
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div class="text-center">
-                    <i class="fas fa-exclamation-triangle text-warning fs-1 mb-3"></i>
-                    <h4>Accesso come Amministratore</h4>
-                    <p>Sei attualmente loggato come amministratore. Per accedere a questa sezione devi essere loggato come utente normale.</p>
-                    <p class="text-muted">Effettua il logout e accedi con un account utente per continuare.</p>
+            <div class="modal-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-user-shield text-primary fs-1 mb-3"></i>
                 </div>
+                <h4 class="mb-3">Accesso come Amministratore</h4>
+                <p class="mb-3">Sei attualmente loggato come amministratore. Per accedere a questa sezione devi essere loggato come utente normale.</p>
+                <p class="text-muted">Effettua il logout e accedi con un account utente per continuare.</p>
             </div>
             <div class="modal-footer justify-content-center">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Chiudi</button>
-                <a href="/auth/logout" class="btn btn-teal">Logout</a>
+                <a href="/auth/logout" class="btn btn-teal">
+                    <i class="fas fa-sign-out-alt me-1"></i>
+                    Logout
+                </a>
             </div>
         </div>
     </div>
@@ -215,34 +403,124 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Gestione click sui link ristretti per admin
-    const adminRestrictedLinks = document.querySelectorAll('.admin-restricted');
-    const adminWarningModal = document.getElementById('adminWarningModal');
+    console.log('🔧 Navbar script caricato');
     
-    adminRestrictedLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            if (adminWarningModal) {
-                const modalInstance = new bootstrap.Modal(adminWarningModal);
-                modalInstance.show();
-            }
-        });
-    });
-    
-    // Chiudi automaticamente il menu mobile quando si clicca su un link
+    // Elementi principali
     const navbarToggler = document.querySelector('.navbar-toggler');
     const navbarCollapse = document.querySelector('.navbar-collapse');
     const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+    const adminRestrictedLinks = document.querySelectorAll('.admin-restricted');
+    const adminWarningModal = document.getElementById('adminWarningModal');
     
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            // Se siamo su mobile e il menu è aperto, chiudilo
-            if (window.innerWidth < 992 && navbarCollapse.classList.contains('show')) {
-                navbarToggler.click();
-            }
+    // Gestione click sui link ristretti per admin
+    if (adminRestrictedLinks.length > 0 && adminWarningModal) {
+        adminRestrictedLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('🚫 Link admin-restricted cliccato');
+                
+                try {
+                    const modalInstance = new bootstrap.Modal(adminWarningModal);
+                    modalInstance.show();
+                } catch (error) {
+                    console.error('❌ Errore apertura modal:', error);
+                    alert('Sei loggato come amministratore. Effettua il logout per accedere a questa sezione.');
+                }
+            });
         });
+    }
+    
+    // Gestione chiusura menu mobile
+    if (navLinks.length > 0) {
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                // Non chiudere per link admin ristretti o pulsanti
+                if (!this.classList.contains('admin-restricted') && !this.classList.contains('btn')) {
+                    closeMobileMenu();
+                }
+            });
+        });
+    }
+    
+    // Migliora la gestione del backdrop
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth < 992 && navbarCollapse && navbarToggler) {
+            const isClickInsideNav = navbarCollapse.contains(e.target) || navbarToggler.contains(e.target);
+            
+            if (!isClickInsideNav && navbarCollapse.classList.contains('show')) {
+                closeMobileMenu();
+            }
+        }
     });
+    
+    // Previeni scroll quando il menu è aperto
+    function toggleBodyScroll(disable) {
+        if (disable) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+    
+    // Aggiorna la funzione closeMobileMenu
+    function closeMobileMenu() {
+        if (window.innerWidth < 992 && navbarCollapse && navbarCollapse.classList.contains('show')) {
+            try {
+                const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
+                    toggle: false
+                });
+                bsCollapse.hide();
+                toggleBodyScroll(false); // Riabilita scroll
+            } catch (error) {
+                console.warn('⚠️ Fallback chiusura menu');
+                navbarCollapse.classList.remove('show');
+                toggleBodyScroll(false);
+            }
+        }
+    }
+    
+    // Aggiungi listener per quando il menu si apre/chiude
+    if (navbarCollapse) {
+        navbarCollapse.addEventListener('shown.bs.collapse', function() {
+            toggleBodyScroll(true); // Disabilita scroll quando menu aperto
+        });
+        
+        navbarCollapse.addEventListener('hidden.bs.collapse', function() {
+            toggleBodyScroll(false); // Riabilita scroll quando menu chiuso
+        });
+    }
+    
+    // Chiudi menu quando si clicca fuori
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth < 992 && navbarCollapse && navbarToggler) {
+            const isClickInsideNav = navbarCollapse.contains(e.target) || navbarToggler.contains(e.target);
+            
+            if (!isClickInsideNav && navbarCollapse.classList.contains('show')) {
+                closeMobileMenu();
+            }
+        }
+    });
+    
+    // Chiudi menu al resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 992 && navbarCollapse && navbarCollapse.classList.contains('show')) {
+            closeMobileMenu();
+        }
+    });
+    
+    // Migliora accessibilità keyboard
+    if (navLinks.length > 0) {
+        navLinks.forEach(link => {
+            link.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.click();
+                }
+            });
+        });
+    }
+    
+    console.log('✅ Navbar inizializzata correttamente');
 });
 </script>
 
