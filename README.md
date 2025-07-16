@@ -65,7 +65,9 @@ npm run dev
 
 L'applicazione sarà disponibile, in locale,  al link:  *http://localhost:3000*
 
-# Struttura cartelle
+# 📁 Struttura cartelle
+
+
 
 # 🛠 Account di test
 
