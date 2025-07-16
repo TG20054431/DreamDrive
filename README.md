@@ -74,8 +74,16 @@ L'applicazione sarà disponibile, in locale,  al link:  *http://localhost:3000*
 
 **Utente**
 
-* Email: claudio.rossi@gmail.com
-* Password: claudio1234
+* Email: marco.rossi@gmail.com
+* Password: marco1234
+
+# 📼 Link al video di presentazione
+
+https://youtu.be/71yw4ih7IfA
+
+# 🌐 Link deploy 
+
+https://dreamdrive-motorsport-rent.up.railway.app
 
 # 🙋🏻‍♂️ Autore
 
