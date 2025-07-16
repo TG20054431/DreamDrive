@@ -6,7 +6,7 @@ class ContattiDAO {
   constructor(database) {
     this.db = database;
   }
-
+  // Metodo per inserire un nuovo contatto
   async insertContatto(contatto) {
     const sql = `INSERT INTO CONTATTO (email, messaggio) VALUES (?, ?)`;
     const params = [contatto.email, contatto.messaggio];
@@ -18,7 +18,7 @@ class ContattiDAO {
     });
   }
 
-  // Aggiungi questo metodo per recuperare tutti i contatti
+  // Metodo per recuperare tutti i contatti
   async getAllContatti() {
     const sql = 'SELECT * FROM CONTATTO ORDER BY data DESC';
     return new Promise((resolve, reject) => {
@@ -32,7 +32,7 @@ class ContattiDAO {
     });
   }
 
-  // Aggiungi questo metodo per eliminare un contatto
+  // Metodo per eliminare un contatto
   async deleteContatto(contattoId) {
     const sql = 'DELETE FROM CONTATTO WHERE ID_contatto = ?';
     return new Promise((resolve, reject) => {

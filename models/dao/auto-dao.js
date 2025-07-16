@@ -59,7 +59,7 @@ exports.insertAuto = (auto) => {
     });
 };
 
-// Aggiorna un'auto - VERSIONE CORRETTA
+// Aggiorna un'auto 
 exports.updateAuto = (autoId, auto) => {
     return new Promise((resolve, reject) => {
         // Se non viene passata una nuova immagine, mantieni quella esistente

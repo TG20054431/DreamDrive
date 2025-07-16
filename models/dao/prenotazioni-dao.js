@@ -2,7 +2,7 @@
 
 const db = require('../../db');
 
-// Inserisce una nuova prenotazione
+// Inserimento nuova prenotazione
 const insertPrenotazione = (prenotazione) => {
     return new Promise((resolve, reject) => {
         const sql = `

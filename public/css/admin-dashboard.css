@@ -34,7 +34,7 @@
 /* Sidebar Styles */
 .admin-sidebar {
     width: 250px;
-    background-color: var(--teal-color); /* Changed from black to teal to match the color scheme */
+    background-color: var(--teal-color); 
     color: #fff;
     padding: 20px 0;
     transition: all 0.3s;
@@ -81,14 +81,14 @@
 }
 
 .sidebar-item:hover {
-    background-color: var(--teal-dark); /* Changed from #222 to teal-dark for better matching */
+    background-color: var(--teal-dark); 
     color: #fff;
     transform: translateX(5px);
 }
 
 .sidebar-item.active {
-    background-color: #fff; /* Changed from teal to white */
-    color: var(--teal-color); /* Changed from white to teal */
+    background-color: #fff; 
+    color: var(--teal-color); 
     position: relative;
 }
 
@@ -99,7 +99,7 @@
     top: 0;
     height: 100%;
     width: 4px;
-    background-color: var(--teal-dark); /* Changed from white to teal-dark */
+    background-color: var(--teal-dark); 
 }
 
 /* Link della sidebar - override completo */
@@ -107,7 +107,7 @@
     display: flex;
     align-items: center;
     padding: 0;
-    color: #ecf0f1 !important; /* Colore chiaro per tutti i link */
+    color: #ecf0f1 !important; 
     text-decoration: none !important;
     font-family: var(--main-font);
     width: 100%;
@@ -115,7 +115,7 @@
 }
 
 .sidebar-link:hover {
-    color: #ffffff !important; /* Bianco al hover */
+    color: #ffffff !important; 
     text-decoration: none !important;
 }
 
@@ -140,12 +140,12 @@
     color: var(--teal-dark) !important; /* Teal scuro al hover del link attivo */
 }
 
-/* Rimuovi la classe text-black dal template e aggiungi stili uniformi */
+
 .sidebar-link.text-black {
-    color: #ecf0f1 !important; /* Override della classe text-black */
+    color: #ecf0f1 !important; 
 }
 
-/* Assicurati che le icone abbiano lo stesso colore del testo */
+
 .sidebar-link i {
     color: inherit;
     margin-right: 10px;

@@ -28,7 +28,7 @@ class RecensioniDAO {
   }
 
   async insertRecensione(recensione) {
-    // Modificato per usare solo le colonne esistenti nella tabella RECENSIONI
+    // Usa solo le colonne esistenti nella tabella RECENSIONI
     const sql = `INSERT INTO RECENSIONI (ID_utente, tipologia, valutazione, contenuto) 
                 VALUES (?, ?, ?, ?)`;
     const params = [
