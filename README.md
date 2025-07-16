@@ -46,7 +46,7 @@ git clone https://github.com/TG20054431/DreamDrive.git
 
 cd DreamDrive
 
-# In caso non fosse presente, bisogna configurare un file .env
+# In caso non fosse presente, bisogna creare un file .env
 
 PORT=3000
 DB_NAME="dreamdrive.db"
