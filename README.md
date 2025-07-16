@@ -65,6 +65,102 @@ npm run dev
 
 L'applicazione sarà disponibile, in locale,  al link:  *http://localhost:3000*
 
+# Struttura cartelle
+
+DreamDrive
+|
+|_ middleware
+|     |
+|     |_auth.js
+|     |_passport.js
+|     |_permessi.js
+|
+|_ models\dao
+|     |
+|     |_auto-dao.js
+|     |_contatti-dao.js
+|     |_prenotazioni-dao.js
+|     |_recensioni-dao.js
+|     |_utenti-dao.js
+|     
+|_public
+|     |
+|     |_css
+|     |   |
+|     |   |_admin-dashboard.css
+|     |
+|     |_images
+|     |   |
+|     |   |_logo_bianco.jpg
+|     |   |_wallpaper.jpg
+|     |
+|     |_js
+|     |   |
+|     |   |_admin-dashboard.js
+|     |   |_auto.js
+|     |   |_date-time-validation.js
+|     |   |_dateTimeValidator.js
+|     |   |_dettaglio-auto.js
+|     |   |_index.js
+|     |   |_main.js
+|     |   |_noleggio.js
+|     |   |_track-day.js
+|     |   |_utility.js
+|     |
+|     |_stylesheets
+|     |   |
+|     |   |_style.css
+|     |
+|     |_uploads
+|         |
+|         |_\auto
+|
+|_routes
+|     |
+|     |_admin.js
+|     |_auth.js
+|     |_index.js
+|     |_utente.js
+|
+|_views
+|     |
+|     |_pages
+|     |  |
+|     |  |_auto.ejs
+|     |  |_dashboard_admin.ejs
+|     |  |_dashboard_utente.ejs
+|     |  |_error.ejs
+|     |  |_index.ejs
+|     |  |_login.ejs
+|     |  |_prenotazioni.ejs
+|     |  |_recensioni.ejs
+|     |  |_register.ejs
+|     |
+|     |_partials
+|         |
+|         |_modals
+|         |    |
+|         |    |_elimina-account-modal.ejs
+|         |    |_logout-modal.ejs
+|         |
+|         |_alerts.ejs
+|         |_footer.ejs
+|         |_head.ejs
+|         |_nav.ejs
+|         |_scripts.ejs
+|         |_toast.ejs   
+|     
+|_.env
+|_.gitignore
+|_app.js
+|_db.js
+|_dreamdrive.db
+|_dreamdrive.sql
+|_package-lock.json
+|_package.json
+|_README.md
+|_server.js
+
 # 🛠 Account di test
 
 **Admin**
