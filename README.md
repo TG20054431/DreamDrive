@@ -2,6 +2,23 @@
 
 Applicazione web che permette la prenotazione di Noleggio Auto o Track-Day in circuiti autorizzati.
 
+# 🏗 Tecnologie utilizzate
+
+Front-end:
+
+* HTML 5
+* JavaScript
+* CSS 3
+
+Back-end:
+
+*Node.js
+*Express.js
+
+Database:
+
+*MySQL
+
 # Funzionalità principali
 
 # 👁 Admin
