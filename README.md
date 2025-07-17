@@ -74,7 +74,7 @@ L'applicazione sarà disponibile, in locale,  al link:  *http://localhost:3000*
 
 https://youtu.be/71yw4ih7IfA
 
-# 🌐 Link deploy 
+# 🌐 Link di deploy 
 
 https://dreamdrive-motorsport-rent.up.railway.app
 
