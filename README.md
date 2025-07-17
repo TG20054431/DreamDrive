@@ -1,6 +1,23 @@
 # 🏁 DreamDrive 
 
-Sviluppo applicazione web che permette la prenotazione di Noleggio Auto o Track-Day in circuiti autorizzati.
+Applicazione web che permette la prenotazione di Noleggio Auto o Track-Day in circuiti autorizzati.
+
+# 🏗 Tecnologie utilizzate
+
+Front-end:
+
+* HTML 5
+* JavaScript
+* CSS 3
+
+Back-end:
+
+* Node.js
+* Express.js
+
+Database:
+
+* MySQL
 
 # Funzionalità principali
 
@@ -38,7 +55,7 @@ L'utente non registrato ha la possibilità di navigare all'interno del sito per 
 # 📥 Procedura di installazione
 
 ```bash
-# Clonazione la repo di GitHub
+# Clonare la repo di GitHub
 
 git clone https://github.com/TG20054431/DreamDrive.git
 
@@ -46,18 +63,11 @@ git clone https://github.com/TG20054431/DreamDrive.git
 
 cd DreamDrive
 
-# In caso non fosse presente, bisogna configurare un file .env
-
-PORT=3000
-DB_NAME="dreamdrive.db"
-SECRET_SESSION="dreamdrive"
-NODE_ENV="development"
-
-# Installazione delle dipendenze
+# Installare le dipendenze
 
 npm install
 
-# Avvio applicazione
+# Avviare l'applicazione
 
 npm run dev
 
@@ -81,7 +91,7 @@ L'applicazione sarà disponibile, in locale,  al link:  *http://localhost:3000*
 
 https://youtu.be/71yw4ih7IfA
 
-# 🌐 Link deploy 
+# 🌐 Link di deploy 
 
 https://dreamdrive-motorsport-rent.up.railway.app
 
