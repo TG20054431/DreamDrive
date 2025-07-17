@@ -38,7 +38,7 @@ L'utente non registrato ha la possibilità di navigare all'interno del sito per 
 # 📥 Procedura di installazione
 
 ```bash
-# Clonazione la repo di GitHub
+# Clonare la repo di GitHub
 
 git clone https://github.com/TG20054431/DreamDrive.git
 
@@ -46,11 +46,11 @@ git clone https://github.com/TG20054431/DreamDrive.git
 
 cd DreamDrive
 
-# Installazione delle dipendenze
+# Installare le dipendenze
 
 npm install
 
-# Avvio applicazione
+# Avviare l'applicazione
 
 npm run dev
 
