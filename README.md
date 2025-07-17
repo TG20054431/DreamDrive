@@ -12,12 +12,12 @@ Front-end:
 
 Back-end:
 
-*Node.js
-*Express.js
+* Node.js
+* Express.js
 
 Database:
 
-*MySQL
+* MySQL
 
 # Funzionalità principali
 
