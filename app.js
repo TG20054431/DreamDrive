@@ -111,7 +111,7 @@ app.use('/auth', authRouter);
 app.use('/auto', require('./routes/auto'));
 app.use('/admin', adminRouter);
 app.use('/utente', utenteRouter);
-app.use('/prenotazioni', prenotazioniRouter); // DEVE ESSERE DOPO LE ALTRE
+app.use('/prenotazioni', prenotazioniRouter); 
 
 // 404 error handler
 app.use((req, res, next) => {
